@@ -1,0 +1,44 @@
+# Sitefinity dev start checklist
+
+- Set up ADO project
+- Initialize git on ADO project
+- Create folder structure on local
+  - /projectName
+    - /Docs (misc project docs for dev)
+    - /Sitebuild
+    - /Web (solution and projects here)
+- Start Sitefinity project on local
+  - <https://www.progress.com/documentation/sitefinity-cms/install-sitefinity>
+  - Install latest Sitefinity version once you've configure nuget source
+- Using Visual Studio or Git Bash, init git repo on local (easier with VS)
+  - Configure .gitignore (for Visual Studio build)
+  - Connect to git repo on ADO
+- Create main branch, push to origin
+- Create other branches – develop, feature, etc
+- Set up ADO build on develop branch
+  - Add yaml pipeline file
+- Create resource package folder
+- Add bootstrap resources
+- Add grid system and containers
+- Add site and responsive css
+- Add custom js
+- Create base layout
+- Create local database
+- Create users
+  - Individual dev accounts
+  - Generic dev account (to give out when new devs come onboard)
+  - Backup admin account
+  - Sitesync account
+- Add license file
+- Add slowcheetah extension
+- Add Sitefinity extension
+- Add build configs
+  - Dev
+  - Test
+  - UAT
+  - Prod
+- Add build config transforms
+- Add media queries, responsive css
+- Set up default widgets
+- Configure azure app and database
+- Set up builds and releases
