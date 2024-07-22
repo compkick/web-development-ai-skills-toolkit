@@ -1,0 +1,43 @@
+# CI/CD environment, Sitefinity upgrade
+
+Instructions for upgrading a single Sitefinity instance with an Azure DevOps / App Service setup. Assumes Azure app service deployment, with develop and master branches in repository. Assumes you have permissions to all necessary servers and resources. A Sitefinity upgrade happens once, on one copy of the database and one branch of code.
+
+- !!! Start Visual Studio in "admin" mode
+- File system and Sitefinity libraries
+  - All live sites, ensure no files are stored directly on app service file system
+- Database
+  - Increase database performance tier, for faster export
+  - Download / export production database
+  - Restore on local
+- Code
+  - Checkout to develop branch
+  - Make sure code is current (pull)
+  - Create backup branch, pre-upgrade (optional)
+  - Update DB connection string as necessary (local)
+  - !!! DataConfig.config connection string must point to local for upgrade
+- CLI
+  - Perform upgrade using Sitefinity CLI, follow instruction link below
+  - <https://www.progress.com/documentation/sitefinity-cms/upgrade-using-sitefinity-cli>
+- Rebuild solution
+- Run and test on local
+- When testing passes…
+  - Export local upgraded database as .bacpac
+  - Upload .bacpac as new database on Azure SQL server (use highest performance tier for faster import)
+  - Update connection strings as necessary to point to upgraded databases
+  - Recommend restoring as new database and leave old databases in place for a couple weeks after upgrade (in case of problems, you can roll back the code and point to the original database)
+- App service – development / testing
+  - Stop site, take offline
+  - Delete all files from site / app service
+    - Use kudu or app service console
+  - Push develop branch and run pipeline
+  - Deploy release and start site
+- App service – production
+  - Stop site, take offline
+  - Delete all files from site / app service
+  - PR develop to main / master and run pipeline
+  - Deploy release and start site
+- Log in and test
+- Clean up
+  - After at least a week of normal operations
+  - Remove old databases
+  - Update database performance tiers, as necessary
