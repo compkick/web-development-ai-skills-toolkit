@@ -1,3 +1,5 @@
+How to start a brand new, blank Sitefinity project
+
 # Sitefinity dev start checklist
 
 - Set up ADO project
