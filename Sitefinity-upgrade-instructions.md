@@ -1,6 +1,6 @@
 # CI/CD environment, Sitefinity upgrade
 
-Instructions for upgrading a single Sitefinity instance with an Azure DevOps / App Service setup. Assumes Azure app service deployment, with develop and master branches in repository. Assumes you have permissions to all necessary servers and resources. A Sitefinity upgrade happens once, on one copy of the database and one branch of code.
+Instructions for upgrading a single Sitefinity instance with an Azure DevOps / App Service setup. Assumes Azure app service deployment, with develop and main branches in repository. Assumes you have permissions to all necessary servers and resources. A Sitefinity upgrade happens once, on one copy of the database and one branch of code.
 
 - !!! Start Visual Studio in "admin" mode
 - File system and Sitefinity libraries
@@ -34,7 +34,7 @@ Instructions for upgrading a single Sitefinity instance with an Azure DevOps / A
 - App service – production
   - Stop site, take offline
   - Delete all files from site / app service
-  - PR develop to main / master and run pipeline
+- PR develop to main and run pipeline
   - Deploy release and start site
 - Log in and test
 - Clean up

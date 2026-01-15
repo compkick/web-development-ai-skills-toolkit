@@ -1,11 +1,23 @@
-# Web Dev Docs and Standards Read Me
+# Dev Docs and Checklists ReadMe
 
-This project is meant as a central repository for all documentation around website development, coding standards and checklists
+This repo is a reference library for general development documents and best practices, with special notes on web development and CMS work. It collects checklists, standards, and playbooks that teams can reuse for planning, delivery, testing, training, and maintenance. The goal is consistency across projects and a single source of truth for common workflows.
 
-See Wiki > Wiki-home.md for files and TOC
+Contents:
 
-WORKFLOW: clone this repo to local, create new branch and use Visual Studio Code for local development
+- Development using Git best practices: `Development-using-Git-best-practices.md`
+- Web dev and CMS coding standards: `Web-dev-and-CMS-coding-standards.md`
+- Website dev checklist (general): `Website-dev-checklist-general.md`
+- Sitefinity dev prerequisites: `Sitefinity-dev-prerequisites.md`
+- Sitefinity dev start checklist: `Sitefinity-dev-start-checklist.md`
+- Sitefinity test plan: `Sitefinity-test-plan.md`
+- Sitefinity upgrade instructions: `Sitefinity-upgrade-instructions.md`
+- Sitefinity user training: `Sitefinity-user-training.md`
+- WordPress migration checklist: `WordPress-migration-checklist.md`
+- Playwright testing: `Playwright-testing.md`
+- Git cheatsheet: `Git-cheatsheet-Readme.md`
 
-TOOLS: recommend using VS Code and 'markdownlint' extension, for writing new markdown with preview
+Workflow: clone locally, create a branch from `develop`, and edit in VS Code.
 
-NOTE: main branch is locked, update only via PR from develop
+Tools: VS Code + the `markdownlint` extension for linting and preview. You can also use other compatible markdown editors like Typedown.
+
+Note: the `main` branch is for publishing only; update only via PRs from `develop`.

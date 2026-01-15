@@ -1,6 +1,6 @@
-How to start a brand new, blank Sitefinity project
-
 # Sitefinity dev start checklist
+
+How to start a brand new, blank Sitefinity project
 
 - Set up ADO project
 - Initialize git on ADO project

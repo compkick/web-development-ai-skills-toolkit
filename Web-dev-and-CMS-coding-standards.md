@@ -1,6 +1,6 @@
-Web dev and CMS coding standards - HTML and CSS
+# Web dev and CMS coding standards
 
-# General
+## General
 
 Simpler is always better. Don't write more HTML than you need to accomplish a task or meet a requirement.
 
@@ -19,17 +19,15 @@ Use a single tab for each logical level of page structure
 
 Use the minimum amount of markup necessary to achieve the required layout and UX
 
-# Anchor tags
+## Anchor tags
 
-All user "clickable" elements should be anchor "a" tags, where possible
+Use anchor tags for navigation and links (changing location or URL).
 
-All elements with "onclick" events should be "a" tags, to allow accessible i.e. keyboard navigation
+Use button elements for actions (submit, open modal, toggle UI, etc).
 
-All anchor tags must have title attribute
+Do not add `title` or `aria-label` when the element already has clear visible text. Only add accessible labels when the visible text is missing or ambiguous.
 
-All anchor tags must have aria-label attribute declaring the purpose
-
-# Buttons and forms
+## Buttons and forms
 
 Use Semantic HTML elements:
 
@@ -60,7 +58,7 @@ Select Menus (&lt;select&gt;):
 
 - Use &lt;select&gt; for dropdown menus and provide meaningful option text
 
-# ARIA Roles and Properties
+## ARIA Roles and Properties
 
 ARIA Labels and Descriptions:
 
@@ -71,7 +69,7 @@ ARIA Roles:
 
 - Use ARIA roles correctly to ensure elements are recognized by assistive technologies
 
-# Accessibility and Responsiveness
+## Accessibility and Responsiveness
 
 Color Contrast and Visual Cues:
 
@@ -82,7 +80,7 @@ Responsive Design:
 
 - Ensure that form elements and buttons are usable on all screen sizes and mobile/touch devices
 
-# Image tags
+## Image tags
 
 Use alt Attribute for descriptive text on &lt;img&gt; tags:
 
@@ -100,13 +98,13 @@ For large images, use Lazy Loading to improve performance:
 
 - Use the loading="lazy" attribute to defer loading of large offscreen images until the user scrolls the element into view
 
-# H1 tags
+## H1 tags
 
 Each page must contain one AND only one H1 tag
 
 H1 value should be descriptive of the page theme and purpose
 
-# CSS
+## CSS
 
 Use standard Bootstrap classes as much as possible. Write custom classes only as needed. If there's a Bootstrap class you can use to achieve a design, use it.
 
@@ -118,11 +116,3 @@ Responsive CSS
 
 - Use Bootstrap breakpoints
 - Avoid overlapping media queries
-
-&nbsp;
-
-&nbsp;
-
-&nbsp;
-
-&nbsp;
