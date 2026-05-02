@@ -1,43 +1,81 @@
-# CI/CD environment, Sitefinity upgrade
+# Upgrading Sitefinity to new version in CI/CD environment
 
-Instructions for upgrading a single Sitefinity instance with an Azure DevOps / App Service setup. Assumes Azure app service deployment, with develop and main branches in repository. Assumes you have permissions to all necessary servers and resources. A Sitefinity upgrade happens once, on one copy of the database and one branch of code.
+Instructions for upgrading a single Sitefinity instance with an Azure DevOps / App Service setup. Assumes Azure app service deployment, with develop and main branches in repository. Assumes you have permissions to all necessary servers and resources.
 
-- !!! Start Visual Studio in "admin" mode
-- File system and Sitefinity libraries
-  - All live sites, ensure no files are stored directly on app service file system
-- Database
-  - Increase database performance tier, for faster export
-  - Download / export production database
-  - Restore on local
-- Code
-  - Checkout to develop branch
-  - Make sure code is current (pull)
-  - Create backup branch, pre-upgrade (optional)
-  - Update DB connection string as necessary (local)
-  - !!! DataConfig.config connection string must point to local for upgrade
-- CLI
-  - Perform upgrade using Sitefinity CLI, follow instruction link below
-  - <https://www.progress.com/documentation/sitefinity-cms/upgrade-using-sitefinity-cli>
+## Notes
+
+A Sitefinity upgrade happens once to the code, on a single branch. Then the new code mutates (upgrades) the database separately for each environment when it first runs.
+
+**Start Visual Studio in "admin" mode**
+
+For file system and Sitefinity libraries, ensure no files are stored directly on app service file system. These could be lost as part of the upgrade.
+
+## Database recommendations
+
+For fast exports on large databases, you can temporarily increase the database performance tier. Before you start the backup, increase DTUs or the service level, run export, then set it back to the typical level for that client / project.  
+
+## Upgrade steps
+
+### Sitefinity CLI
+
+- Install and/or update the Sitefinity CLI
+- You can add this on path, or just run directly via terminal from the containing folder
+
+### Export and restore database
+
+- Export the production database, download and restore on your local
+- Easiest path: Use Azure SQL server "export" tool, to copy .bacpac to client storage account
+
+### Code prep
+
+- Checkout to develop branch
+- Make sure your local git is current (fetch and pull, for develop and main)
+- Optional - Create backup branch, name like pre-upgrade "version 14.x"
+- **Important:** Verify that the database connection string points to your local dev database
+- From develop, checkout to a new upgrade branch, recommended naming - "upgrade Sitefinity to version 15.x"
+- Close Visual Studio (if open)
+
+### Run sf.exe
+
+- Run the Sitefinity CLI, from folder where you unzipped or copied it
+- Example command:
+
+`
+sf - upgrade
+sf upgrade "{path to solution file to upgrade}" "{specific version to upgrade to}"
+`
+
+- Or, for automatic upgrade to latest version:
+
+`
+sf upgrade "{path to solution file to upgrade}"
+`
+
+- For more information, see link - <https://www.progress.com/documentation/sitefinity-cms/upgrade-using-sitefinity-cli>
+- sf.exe will run, follow the prompts, and it will open Visual Studio to perform package upgrades
+
+### Replace license file
+
+- Each version of Sitefinity requires a unique license file
+- Download the .lic file from your Telerik account and save to:
+  - SOLUTION_DIR/App_Data/Sitefinity/Sitefinity.lic
+
+### Rebuild solution
+
+- Clean solution
 - Rebuild solution
-- Run and test on local
-- When testing passes…
-  - Export local upgraded database as .bacpac
-  - Upload .bacpac as new database on Azure SQL server (use highest performance tier for faster import)
-  - Update connection strings as necessary to point to upgraded databases
-  - Recommend restoring as new database and leave old databases in place for a couple weeks after upgrade (in case of problems, you can roll back the code and point to the original database)
-- App service – development / testing
-  - Stop site, take offline
-  - Delete all files from site / app service
-    - Use kudu or app service console
-  - Push develop branch and run pipeline
-  - Deploy release and start site
-- App service – production
-  - Stop site, take offline
-  - Delete all files from site / app service
-- PR develop to main and run pipeline
-  - Deploy release and start site
-- Log in and test
-- Clean up
-  - After at least a week of normal operations
-  - Remove old databases
-  - Update database performance tiers, as necessary
+- Run from VS, and Sitefinity will start the database upgrade process
+
+### Sync branches
+
+After you run and test on local, the recommended steps are:
+
+- Merge or PR your upgrade branch to develop, run again and check for errors
+- Push the updated develop to git / DevOps, the pipeline will run and Sitefinity will upgrade its database on dev
+- Perform the same operation on main/master/prod, once testing, UAT and verification are complete on dev
+
+## Testing and troubleshooting
+
+After an upgrade (especially during major version upgrades), you might run into errors, if your Sitefinity project has custom code, and that custom code is referencing methods or classes that don't exist or have been changed in the new version. You'll need to trace any build errors and fix manually.
+
+If you run into build errors after an upgrade, a common fix is to run Clean Solution again, then delete everything from SOLUTION_DIR/bin. Then rebuild the project from scratch
