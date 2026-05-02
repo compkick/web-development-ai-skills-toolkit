@@ -1,7 +1,8 @@
+# Sitefinity dev prerequisites
 
 Sitefinity dev quick start and reference guide. This document provides the reader with basic software and system requirements for setting up a local development environment with Sitefinity CMS
 
-# Software
+## Software
 
 Windows 10 or higher
 .NET Framework 
@@ -21,11 +22,11 @@ This is the Windows web server, and is always running. Offers better performance
 
 IIS is a Windows feature you have to enable in Control Panel
 
-# Notes
+## Notes
 
 Run Visual Studio as admin
 
-# Links
+## Links
 
 https://www.progress.com/documentation/sitefinity-cms/tutorials-hub
 https://www.progress.com/documentation/sitefinity-cms/install-sitefinity-in-mvc-mode
@@ -40,7 +41,7 @@ https://visualstudio.microsoft.com/
 MS SQL Express
 https://www.microsoft.com/en-us/download/details.aspx?id=104781&lc=1033
 
-# Sitefinity architecture
+## Sitefinity architecture
 
 ## High-level
 
@@ -70,7 +71,7 @@ For widget development, Sitefinity uses the MVC dev pattern
 
 Models are the data representation. Views control the front-end render logic.  Controllers are the server-side logic.
 
-# Basics
+## Basics
 
 IIS - internet information services, web server
 ASP.NET - C#, razor syntax

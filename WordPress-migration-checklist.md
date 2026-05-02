@@ -1,6 +1,6 @@
-WordPress migration checklist
+# WordPress migration checklist
 
-# Pre-migration
+## Pre-migration
 
 - Review site health
 - Review plugins
@@ -11,7 +11,7 @@ WordPress migration checklist
 - Review email and site contact settings
 - Shorten DNS A record TTL
 
-# Migration
+## Migration
 
 - Export database as sql file from old host
 - Download site files from old host
@@ -32,7 +32,7 @@ WordPress migration checklist
 
 NOTE: if migrating from Apache to Nginx, htaccess will not work. Rewrite custom htaccess in nginx conf files
 
-# Post-migration
+## Post-migration
 
 - Test home page
 - Test navigation and links

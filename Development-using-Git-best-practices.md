@@ -1,18 +1,18 @@
-Development using Git
-
-&nbsp;
+# Development using Git
 
 Using Git with a distributed development team requires a defined workflow and adherence to best practices. Following documented workflows and best practices will ensure smooth collaboration and maintain a clean codebase. The following section explains the Git workflow and branching strategy as it relates to general website development. Adapt these strategies and practices for other project types.
 
-# Branching strategy
+## Branching strategy
 
 - Main branch (main):
   - The main branch should always contain stable and production-ready code
   - Only merge changes into main from the develop branch after thorough testing and code reviews
   - Prefer pull requests (PRs), with rulesets and approvals, to update the main branch
 - Development Branch (develop):
-  - The develop branch is used for integration and contains the latest changes from all feature branches
+  - The develop branch is used for development and integration
+  - Feature branches should merge/PR to develop branch
   - Regularly merge feature branches into develop to keep it up-to-date
+  - If a feature branch runs long, regularly rebase onto develop so you keep your changes and pick up the latest upstream updates
 - Feature / Fix / Hotfix Branches:
   - Feature branches
     - Used for developing new features. Branch from develop and merge back into develop when complete
@@ -22,12 +22,12 @@ Using Git with a distributed development team requires a defined workflow and ad
     - Used for bug fixes. Branch from develop and merge back into develop when complete
     - Example: git checkout develop  
        git checkout -b fix/bug-description
-  - Hotfix Branches
-    - Used for urgent fixes on the main branch. Branch from main and merge back into main and develop when complete
+- Hotfix Branches
+  - Used for urgent fixes on the main branch. Branch from main and merge back into main and develop when complete
     - Example: git checkout main  
        git checkout -b hotfix/issue-description
 
-# Best practices
+## Best practices
 
 - Consistent Branch Naming:
   - Use a consistent naming convention for branches (e.g., feature/, fix/, hotfix/)

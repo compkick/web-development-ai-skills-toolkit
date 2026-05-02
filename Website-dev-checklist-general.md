@@ -1,6 +1,6 @@
-General website development checklist
+# General website development checklist
 
-# Development checklist
+## Development checklist
 
 - Set up SSL certs
 - Create and review sitemap
@@ -32,7 +32,7 @@ General website development checklist
 - Add analytics and tag manager
 - Configure backups for site and database
 
-# Pre-launch checklist
+## Pre-launch checklist
 
 - Review homepage
 - Review header and footer
@@ -52,7 +52,7 @@ General website development checklist
 - Review backups
 - For migrations - Shorten DNS A record TTL – 30 seconds, or minimum allowed by system
 
-# Launch day checklist
+## Launch day checklist
 
 - Review databases and move as necessary – dev / test / prod
 - For migrations - Point DNS records to new server
@@ -66,7 +66,7 @@ General website development checklist
 - Test emails / notifications
 - Check for dead links and missing pages – run SEO crawl
 
-# Post-launch checklist
+## Post-launch checklist
 
 - Test forms
 - Test site speed
@@ -76,7 +76,7 @@ General website development checklist
 - Test backups
 - Reset DNS record TTL – one hour or one day as per client
 
-# Remediation/rollback plan for launch day
+## Remediation/rollback plan for launch day
 
 As necessary -
 
