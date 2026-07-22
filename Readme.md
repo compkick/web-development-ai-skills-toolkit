@@ -2,7 +2,7 @@
 
 This repo is a reference library for general development documents and best practices, with special notes on web development and CMS work. It collects checklists, standards, and playbooks that teams can reuse for planning, delivery, testing, training, and maintenance. The goal is consistency across projects and a single source of truth for common workflows.
 
-Contents:
+## Contents
 
 - Development using Git best practices: `Development-using-Git-best-practices.md`
 - Web dev and CMS coding standards: `Web-dev-and-CMS-coding-standards.md`
@@ -16,8 +16,14 @@ Contents:
 - Playwright testing: `Playwright-testing.md`
 - Git cheatsheet: `Git-cheatsheet-Readme.md`
 
-Workflow: clone locally, create a branch from `develop`, and edit in VS Code.
+## Workflow
 
-Tools: VS Code + the `markdownlint` extension for linting and preview. You can also use other compatible markdown editors like Typedown.
+Clone locally, create a branch from `develop`, and edit in VS Code.
 
-Note: the `main` branch is for publishing only; update only via PRs from `develop`.
+## Tools
+
+VS Code + the `markdownlint` extension for linting and preview. You can also use other compatible markdown editors like Typedown.
+
+## Notes
+
+The `main` branch is for publishing only; update only via PRs from `develop`.
