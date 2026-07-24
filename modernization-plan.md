@@ -354,14 +354,19 @@ Add a specialized skill only when:
 9. Core plugin validation and packaging
 10. Optional specialized skill families
 
+## Project publishing and go-live
+
+- Rename the project and repo to a new name that reflects the new purpose, i.e. web dev checklists plus agent skills
+- Set up public page on Computerkick
+- Share to LinkedIn and Facebook
+- Brainstorm marketing and sharing ideas
+
 ## Plan maintenance rules
 
 - Update checkboxes only when the associated work and validation are complete.
-- Update `Current phase`, `Next work item`, and `Last reviewed` whenever this
-  plan materially changes.
+- Update `Current phase`, `Next work item`, and `Last reviewed` whenever this plan materially changes.
 - Record scope or sequencing changes in the decision log.
-- Keep implementation details in the relevant pull request or commit rather
-  than expanding this file into a work diary.
+- Keep implementation details in the relevant pull request or commit rather than expanding this file into a work diary.
 - Do not silently remove deferred work; move it to a later phase and explain why.
 
 ## Decision log
