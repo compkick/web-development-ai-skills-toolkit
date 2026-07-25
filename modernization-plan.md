@@ -14,7 +14,7 @@ the authoritative plan when this file contains a newer decision.
 
 - Plan status: In progress
 - Current phase: Phase 1
-- Next work item: Phase 1C, WordPress documentation
+- Next work item: Phase 1 exit-criteria review
 - Last reviewed: 2026-07-24
 
 ## Guiding decisions
@@ -58,10 +58,10 @@ the authoritative plan when this file contains a newer decision.
 
 Create a coherent WordPress lifecycle section:
 
-- [ ] Add `wordpress-setup-checklist.md`.
-- [ ] Add `wordpress-testing-checklist.md`.
-- [ ] Add `wordpress-launch-checklist.md`.
-- [ ] Expand and modernize `wordpress-migration-checklist.md`.
+- [x] Add `wordpress-setup-checklist.md`.
+- [x] Add `wordpress-testing-checklist.md`.
+- [x] Add `wordpress-launch-checklist.md`.
+- [x] Expand and modernize `WordPress-migration-checklist.md`.
 
 The WordPress setup checklist should cover:
 
@@ -120,12 +120,12 @@ The WordPress migration checklist should cover:
 
 ### Phase 1D: Sitefinity maintenance guidance
 
-- [ ] Update Sitefinity prerequisites.
-- [ ] Update the Sitefinity project-start checklist.
-- [ ] Update the Sitefinity test plan.
-- [ ] Verify and update the Sitefinity upgrade instructions.
-- [ ] Turn the Sitefinity training outline into a runnable training plan.
-- [ ] Label version-specific and organization-specific assumptions clearly.
+- [x] Update Sitefinity prerequisites.
+- [x] Update the Sitefinity project-start checklist.
+- [x] Update the Sitefinity test plan.
+- [x] Verify and update the Sitefinity upgrade instructions.
+- [x] Turn the Sitefinity training outline into a runnable training plan.
+- [x] Label version-specific and organization-specific assumptions clearly.
 
 ### Phase 1 exit criteria
 

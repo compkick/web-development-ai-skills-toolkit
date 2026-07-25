@@ -7,11 +7,14 @@ This repo is a reference library for general development documents and best prac
 - Development using Git best practices: `Development-using-Git-best-practices.md`
 - Web dev and CMS coding standards: `Web-dev-and-CMS-coding-standards.md`
 - Website dev checklist (general): `Website-dev-checklist-general.md`
-- Sitefinity dev prerequisites: `Sitefinity-dev-prerequisites.md`
-- Sitefinity dev start checklist: `Sitefinity-dev-start-checklist.md`
+- Sitefinity development prerequisites: `Sitefinity-dev-prerequisites.md`
+- Sitefinity project-start checklist: `Sitefinity-dev-start-checklist.md`
 - Sitefinity test plan: `Sitefinity-test-plan.md`
 - Sitefinity upgrade instructions: `Sitefinity-upgrade-instructions.md`
-- Sitefinity user training: `Sitefinity-user-training.md`
+- Sitefinity editor training plan: `Sitefinity-user-training.md`
+- WordPress setup checklist: `wordpress-setup-checklist.md`
+- WordPress testing checklist: `wordpress-testing-checklist.md`
+- WordPress launch checklist: `wordpress-launch-checklist.md`
 - WordPress migration checklist: `WordPress-migration-checklist.md`
 - Playwright testing: `Playwright-testing.md`
 - Git cheatsheet: `Git-cheatsheet-Readme.md`
