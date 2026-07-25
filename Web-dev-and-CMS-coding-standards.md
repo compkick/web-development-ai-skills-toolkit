@@ -19,6 +19,7 @@ In this document:
 - Keep content, presentation, and behavior appropriately separated.
 - Build for progressive enhancement: essential content and core workflows should remain understandable when optional enhancements fail.
 - Do not depend on color, position, shape, motion, hover, or a single input method to communicate essential information.
+- Meet the applicable WCAG contrast requirements for text, controls, focus indicators, and meaningful visual states.
 - Use automated formatting, linting, testing, and review to enforce mechanical rules. Do not rely on manual consistency alone.
 - Record exceptions with their scope, reason, owner, and review date.
 
@@ -66,8 +67,10 @@ In this document:
 
 - Use native `<form>`, `<button>`, `<input>`, `<label>`, `<select>`, and `<textarea>` elements whenever they meet the requirement.
 - Give every form control an accessible name, normally through a visible `<label>` associated with the control.
+- Use `aria-describedby` to associate supplementary instructions or error details with a control when its accessible name alone is insufficient.
 - Use `<fieldset>` and `<legend>` for related groups such as radio buttons and checkboxes when a group label is needed.
 - Use the most appropriate input type and provide `autocomplete`, `inputmode`, and other applicable attributes.
+- Give `<option>` elements meaningful text that clearly identifies each available choice.
 - Do not block paste or password managers. Do not require a cognitive-function test for authentication without an accessible alternative that meets WCAG 2.2.
 - Identify required fields and formatting expectations in text before submission.
 - Validate on the server even when client-side validation is provided.
@@ -92,6 +95,7 @@ In this document:
 - Give informative icons an accessible name. Hide decorative icons from assistive technology.
 - Set intrinsic `width` and `height` on images when the dimensions are known to reserve layout space and reduce layout shifts.
 - Use responsive image formats and `srcset`/`sizes` where they materially reduce transferred bytes without harming quality.
+- Ensure images resize within their containers without overflow, distortion, or unintended cropping.
 - Use `loading="lazy"` for appropriate offscreen images and iframes. Do not lazy-load an image likely to be visible on initial load, especially the Largest Contentful Paint image.
 - Provide captions, transcripts, audio descriptions, and controls for audio or video as required by the content and accessibility target.
 - Do not autoplay audio.
@@ -106,6 +110,7 @@ In this document:
 - Prefer reusable component or utility patterns over selectors tied to fragile DOM depth.
 - Do not use IDs as general styling hooks.
 - Ensure layouts reflow without loss of information or functionality.
+- Keep media queries and container queries intentional; avoid overlapping or contradictory responsive rules that make the cascade difficult to predict.
 - Preserve visible focus styles and support forced colors or high-contrast modes where applicable.
 - Use `prefers-reduced-motion` to remove non-essential motion for users who request it.
 - Test text spacing, zoom, long content, localization, validation messages, and user-generated content.

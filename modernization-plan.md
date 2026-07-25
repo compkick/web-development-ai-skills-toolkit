@@ -14,14 +14,15 @@ the authoritative plan when this file contains a newer decision.
 
 - Plan status: In progress
 - Current phase: Phase 1
-- Next work item: Phase 1B, engineering workflows
-- Last reviewed: 2026-07-21
+- Next work item: Phase 1C, WordPress documentation
+- Last reviewed: 2026-07-24
 
 ## Guiding decisions
 
 - Correct and normalize the human documentation before encoding it in skills.
 - Keep one canonical copy of detailed guidance in the final repository.
 - Make the core library useful to web developers regardless of framework or CMS.
+- Keep checklists concise, high-impact, security-conscious, and realistically assessable; exclude items that do not support a decision, verify a meaningful outcome, or prevent a material failure, but never remove critical risk coverage merely to reduce length.
 - Make WordPress the primary CMS documentation track.
 - Retain Sitefinity as lower-priority maintenance and specialist guidance.
 - Treat skills as focused workflows, not one-to-one wrappers around documents.
@@ -47,12 +48,11 @@ the authoritative plan when this file contains a newer decision.
 
 ### Phase 1B: Engineering workflows
 
-- [ ] Update the Git development practices.
-- [ ] Update the Git cheatsheet.
-- [ ] Update the Playwright testing guidance.
-- [ ] Add modern CI, test-isolation, evidence, and safe-operation guidance.
-- [ ] Present `develop`/GitFlow as an available strategy rather than a universal
-      default.
+- [x] Update the Git development practices.
+- [x] Update the Git cheatsheet.
+- [x] Update the Playwright testing guidance.
+- [x] Add modern CI, test-isolation, evidence, and safe-operation guidance.
+- [x] Present `develop`/GitFlow as an available strategy rather than a universal default.
 
 ### Phase 1C: WordPress documentation
 
@@ -378,3 +378,4 @@ Add a specialized skill only when:
 | 2026-07-21 | Retain Sitefinity as lower-priority specialist guidance. | Existing knowledge remains useful, but should not define the core library. |
 | 2026-07-21 | Build five specialist skills before `audit-web-project`. | The audit skill should route into stable specialist workflows. |
 | 2026-07-21 | Separate core and optional plugin families. | This keeps skill discovery focused and reduces irrelevant context. |
+| 2026-07-24 | Preserve critical risk coverage while keeping checklists assessable, security-conscious, and tied to meaningful outcomes. | Long inventories create review fatigue, but an arbitrary length target must not create blind spots. |
