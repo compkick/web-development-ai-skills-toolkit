@@ -1,5 +1,7 @@
 # Playwright testing
 
+## Purpose
+
 Use Playwright for a small set of browser-level tests that protect important user journeys and integration points. Do not reproduce every unit test or turn every page variation into an end-to-end test.
 
 ## Setup
@@ -104,3 +106,5 @@ npx playwright show-report
 - [Playwright best practices](https://playwright.dev/docs/best-practices)
 - [Playwright continuous integration](https://playwright.dev/docs/ci)
 - [Playwright trace viewer](https://playwright.dev/docs/trace-viewer-intro)
+
+Last verified against official documentation: 2026-07-24.

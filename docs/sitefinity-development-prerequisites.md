@@ -1,5 +1,7 @@
 # Sitefinity development prerequisites
 
+## Purpose
+
 Use this guide to prepare a local development environment and understand the main parts of a Sitefinity project.
 
 > **Version-specific:** Sitefinity requirements change between releases. Before installing or upgrading, confirm the target release against the current [Sitefinity system requirements](https://www.progress.com/documentation/sitefinity-cms/system-requirements) and release-specific installation or upgrade instructions. Do not select a framework, SDK, database, or renderer version from this document alone.
@@ -86,3 +88,5 @@ In classic Sitefinity MVC development, models represent data, views use Razor to
 - [Sitefinity lifecycle policy](https://www.progress.com/support/sitefinity-lifecycle-policy)
 - [Visual Studio downloads](https://visualstudio.microsoft.com/)
 - [SQL Server downloads](https://www.microsoft.com/sql-server/sql-server-downloads)
+
+Last verified against official documentation: 2026-07-24.

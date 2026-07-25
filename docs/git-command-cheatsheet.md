@@ -1,5 +1,7 @@
 # Git cheatsheet
 
+## Purpose
+
 Common commands for a branch-and-pull-request workflow. Replace values in angle brackets and confirm your current branch with `git status -sb` before any command that changes history or discards work.
 
 Use a repository-level `.gitattributes` file for consistent line-ending behavior. Do not copy a global `core.autocrlf` setting without considering the operating systems and file types used by the project.
@@ -56,6 +58,8 @@ Use a repository-level `.gitattributes` file for consistent line-ending behavior
 - `git reset --hard <commit>` discards tracked working-tree changes and moves the current branch. It is intentionally omitted from the main table because safer commands usually exist.
 - If a command produces an unexpected conflict or history, stop and inspect `git status`, `git log`, and `git reflog` before trying another corrective command.
 
-## Reference
+## References
 
 - [Official Git documentation](https://git-scm.com/docs)
+
+Last verified against official documentation: 2026-07-24.

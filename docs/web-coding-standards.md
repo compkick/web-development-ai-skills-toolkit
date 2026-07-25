@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Use these standards for public websites, web applications, themes, templates, widgets, and CMS-rendered content. They define a general baseline; project requirements, laws, contracts, platform constraints, or threat models may require stricter controls.
+Apply these standards to public websites, web applications, themes, templates, widgets, and CMS-rendered content. They define a general baseline; project requirements, laws, contracts, platform constraints, or threat models may require stricter controls.
 
 Target WCAG 2.2 Level AA unless the project has a documented requirement for a different standard. Accessibility conformance requires human evaluation as well as automated testing.
 
@@ -183,3 +183,5 @@ Security references last verified 2026-07-21 against OWASP Top 10:2025 and OWASP
 - [OWASP Application Security Verification Standard](https://owasp.org/www-project-application-security-verification-standard/)
 - [Google Search technical SEO guidance](https://developers.google.com/search/docs/fundamentals/get-started)
 - [Google canonical URL guidance](https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls)
+
+Last verified against official documentation: 2026-07-24.

@@ -1,5 +1,7 @@
 # Development using Git
 
+## Purpose
+
 Use a documented Git workflow that matches the project's release process. The goal is safe collaboration and reviewable changes, not a complicated branch model.
 
 ## Choose the workflow intentionally
@@ -53,3 +55,5 @@ Create an urgent production fix from the production branch, keep it narrowly sco
 - [Available rules for GitHub rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets)
 - [Git rebase documentation](https://git-scm.com/docs/git-rebase)
 - [Git push documentation](https://git-scm.com/docs/git-push)
+
+Last verified against official documentation: 2026-07-24.

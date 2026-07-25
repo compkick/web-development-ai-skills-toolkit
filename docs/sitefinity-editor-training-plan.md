@@ -1,5 +1,7 @@
 # Sitefinity editor training plan
 
+## Purpose
+
 Use this plan to deliver a focused one-hour session for Sitefinity content editors and authors. It combines a guided backend tour with a hands-on publish exercise.
 
 > **Project-specific:** Adapt every demonstration to the site's enabled content types, renderer, templates, workflow, permissions, terminology, and integrations. Do not teach features the audience cannot or should not use.
@@ -94,3 +96,10 @@ Schedule separate role-based sessions for topics that do not fit responsibly int
 - [ ] Questions, confusing labels, permission gaps, and documentation needs were captured.
 - [ ] Training artifacts contain no real credentials, personal data, or production-only information.
 - [ ] The trainer recorded the date, environment, Sitefinity version, audience, materials, and owner for the next review.
+
+## References
+
+- [Sitefinity content management documentation](https://www.progress.com/documentation/sitefinity-cms/content-management)
+- [Sitefinity documentation](https://www.progress.com/documentation/sitefinity-cms)
+
+Last verified against official documentation: 2026-07-24.

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Use this checklist for a new website, redesign, replatform, or major release. Adapt it to the project's risk, architecture, content, audience, and contractual requirements. Mark non-applicable items explicitly rather than silently skipping them.
+Use this checklist to plan and verify a new website, redesign, replatform, or major release. Adapt it to the project's risk, architecture, content, audience, and contractual requirements. Mark non-applicable items explicitly rather than silently skipping them.
 
 Use it throughout delivery rather than as a single launch-day exercise: establish scope and owners early, gather readiness evidence during development, and rerun time-sensitive checks around launch.
 
@@ -136,3 +136,5 @@ Security references last verified 2026-07-21 against OWASP Top 10:2025 and OWASP
 - [OWASP Application Security Verification Standard](https://owasp.org/www-project-application-security-verification-standard/)
 - [Google Search technical SEO guidance](https://developers.google.com/search/docs/fundamentals/get-started)
 - [Google canonical URL guidance](https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls)
+
+Last verified against official documentation: 2026-07-24.

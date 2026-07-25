@@ -1,4 +1,6 @@
-# Upgrading Sitefinity to new version in CI/CD environment
+# Sitefinity upgrade runbook
+
+## Purpose
 
 Instructions for upgrading a single Sitefinity instance with an Azure DevOps / App Service setup. Assumes Azure app service deployment, with develop and main branches in repository. Assumes you have permissions to all necessary servers and resources.
 
@@ -198,3 +200,13 @@ If you run into build errors after an upgrade, a common fix is to run Clean Solu
 - Confirm NuGet package versions are consistent across Sitefinity projects in the solution
 - Confirm the CMS and renderer versions are within the supported compatibility window
 - Rebuild search indexes after successful startup
+
+## References
+
+- [Sitefinity upgrade guidance](https://www.progress.com/documentation/sitefinity-cms/upgrade)
+- [Sitefinity CLI](https://www.progress.com/documentation/sitefinity-cms/upgrade-using-sitefinity-cli)
+- [Upgrade the Renderer](https://www.progress.com/documentation/sitefinity-cms/upgrade-the-renderer)
+- [Sitefinity system requirements](https://www.progress.com/documentation/sitefinity-cms/system-requirements)
+- [Sitefinity lifecycle policy](https://www.progress.com/support/sitefinity-lifecycle-policy)
+
+Last verified against official documentation: 2026-07-24.

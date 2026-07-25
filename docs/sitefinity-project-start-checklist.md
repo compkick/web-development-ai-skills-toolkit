@@ -1,5 +1,7 @@
 # Sitefinity project-start checklist
 
+## Purpose
+
 Use this checklist to start a new Sitefinity project with enough structure to develop, test, secure, and deploy it reliably.
 
 > **Version-specific:** Confirm the current Sitefinity installation paths, system requirements, renderer compatibility, and supported package versions before creating the solution. **Organization-specific example:** References to Azure DevOps (ADO), Azure App Service, `develop` and `main`, and the sample folder names describe one workable delivery model. Replace them with the project's approved source-control, hosting, environment, and naming conventions.
@@ -23,7 +25,7 @@ Use this checklist to start a new Sitefinity project with enough structure to de
 
 ## Create the Sitefinity applications
 
-- [ ] Verify the workstation against the [Sitefinity development prerequisites](Sitefinity-dev-prerequisites.md).
+- [ ] Verify the workstation against the [Sitefinity development prerequisites](sitefinity-development-prerequisites.md).
 - [ ] Install the selected Sitefinity packages from authenticated feeds, following the current [Sitefinity installation guidance](https://www.progress.com/documentation/sitefinity-cms/install-sitefinity).
 - [ ] Create and connect the renderer application when the selected architecture requires one.
 - [ ] Create a local development database and verify the connection string cannot point to another environment by mistake.
@@ -54,5 +56,13 @@ Use this checklist to start a new Sitefinity project with enough structure to de
 - [ ] Provision the approved application, database, storage, search, email, identity, logging, and monitoring resources; for the example Azure model, configure App Service and Azure SQL.
 - [ ] Configure environment settings, licenses, domains, HTTPS, health checks, and least-privilege service connections.
 - [ ] Confirm persistent media and required Sitefinity data are stored in the documented provider rather than an ephemeral deployment location.
-- [ ] Deploy through the pipeline to development and run the [Sitefinity test plan](Sitefinity-test-plan.md).
+- [ ] Deploy through the pipeline to development and run the [Sitefinity testing checklist](sitefinity-testing-checklist.md).
 - [ ] Document backup, restore, deployment, rollback, content synchronization, and incident-response procedures before production work begins.
+
+## References
+
+- [Sitefinity development prerequisites](sitefinity-development-prerequisites.md)
+- [Sitefinity testing checklist](sitefinity-testing-checklist.md)
+- [Install Sitefinity CMS](https://www.progress.com/documentation/sitefinity-cms/install-sitefinity)
+
+Last verified against official documentation: 2026-07-24.

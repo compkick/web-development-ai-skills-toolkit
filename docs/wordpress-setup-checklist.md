@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Use this checklist to establish a maintainable self-hosted WordPress site before feature development or content entry is considered ready. Adapt it to the site's risk, hosting model, editorial workflow, and whether it is a single site or Multisite network. Mark non-applicable items explicitly.
+Use this checklist to establish and verify a maintainable self-hosted WordPress site before feature development or content entry is considered ready. Adapt it to the site's risk, hosting model, editorial workflow, and whether it is a single site or Multisite network. Mark non-applicable items explicitly.
 
 This checklist covers WordPress-specific setup. The repository's general coding standards and website development checklist still apply.
 
@@ -91,3 +91,5 @@ WordPress runtime requirements last verified 2026-07-24: PHP 8.3 or greater, Mar
 - [WordPress roles and capabilities](https://developer.wordpress.org/apis/security/user-roles-and-capabilities/)
 - [WordPress Site Health](https://wordpress.org/documentation/site-health/)
 - [WordPress Cron](https://developer.wordpress.org/plugins/cron/)
+
+Last verified against official documentation: 2026-07-24.

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Use this checklist to prepare and execute the production launch of a new or materially changed WordPress site. Use the separate migration checklist when moving an existing installation, host, domain, or URL structure. Mark non-applicable items explicitly.
+Use this checklist to prepare, approve, and execute the production launch of a new or materially changed WordPress site. Use the separate migration checklist when moving an existing installation, host, domain, or URL structure. Mark non-applicable items explicitly.
 
 A checked item means the outcome was verified with the production release candidate or production system, not merely configured earlier in the project.
 
@@ -87,3 +87,5 @@ A checked item means the outcome was verified with the production release candid
 - [WordPress Site Health](https://wordpress.org/documentation/site-health/)
 - [WordPress Cron](https://developer.wordpress.org/plugins/cron/)
 - [Updating WordPress](https://developer.wordpress.org/advanced-administration/upgrade/upgrading/)
+
+Last verified against official documentation: 2026-07-24.

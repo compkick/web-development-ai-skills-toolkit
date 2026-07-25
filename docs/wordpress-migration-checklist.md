@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Use this checklist when moving an existing self-hosted WordPress site between hosts, servers, domains, protocols, paths, or installation models. A migration can affect serialized data, media, email, scheduled tasks, integrations, search visibility, and user activity; rehearse it and define rollback before changing production.
+Use this checklist when planning and performing a move of an existing self-hosted WordPress site between hosts, servers, domains, protocols, paths, or installation models. A migration can affect serialized data, media, email, scheduled tasks, integrations, search visibility, and user activity; rehearse it and define rollback before changing production.
 
 Mark non-applicable items explicitly. Do not copy commands without confirming the database, table scope, URLs, and Multisite behavior for the project.
 
@@ -121,3 +121,5 @@ WordPress runtime requirements last verified 2026-07-24: PHP 8.3 or greater, Mar
 - [WordPress Multisite administration](https://developer.wordpress.org/advanced-administration/multisite/administration/)
 - [Migrate sites into WordPress Multisite](https://developer.wordpress.org/advanced-administration/multisite/sites-multisite/)
 - [Hardening WordPress](https://developer.wordpress.org/advanced-administration/security/hardening/)
+
+Last verified against official documentation: 2026-07-24.

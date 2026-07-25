@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Use this checklist for a new WordPress build, material theme or plugin change, WordPress update, or release candidate. Select tests from actual site risk and functionality rather than testing every WordPress feature. Mark non-applicable items explicitly and record evidence for failures and release-blocking checks.
+Use this checklist to plan and perform testing for a new WordPress build, material theme or plugin change, WordPress update, or release candidate. Select tests from actual site risk and functionality rather than testing every WordPress feature. Mark non-applicable items explicitly and record evidence for failures and release-blocking checks.
 
 Run destructive tests only in an isolated environment with controlled data.
 
@@ -85,3 +85,5 @@ Run destructive tests only in an isolated environment with controlled data.
 - [WordPress Site Health](https://wordpress.org/documentation/site-health/)
 - [WordPress Cron](https://developer.wordpress.org/plugins/cron/)
 - [`wp cron event run`](https://developer.wordpress.org/cli/commands/cron/event/run/)
+
+Last verified against official documentation: 2026-07-24.

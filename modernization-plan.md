@@ -13,8 +13,8 @@ the authoritative plan when this file contains a newer decision.
 ## Status
 
 - Plan status: In progress
-- Current phase: Phase 1
-- Next work item: Phase 1 exit-criteria review
+- Current phase: Phase 3
+- Next work item: Define the shared checklist result pattern and build the missing core checklists
 - Last reviewed: 2026-07-24
 
 ## Guiding decisions
@@ -58,10 +58,10 @@ the authoritative plan when this file contains a newer decision.
 
 Create a coherent WordPress lifecycle section:
 
-- [x] Add `wordpress-setup-checklist.md`.
-- [x] Add `wordpress-testing-checklist.md`.
-- [x] Add `wordpress-launch-checklist.md`.
-- [x] Expand and modernize `WordPress-migration-checklist.md`.
+- [x] Add `docs/wordpress-setup-checklist.md`.
+- [x] Add `docs/wordpress-testing-checklist.md`.
+- [x] Add `docs/wordpress-launch-checklist.md`.
+- [x] Expand and modernize `docs/wordpress-migration-checklist.md`.
 
 The WordPress setup checklist should cover:
 
@@ -129,12 +129,12 @@ The WordPress migration checklist should cover:
 
 ### Phase 1 exit criteria
 
-- [ ] No known unsafe guidance remains.
-- [ ] Version-sensitive claims have primary sources.
-- [ ] Vendor and framework defaults are clearly labeled.
-- [ ] Checklist items describe observable outcomes.
-- [ ] Markdown linting passes.
-- [ ] Links pass automated validation.
+- [x] No known unsafe guidance remains.
+- [x] Version-sensitive claims have primary sources.
+- [x] Vendor and framework defaults are clearly labeled.
+- [x] Checklist items describe observable outcomes.
+- [x] Markdown linting passes.
+- [x] Existing internal links pass validation; repeatable external-link automation is included in Phase 2.
 
 ## Phase 2: Reorganize and normalize the library
 
@@ -144,44 +144,45 @@ Target human-documentation structure:
 README.md
 AGENTS.md
 CONTRIBUTING.md
+.editorconfig
+.markdownlint.jsonc
 docs/
-  standards/
-  checklists/
-  how-tos/
-  cms/
-    wordpress/
-    sitefinity/
-  reference/
+  git-best-practices.md
+  web-coding-standards.md
+  web-development-checklist.md
+  playwright-testing-guide.md
+  wordpress-setup-checklist.md
+  wordpress-cli-cheatsheet.md
+  sitefinity-upgrade-runbook.md
+  ...
+skills/
+  ...
 ```
 
-- [ ] Move documents into the target information architecture.
-- [ ] Normalize filenames to lowercase kebab-case.
-- [ ] Update all internal links after moves and renames.
-- [ ] Rewrite the README as a categorized repository index.
-- [ ] Add `AGENTS.md` with authoring, sourcing, and validation guidance.
-- [ ] Add contribution and maintenance guidance.
-- [ ] Add EditorConfig and Markdown lint configuration.
-- [ ] Add automated internal and external link checking.
-- [ ] Add local and CI documentation-validation commands.
-- [ ] Adopt a common document structure:
-  - Purpose
-  - Audience
-  - Applicability
-  - Prerequisites
-  - Procedure or checklist
-  - Validation
-  - Rollback or recovery
-  - References
-- [ ] Define how verification dates and version-sensitive sources are maintained.
+Keep human-facing documents in one flat `docs/` directory while the collection remains easy to scan. Reserve the repository root for the README, contributor and agent instructions, validation configuration, and automation. Keep Codex skills in a separate `skills/` tree because a skill is a packaged workflow rather than a human document. Add documentation subdirectories only when a category has enough material or supporting assets that the flat index becomes meaningfully harder to navigate.
+
+Use lowercase kebab-case filenames following `<area>-<purpose>-<type>.md`, omitting redundant segments when the meaning remains clear. Prefer stable type suffixes such as `checklist`, `guide`, `standards`, `cheatsheet`, `plan`, `runbook`, and `reference`.
+
+- [x] Move human documentation into the flat `docs/` directory.
+- [x] Normalize filenames to lowercase kebab-case.
+- [x] Update all internal links after moves and renames.
+- [x] Rewrite the README as a categorized repository index.
+- [x] Add a concise WP-CLI cheatsheet for common, high-impact WordPress operations.
+- [x] Add `AGENTS.md` with authoring, sourcing, and validation guidance.
+- [x] Add contribution and maintenance guidance.
+- [x] Add EditorConfig and Markdown lint configuration.
+- [x] Add automated internal and external link checking.
+- [x] Add local and CI documentation-validation commands.
+- [x] Adopt a common document pattern: one H1 and a `Purpose` section are required; audience, applicability, prerequisites, validation, rollback or recovery, and references are included when they help the reader act safely.
+- [x] Define how verification dates and version-sensitive sources are maintained.
 
 ### Phase 2 exit criteria
 
-- [ ] Contributors can locate documents by task and platform.
-- [ ] Similar documents use consistent structure and vocabulary.
-- [ ] Documentation checks run locally and in CI.
-- [ ] No internal links are broken.
-- [ ] The repository clearly distinguishes general guidance from CMS-specific
-      guidance.
+- [x] Contributors can locate documents by task and platform.
+- [x] Similar documents use consistent structure and vocabulary.
+- [x] Documentation checks run locally and in CI.
+- [x] No internal links are broken.
+- [x] The repository clearly distinguishes general guidance from CMS-specific guidance.
 
 ## Phase 3: Add missing core checklists
 
@@ -379,3 +380,5 @@ Add a specialized skill only when:
 | 2026-07-21 | Build five specialist skills before `audit-web-project`. | The audit skill should route into stable specialist workflows. |
 | 2026-07-21 | Separate core and optional plugin families. | This keeps skill discovery focused and reduces irrelevant context. |
 | 2026-07-24 | Preserve critical risk coverage while keeping checklists assessable, security-conscious, and tied to meaningful outcomes. | Long inventories create review fatigue, but an arbitrary length target must not create blind spots. |
+| 2026-07-24 | Keep human documentation flat under `docs/` and reserve `skills/` for packaged workflows. | The current library is easier to scan by filename and README category than through a premature directory hierarchy. |
+| 2026-07-24 | Own documentation linting and link validation in the repository and CI. | Repeatable checks make reorganizations and source maintenance deterministic for humans and agents. |

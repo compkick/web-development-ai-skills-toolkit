@@ -1,4 +1,6 @@
-# Sitefinity test plan
+# Sitefinity testing checklist
+
+## Purpose
 
 Use this plan for a project milestone, release candidate, upgrade, or production smoke test. Select the sections affected by the change and record the environment, build, tester, date, and evidence.
 
@@ -58,3 +60,10 @@ Use this plan for a project milestone, release candidate, upgrade, or production
 - [ ] Crawl the site to identify broken links, unexpected status codes, incorrect canonicals, unexpected multiple H1 elements or other semantic/DOM-structure problems, duplicate metadata, or unintended indexing directives.
 - [ ] Run the applicable security review and automated dependency, secret, and vulnerability scans; triage findings before release.
 - [ ] Complete the critical end-to-end smoke path, document defects and residual risk, and obtain the required QA or project-owner sign-off.
+
+## References
+
+- [Sitefinity development prerequisites](sitefinity-development-prerequisites.md)
+- [Sitefinity documentation](https://www.progress.com/documentation/sitefinity-cms)
+
+Last verified against official documentation: 2026-07-24.
