@@ -13,9 +13,9 @@ the authoritative plan when this file contains a newer decision.
 ## Status
 
 - Plan status: In progress
-- Current phase: Phase 3
-- Next work item: Define the shared checklist result pattern and build the missing core checklists
-- Last reviewed: 2026-07-24
+- Current phase: Phase 4
+- Next work item: Design and scaffold `review-web-accessibility`
+- Last reviewed: 2026-07-25
 
 ## Guiding decisions
 
@@ -149,7 +149,7 @@ CONTRIBUTING.md
 docs/
   git-best-practices.md
   web-coding-standards.md
-  web-development-checklist.md
+  website-launch-checklist.md
   playwright-testing-guide.md
   wordpress-setup-checklist.md
   wordpress-cli-cheatsheet.md
@@ -188,24 +188,24 @@ Use lowercase kebab-case filenames following `<area>-<purpose>-<type>.md`, omitt
 
 ### Skill-aligned checklists
 
-- [ ] Web project audit
-- [ ] Web accessibility audit
-- [ ] Web application security review
-- [ ] Web performance review
-- [ ] Technical SEO review
-- [ ] Website release and launch
+- [x] Web project audit
+- [x] Web accessibility audit
+- [x] Web application security review
+- [x] Web performance review
+- [x] Technical SEO review
+- [x] Website release and launch
 
 Refactor the existing general website checklist into the website release and
 launch checklist instead of creating overlapping documents.
 
 ### Supporting checklists
 
-- [ ] Dependency and software-supply-chain review
-- [ ] Privacy and data-handling review
-- [ ] CI/CD and release readiness
-- [ ] Production observability and operations
-- [ ] Agent-ready repository review
-- [ ] CMS content-governance review
+- [x] Dependency and software-supply-chain review
+- [x] Privacy and data-handling review
+- [x] CI/CD and release readiness
+- [x] Production observability and operations
+- [x] Agent-ready repository review
+- [x] CMS content-governance review
 
 ### Shared checklist result model
 
@@ -223,11 +223,11 @@ Every checklist should capture:
 
 ### Phase 3 exit criteria
 
-- [ ] Every check is observable and testable.
-- [ ] Requirements and recommendations are distinguishable.
-- [ ] Compliance-sensitive items require jurisdiction-specific verification.
-- [ ] A human can run every checklist without Codex.
-- [ ] The checklists are structured for later use as skill references.
+- [x] Every check is observable and testable.
+- [x] Requirements and recommendations are distinguishable.
+- [x] Compliance-sensitive items require jurisdiction-specific verification.
+- [x] A human can run every checklist without Codex.
+- [x] The checklists are structured for later use as skill references.
 
 ## Phase 4: Build the core skills
 
@@ -382,3 +382,5 @@ Add a specialized skill only when:
 | 2026-07-24 | Preserve critical risk coverage while keeping checklists assessable, security-conscious, and tied to meaningful outcomes. | Long inventories create review fatigue, but an arbitrary length target must not create blind spots. |
 | 2026-07-24 | Keep human documentation flat under `docs/` and reserve `skills/` for packaged workflows. | The current library is easier to scan by filename and README category than through a premature directory hierarchy. |
 | 2026-07-24 | Own documentation linting and link validation in the repository and CI. | Repeatable checks make reorganizations and source maintenance deterministic for humans and agents. |
+| 2026-07-25 | Use one shared result model and label checklist items as baseline requirements, conditional requirements, or recommendations. | Review evidence, severity, ownership, and exceptions need consistent meaning without repeating reporting instructions in every checklist. |
+| 2026-07-25 | Refactor the general website checklist into a launch gate and preserve its broader concepts in focused Phase 3 checklists. | Humans need a runnable launch checklist, while future skills need clear specialist boundaries and one canonical home for detailed guidance. |
