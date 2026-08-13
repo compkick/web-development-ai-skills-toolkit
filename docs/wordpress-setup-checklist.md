@@ -58,8 +58,13 @@ Also use the [web coding standards](web-coding-standards.md), [website developme
 - [ ] Remove unused themes and plugins.
 - [ ] Test the complete theme and plugin combination outside production.
 - [ ] Configure content types, taxonomies, templates, menus, patterns, and editor permissions.
-- [ ] Configure permalinks, redirects, canonicals, XML sitemaps, and search visibility.
 - [ ] Configure media sizes, upload types, storage, and image optimization.
+
+## SEO and Accessibility
+
+- [ ] Configure permalinks, redirects, canonicals, XML sitemaps, and search visibility.
+- [ ] Review public pages with the [technical SEO review checklist](technical-seo-review-checklist.md).
+- [ ] Review representative pages and editing workflows with the [web accessibility review checklist](web-accessibility-review-checklist.md).
 
 ## Configure services and operations
 
@@ -77,9 +82,7 @@ Also use the [web coding standards](web-coding-standards.md), [website developme
 ## Initial test
 
 - [ ] Test the homepage, templates, navigation, search, forms, email, login, editing, media, and scheduled tasks.
-- [ ] Run an accessibility check on representative pages and editing workflows.
 - [ ] Record an initial performance baseline.
-- [ ] Crawl the site for broken links and technical SEO problems.
 - [ ] Record unresolved issues and assign owners.
 
 ## References

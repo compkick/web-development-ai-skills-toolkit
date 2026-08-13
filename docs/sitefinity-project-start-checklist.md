@@ -13,15 +13,20 @@ Use this checklist to start a new Sitefinity project with enough structure to de
 - [ ] Document the environments, hosting, database, media storage, search, authentication, email, and integrations.
 - [ ] Assign owners for infrastructure, DNS, certificates, secrets, backups, monitoring, content, security, and launch.
 
-## Create source control and delivery foundations
+## Prepare hosted environments
+
+- [ ] Provision the hosting, database, storage, search, email, identity, logging, and monitoring resources the project needs.
+- [ ] Configure settings, licenses, domains, HTTPS, health checks, and service connections.
+- [ ] Confirm persistent media and required Sitefinity data are stored in the documented provider rather than an ephemeral deployment location.
+- [ ] Deploy through the pipeline to development and run the [Sitefinity testing checklist](sitefinity-testing-checklist.md).
+- [ ] Document backups, restores, deployments, rollbacks, content synchronization, and incident response.
+
+## Create source control and repo
 
 - [ ] Create the repository in the approved source-control platform.
 - [ ] Create a practical folder structure, such as `/Docs`, `/Sitebuild`, and `/Web`.
 - [ ] Initialize Git locally, connect the remote, and add the correct `.gitignore` before the first commit.
 - [ ] Protect the primary branch and require review and successful checks before merging.
-- [ ] Add a pipeline that restores, builds, tests, and creates a deployable artifact.
-- [ ] Configure development, test, UAT, and production environments as needed.
-- [ ] Keep environment settings and secrets outside source control.
 
 ## Create the Sitefinity applications
 
@@ -33,6 +38,12 @@ Use this checklist to start a new Sitefinity project with enough structure to de
 - [ ] Build and start the CMS and renderer.
 - [ ] Sign in at `/Sitefinity` and load a frontend page.
 - [ ] Install only the IDE extensions the project needs.
+
+## Create the delivery foundations
+
+- [ ] Add a pipeline that restores, builds, tests, and creates a deployable artifact.
+- [ ] Configure development, test, UAT, and production environments as needed.
+- [ ] Keep environment settings and secrets outside source control.
 
 ## Establish access and security
 
@@ -52,13 +63,12 @@ Use this checklist to start a new Sitefinity project with enough structure to de
 - [ ] Create a style-guide page and a widget-guide page that editors and testers can use.
 - [ ] Test the base layout, header, footer, navigation, content, and responsive behavior.
 
-## Prepare hosted environments
+## SEO and Accessibility
 
-- [ ] Provision the hosting, database, storage, search, email, identity, logging, and monitoring resources the project needs.
-- [ ] Configure settings, licenses, domains, HTTPS, health checks, and service connections.
-- [ ] Confirm persistent media and required Sitefinity data are stored in the documented provider rather than an ephemeral deployment location.
-- [ ] Deploy through the pipeline to development and run the [Sitefinity testing checklist](sitefinity-testing-checklist.md).
-- [ ] Document backups, restores, deployments, rollbacks, content synchronization, and incident response.
+- [ ] Configure page titles, descriptions, canonicals, redirects, XML sitemaps, and indexing settings.
+- [ ] Configure `robots.txt` and indexing rules for each environment.
+- [ ] Review public pages with the [technical SEO review checklist](technical-seo-review-checklist.md).
+- [ ] Review representative pages, widgets, and editing workflows with the [web accessibility review checklist](web-accessibility-review-checklist.md).
 
 ## References
 

@@ -27,7 +27,7 @@ Use this checklist while building and configuring a website. It covers the commo
 - [ ] Set up the required CSS and JavaScript build, bundling, and cache busting.
 - [ ] Configure caching and test that it clears after content or code changes.
 
-## Metadata and discovery
+## SEO and Accessibility
 
 - [ ] Add useful page titles and meta descriptions.
 - [ ] Add canonical URLs.
@@ -36,6 +36,8 @@ Use this checklist while building and configuring a website. It covers the commo
 - [ ] Configure `robots.txt` and indexing rules for each environment.
 - [ ] Create the XML sitemap when the site needs one.
 - [ ] Configure the site search index when search is enabled.
+- [ ] Review public pages with the [technical SEO review checklist](technical-seo-review-checklist.md).
+- [ ] Review representative pages and important workflows with the [web accessibility review checklist](web-accessibility-review-checklist.md).
 
 ## Services and compliance
 
