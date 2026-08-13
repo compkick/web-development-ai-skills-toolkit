@@ -2,80 +2,81 @@
 
 ## Purpose
 
-Use this checklist to plan and perform testing for a new WordPress build, material theme or plugin change, WordPress update, or release candidate. Select tests from actual site risk and functionality rather than testing every WordPress feature. Mark non-applicable items explicitly and record evidence for failures and release-blocking checks.
+Use this checklist for a new WordPress site, theme or plugin change, WordPress update, or release candidate. Select the tests that match the site's features and risk.
 
 Run destructive tests only in an isolated environment with controlled data.
 
-## Test scope and readiness
+## Prepare for testing
 
-- [ ] Identify the release artifact or commit, WordPress and runtime versions, active theme, active plugins, environment, database snapshot, and test-data version.
-- [ ] Map the site's critical frontend, editorial, administrative, integration, and scheduled workflows to test coverage.
-- [ ] Define supported browsers, devices, assistive technologies, roles, locales, and network conditions.
-- [ ] Confirm the test environment represents production without sending real email, payments, webhooks, analytics, or indexing signals.
-- [ ] Enable appropriate non-production debugging and logging and begin with no unexplained PHP errors, deprecated notices, JavaScript errors, or failed requests.
-- [ ] Verify backups or snapshots exist before tests that change content, configuration, users, plugins, themes, or database state.
+- [ ] Record the release, WordPress version, PHP version, theme, plugins, environment, and test data.
+- [ ] List the site's most important visitor, editor, administrator, and integration workflows.
+- [ ] Define the browsers, devices, roles, and languages that must be tested.
+- [ ] Confirm the test site cannot send real email, payments, webhooks, analytics, or indexing signals.
+- [ ] Enable appropriate debugging and logging outside production.
+- [ ] Review PHP, JavaScript, and failed-request errors before testing.
+- [ ] Create a backup before tests that change the database or configuration.
 
-## Frontend, content, and navigation
+## Test the frontend
 
-- [ ] Test the homepage, header, footer, primary navigation, search, 404 page, and representative error or unavailable state.
-- [ ] Test every material template, content type, archive, taxonomy, and search-result layout with representative content.
-- [ ] Test long titles, long body content, empty fields, missing featured images, captions, galleries, tables, embeds, downloads, and other likely edge cases.
-- [ ] Verify menus, breadcrumbs, pagination, internal links, previous/next navigation, filters, and sorting where applicable.
-- [ ] Verify responsive behavior across the support matrix, including zoom, reflow, portrait and landscape orientation, touch, keyboard, and reduced motion.
-- [ ] Verify media renders at appropriate dimensions and quality without broken URLs, mixed content, layout shifts, or inaccessible alternatives.
-- [ ] Test localization, right-to-left layout, date and time display, and translated content when the site supports them.
+- [ ] Test the homepage, header, footer, navigation, search, and `404` page.
+- [ ] Test each important template, content type, archive, and taxonomy page.
+- [ ] Test long content, empty fields, missing images, tables, embeds, and downloads.
+- [ ] Test menus, breadcrumbs, pagination, filters, and internal links.
+- [ ] Test desktop, tablet, phone, zoom, keyboard, and touch behavior.
+- [ ] Check images, captions, galleries, downloads, and other media.
+- [ ] Test translated and right-to-left content when supported.
 
-## Forms, email, search, integrations, and scheduled tasks
+## Test forms, email, search, and integrations
 
-- [ ] Test each critical form's successful submission, required fields, invalid input, duplicate submission, spam controls, failure state, and retained valid input.
-- [ ] Verify form storage, notifications, recipient routing, reply-to behavior, sender authentication, links, attachments, and sensitive-data handling.
-- [ ] Test uploads with allowed, disallowed, oversized, and potentially unsafe file types according to project policy.
-- [ ] Verify site search indexing, permissions, high-value queries, filtering, empty results, special characters, and newly published or updated content.
-- [ ] Test critical APIs, webhooks, identity, CRM, payment, maps, video, chat, and other integrations under meaningful success, failure, timeout, retry, and duplicate-delivery conditions.
-- [ ] Verify scheduled posts and material WordPress or plugin cron events execute, fail visibly, and do not run more than intended.
-- [ ] Confirm non-production safeguards prevent real customer messages, transactions, analytics pollution, and writes to production services.
+- [ ] Submit each important form successfully.
+- [ ] Test required fields, invalid input, spam controls, and failure messages.
+- [ ] Confirm form entries are stored and sent to the correct people.
+- [ ] Test allowed, blocked, and oversized file uploads when uploads are enabled.
+- [ ] Test common searches, filters, no-result messages, and newly published content.
+- [ ] Test important APIs, webhooks, identity, CRM, payment, maps, video, and chat integrations.
+- [ ] Test scheduled posts and important WordPress or plugin cron events.
+- [ ] Confirm failed integrations and scheduled tasks are visible in logs or monitoring.
 
-## Administration and editing
+## Test editing and administration
 
-- [ ] Test administrator and editor sign-in, sign-out, account recovery, session expiry, and multifactor authentication where applicable.
-- [ ] Create, preview, publish, revise, and view representative content through the normal editorial workflow.
-- [ ] Test reusable blocks or patterns, template parts, navigation editing, featured images, media replacement, revisions, autosave, and preview where used.
-- [ ] Verify required custom fields, validation, conditional controls, editorial guidance, and relationships between content.
-- [ ] Test bulk actions, imports, exports, comments, moderation, and user management only when the editorial workflow depends on them.
-- [ ] Verify editor-facing labels, help text, ordering, defaults, and permissions make the intended workflow understandable.
-- [ ] Confirm production administrators cannot edit or install code through the dashboard when deployment policy prohibits it.
+- [ ] Test administrator and editor login, logout, account recovery, and multifactor authentication when used.
+- [ ] Create, preview, publish, revise, and view representative content.
+- [ ] Test reusable blocks, patterns, template parts, featured images, revisions, autosave, and preview when used.
+- [ ] Test required fields and custom-field validation.
+- [ ] Test imports, exports, comments, moderation, and bulk actions when used.
+- [ ] Confirm editor labels, instructions, defaults, and permissions are understandable.
+- [ ] Confirm dashboard code editing and installation follow the production policy.
 
-## Roles, permissions, and security
+## Test roles and security
 
-- [ ] Test each material role with a representative account and verify the user can perform required work without receiving unnecessary capabilities.
-- [ ] Verify unauthenticated and lower-privileged users cannot access protected content, administrative screens, files, REST endpoints, AJAX actions, or privileged operations.
-- [ ] Verify custom theme and plugin operations validate capabilities and requests rather than relying only on hidden controls or nonces.
-- [ ] Test account creation, password reset, email-change, and user-enumeration behavior according to project risk.
-- [ ] Review public uploads, backups, logs, configuration files, directory listings, debug output, and administrative endpoints for unintended exposure.
-- [ ] Run approved dependency, vulnerability, malware, and secret checks and review material findings.
-- [ ] Review Tools > Site Health and investigate new critical or recommended issues relevant to the release.
+- [ ] Test each important role with a representative account.
+- [ ] Confirm visitors and lower-privileged users cannot access protected content or actions.
+- [ ] Confirm custom theme and plugin actions check permissions on the server.
+- [ ] Test account creation and password reset when enabled.
+- [ ] Check that uploads, backups, logs, configuration files, and admin tools are not publicly exposed.
+- [ ] Run the project's vulnerability, dependency, malware, and secret checks.
+- [ ] Review Site Health. Note and address any new issues.
 
-## Accessibility, performance, SEO, and caching
+## Test accessibility, performance, SEO, and caching
 
-- [ ] Run automated and manual accessibility checks on representative templates and important journeys.
-- [ ] Test frontend and editor workflows with real content and confirm third-party widgets, cookie notices, dialogs, and overlays do not create accessibility barriers.
-- [ ] Measure critical templates and journeys against project performance budgets on representative mobile hardware and constrained networks.
-- [ ] Review page weight, requests, images, fonts, scripts, styles, database queries, object-cache behavior, and material third-party costs when budgets fail.
-- [ ] Verify page titles, descriptions, headings, canonicals, robots directives, XML sitemaps, structured data, redirects, status codes, and indexable URL behavior.
-- [ ] Crawl the site and investigate broken links, redirect chains, soft 404s, duplicate URLs, orphaned pages, and unexpected indexable content.
-- [ ] Test page, browser, CDN, and persistent object caching while signed out and signed in as applicable.
-- [ ] Verify cache exclusions for personalized, authenticated, cart, checkout, preview, form, and other dynamic responses.
-- [ ] Confirm publishing, updating, deleting, scheduling, plugin updates, deployments, and content synchronization invalidate or refresh the correct caches and search indexes.
+- [ ] Run automated and manual accessibility checks on representative pages and important workflows.
+- [ ] Test third-party widgets, cookie notices, dialogs, and overlays for accessibility problems.
+- [ ] Test important pages against the project's performance goals.
+- [ ] Investigate images, fonts, scripts, styles, database queries, and third-party code when performance is poor.
+- [ ] Check titles, descriptions, headings, canonicals, robots directives, sitemaps, redirects, and status codes.
+- [ ] Crawl the site for broken links, redirect chains, duplicate URLs, and missing pages.
+- [ ] Test caching while signed out and signed in.
+- [ ] Confirm private, personalized, cart, checkout, preview, and form pages are not cached incorrectly.
+- [ ] Confirm publishing and deployments clear the correct caches and search indexes.
 
-## Compatibility, recovery, and sign-off
+## Finish testing
 
-- [ ] Test the approved theme and complete plugin set together; deactivate components selectively only when diagnosing a conflict.
-- [ ] Test supported WordPress, PHP, and database updates in staging before production and review deprecated or compatibility warnings.
-- [ ] Verify a representative database-and-files backup can be restored into an approved environment and produces a usable site.
-- [ ] Rerun the site's critical regression suite after fixes, updates, cache changes, and configuration changes.
-- [ ] Record the environment, build, data, browser, role, steps, expected result, actual result, and evidence for material failures.
-- [ ] Resolve release blockers and document accepted exceptions with severity, owner, rationale, and target date.
-- [ ] Obtain technical, content, accessibility, security, privacy, and product sign-off required by project risk.
+- [ ] Test the approved theme and complete plugin set together.
+- [ ] Test WordPress, PHP, database, theme, and plugin updates in staging before production.
+- [ ] Restore a representative backup and confirm the site works.
+- [ ] Rerun important tests after fixes and configuration changes.
+- [ ] Record failures with steps, expected results, actual results, and evidence.
+- [ ] Resolve release blockers and assign owners to accepted issues.
 
 ## References
 

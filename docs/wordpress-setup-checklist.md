@@ -2,82 +2,85 @@
 
 ## Purpose
 
-Use this checklist to establish and verify a maintainable self-hosted WordPress site before feature development or content entry is considered ready. Adapt it to the site's risk, hosting model, editorial workflow, and whether it is a single site or Multisite network. Mark non-applicable items explicitly.
+Use this checklist to set up a maintainable self-hosted WordPress site. Mark items that do not apply.
 
-This checklist covers WordPress-specific setup. Also apply the [web coding standards](web-coding-standards.md), [website development checklist](website-development-checklist.md), and general launch checklist.
+Also use the [web coding standards](web-coding-standards.md), [website development checklist](website-development-checklist.md), and [WordPress launch checklist](wordpress-launch-checklist.md).
 
-## Scope and ownership
+## Plan the site
 
-- [ ] Document the site's purpose, critical journeys, content model, integrations, expected traffic, data sensitivity, and availability needs.
-- [ ] Confirm whether the installation is single-site or Multisite and document the reason for that architecture.
-- [ ] Assign technical, hosting, domain, content, security, privacy, backup, incident, and renewal ownership.
-- [ ] Record the supported WordPress, PHP, database, browser, and assistive-technology policy.
-- [ ] Identify applicable accessibility, privacy, security, retention, licensing, and contractual requirements.
+- [ ] Document the site's purpose, important user journeys, content types, integrations, and expected traffic.
+- [ ] Decide whether the installation will be single-site or Multisite.
+- [ ] Assign owners for hosting, domains, content, security, privacy, backups, and maintenance.
+- [ ] Record the supported WordPress, PHP, database, and browser versions.
+- [ ] Identify accessibility, privacy, security, licensing, and retention requirements.
 
-## Environments, repository, and delivery
+## Set up environments and source control
 
-- [ ] Establish the necessary local, development, staging, and production environments and document material differences.
-- [ ] Set `WP_ENVIRONMENT_TYPE` accurately for each environment and confirm environment-dependent behavior fails safely.
-- [ ] Protect non-production environments with authentication or network controls and prevent unintended indexing, analytics, email, and external writes.
-- [ ] Define what belongs in source control, including custom themes, plugins, must-use plugins, configuration templates, dependency manifests, lockfiles, and deployment scripts.
-- [ ] Exclude secrets, generated caches, logs, backup archives, authentication exports, and environment-specific uploads from source control.
-- [ ] Store credentials and environment configuration in approved systems rather than committed `wp-config.php` values or browser-delivered code.
-- [ ] Document code, database, media, configuration, and content synchronization directions; prevent an automated workflow from overwriting newer production data.
-- [ ] Configure CI to run the relevant formatting, linting, tests, build, dependency, security, and documentation checks.
-- [ ] Produce a traceable release artifact or commit and document the deployment and rollback process.
+- [ ] Create the local, development, staging, and production environments the project needs.
+- [ ] Set `WP_ENVIRONMENT_TYPE` correctly in each environment.
+- [ ] Protect non-production sites from public access and search indexing.
+- [ ] Prevent non-production sites from sending real email, webhooks, payments, or analytics.
+- [ ] Put custom themes, plugins, configuration templates, dependency files, and deployment scripts in source control.
+- [ ] Keep secrets, uploads, caches, logs, and backups out of source control.
+- [ ] Document how code, database, media, and content move between environments.
+- [ ] Document the deployment and rollback process.
 
-## Hosting, runtime, and domain
+## Configure hosting
 
-- [ ] Verify the host meets WordPress's current recommended PHP, database, HTTPS, and server requirements and supports every required theme, plugin, and integration.
-- [ ] Confirm PHP extensions, memory, execution time, upload limits, storage, database capacity, and traffic limits are appropriate for the site.
-- [ ] Configure the database character set and collation appropriately and restrict the database account to the required database.
-- [ ] Configure HTTPS, the canonical scheme and host, HTTP-to-HTTPS redirects, and certificate renewal.
-- [ ] Verify web-server rewrites, permalink support, file ownership, and permissions without making application files broadly writable.
-- [ ] Configure production error handling so errors are logged securely and are not displayed to visitors.
-- [ ] Provide secure administrative access through the hosting platform and WP-CLI where needed; use SSH or SFTP rather than unencrypted transfer.
+- [ ] Confirm the host meets the current WordPress requirements.
+- [ ] Confirm the host has the PHP extensions, memory, upload limits, storage, and database capacity the site needs.
+- [ ] Configure HTTPS, the preferred domain, redirects, and certificate renewal.
+- [ ] Configure permalinks and web-server rewrite rules.
+- [ ] Set appropriate file ownership and permissions.
+- [ ] Log production errors without displaying them to visitors.
+- [ ] Set up secure SSH, SFTP, hosting, and WP-CLI access as needed.
 
-## WordPress configuration and access
+## Configure WordPress and access
 
-- [ ] Obtain WordPress core, themes, and plugins from approved, trustworthy sources and do not modify WordPress core files.
-- [ ] Generate unique authentication keys and salts, protect `wp-config.php`, and define a controlled process for rotating exposed secrets.
-- [ ] Create named administrator accounts, require strong authentication, and enable multifactor authentication when the project's risk and tooling support it.
-- [ ] Assign the lowest practical WordPress role or custom capability set to each editor, author, integration, and service account.
-- [ ] Remove unused accounts and installation-time credentials and verify account-recovery addresses.
-- [ ] Enable and protect only the public registration, comments, APIs, and remote-publishing features the site needs.
-- [ ] Decide whether production administrators may install, update, or edit code from the dashboard; disable file editing when code is managed through deployment.
-- [ ] Define WordPress core, theme, and plugin update responsibilities, test requirements, maintenance windows, and emergency security-update process.
-- [ ] Enable vulnerability and update monitoring appropriate to the hosting model and review material findings.
-- [ ] Review Tools > Site Health and resolve or document material issues.
+- [ ] Install WordPress, themes, and plugins from trusted sources.
+- [ ] Do not modify WordPress core files.
+- [ ] Generate unique authentication keys and salts.
+- [ ] Protect `wp-config.php` and keep secrets out of the repository.
+- [ ] Create named administrator accounts with strong authentication.
+- [ ] Give editors, authors, integrations, and service accounts only the permissions they need.
+- [ ] Remove unused accounts and installation-time credentials.
+- [ ] Enable only the registration, comments, APIs, XML-RPC, and remote-publishing features the site needs.
+- [ ] Disable dashboard file editing when code is managed through deployment.
+- [ ] Define how WordPress, themes, and plugins will be updated and tested.
+- [ ] Set up update and vulnerability monitoring.
+- [ ] Review Site Health. Note and address any issues.
 
-## Themes, plugins, content, and URLs
+## Configure themes, plugins, and content
 
-- [ ] Select an actively maintained theme architecture and document child-theme, block-theme, or custom-theme responsibilities.
-- [ ] Install only required plugins, confirm current support and licensing, and document the owner and purpose of each material plugin.
-- [ ] Remove inactive themes and plugins that are not retained intentionally for rollback or troubleshooting.
-- [ ] Test the approved theme and plugin combination in a non-production environment before production updates.
-- [ ] Define content types, taxonomies, block patterns, templates, menus, widgets, reusable content, and editorial permissions.
-- [ ] Configure the permalink structure, canonical URLs, redirect ownership, XML sitemaps, and environment-appropriate search visibility.
-- [ ] Configure media sizes, allowed upload types, storage, optimization, responsive images, and any external media service.
+- [ ] Choose an actively maintained theme or theme architecture.
+- [ ] Install only the plugins the site needs.
+- [ ] Record the purpose, owner, support status, and license for important plugins.
+- [ ] Remove unused themes and plugins.
+- [ ] Test the complete theme and plugin combination outside production.
+- [ ] Configure content types, taxonomies, templates, menus, patterns, and editor permissions.
+- [ ] Configure permalinks, redirects, canonicals, XML sitemaps, and search visibility.
+- [ ] Configure media sizes, upload types, storage, and image optimization.
 
-## Email, scheduling, caching, privacy, and operations
+## Configure services and operations
 
-- [ ] Configure transactional email through an approved SMTP or email API service and verify sender-domain authentication, routing, and failure visibility.
+- [ ] Set up site email through an approved SMTP or email service.
+- [ ] Test email delivery and failure reporting.
 - [ ] Review scheduled tasks and use a system scheduler when WP-Cron is not reliable enough.
-- [ ] Configure page caching, browser caching, CDN behavior, and persistent object caching only where the architecture benefits, with documented exclusions and invalidation.
-- [ ] Configure analytics, tag management, cookies, consent, privacy notices, data retention, and data-subject workflows according to approved requirements.
-- [ ] Configure backups for the database, uploads, custom code, and required configuration; store copies outside the application host.
-- [ ] Complete and record a restore test that verifies the site can be recovered, not merely that backup files exist.
-- [ ] Configure uptime, certificate, domain, backup, security, application-error, and critical-journey monitoring with owned alerts.
-- [ ] Document routine maintenance, incident response, renewal, recovery, and vendor-escalation procedures.
+- [ ] Configure page, browser, CDN, and object caching only where needed.
+- [ ] Configure analytics, tag management, cookies, and consent when required.
+- [ ] Back up the database, uploads, custom code, and required configuration.
+- [ ] Store backup copies outside the application host.
+- [ ] Test a restore.
+- [ ] Set up monitoring for uptime, errors, domains, certificates, backups, and important user journeys.
+- [ ] Document routine maintenance and incident-response contacts.
 
-## Initial quality baseline
+## Initial test
 
-- [ ] Verify the homepage, representative templates, navigation, search, forms, email, authentication, editor, media, scheduled tasks, and error handling.
-- [ ] Establish an accessibility baseline with automated and manual checks on representative frontend and administrative workflows.
-- [ ] Establish performance budgets and record representative lab results before adding avoidable third-party code.
-- [ ] Crawl the site and record the initial technical SEO, redirects, metadata, canonical, sitemap, and indexing state.
-- [ ] Review WordPress, hosting, theme, plugin, account, secret, file-permission, and public-endpoint security before accepting the setup.
-- [ ] Record unresolved risks, accepted exceptions, owners, and target dates.
+- [ ] Test the homepage, templates, navigation, search, forms, email, login, editing, media, and scheduled tasks.
+- [ ] Run an accessibility check on representative pages and editing workflows.
+- [ ] Record an initial performance baseline.
+- [ ] Crawl the site for broken links and technical SEO problems.
+- [ ] Record unresolved issues and assign owners.
 
 ## References
 

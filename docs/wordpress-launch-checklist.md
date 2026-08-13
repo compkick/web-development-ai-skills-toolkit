@@ -2,82 +2,84 @@
 
 ## Purpose
 
-Use this checklist to prepare, approve, and execute the production launch of a new or materially changed WordPress site. Use the separate migration checklist when moving an existing installation, host, domain, or URL structure. Mark non-applicable items explicitly.
+Use this checklist when launching a new or materially changed WordPress site. Use the [WordPress migration checklist](wordpress-migration-checklist.md) when moving an existing site, host, domain, or URL structure.
 
-A checked item means the outcome was verified with the production release candidate or production system, not merely configured earlier in the project.
+## Plan the launch
 
-## Launch scope and control
+- [ ] Identify the exact code, database changes, media, and content going to production.
+- [ ] Record the WordPress, PHP, theme, and plugin versions.
+- [ ] Choose the launch window and assign the launch, deployment, testing, content, DNS, and rollback owners.
+- [ ] Define the go/no-go and rollback conditions.
+- [ ] Resolve release blockers and record accepted issues.
+- [ ] Confirm the people and vendor support needed for launch will be available.
 
-- [ ] Identify the exact release, WordPress version, theme, plugins, configuration, database changes, media, and content going to production.
-- [ ] Assign the launch lead, deployer, tester, content owner, infrastructure or DNS owner, incident contact, communication channel, decision authority, and rollback authority.
-- [ ] Define the launch window, expected impact, checkpoints, go/no-go criteria, measurable rollback triggers, and final rollback decision time.
-- [ ] Confirm required technical, content, accessibility, security, privacy, performance, SEO, and stakeholder approvals.
-- [ ] Resolve release-blocking findings and record accepted exceptions with owners and target dates.
-- [ ] Confirm vendor support and responsible team members are available for the launch risk and timing.
+## Prepare content and backups
 
-## Content, data, and release preparation
+- [ ] Set the required code, database, media, and content freeze.
+- [ ] Complete the final approved content synchronization.
+- [ ] Review the homepage, navigation, shared layout, forms, legal content, contact details, media, and downloads.
+- [ ] Remove placeholder, expired, test, duplicate, and draft-only content.
+- [ ] Back up the production database, uploads, custom code, and configuration.
+- [ ] Confirm the backup is available for rollback.
+- [ ] Rehearse high-risk deployment and rollback steps.
 
-- [ ] Set and communicate the required code, configuration, database, media, and content freeze.
-- [ ] Complete the final approved content synchronization and confirm its direction, scope, conflict handling, and audit record.
-- [ ] Review the homepage, navigation, shared layout, forms, legal and privacy content, cornerstone content, contact details, media, downloads, and time-sensitive content.
-- [ ] Remove placeholder, duplicate, expired, test, draft-only, unlicensed, and unintended environment-specific content.
-- [ ] Back up the production database, uploads, custom code, and configuration needed for rollback.
-- [ ] Rehearse deployment, database or content migration, cache invalidation, search indexing, smoke tests, and rollback in a production-like environment.
-- [ ] Confirm application and database versions remain compatible during rollout or document an atomic deployment and rollback sequence.
-- [ ] Verify the approved artifact can be deployed without rebuilding different code.
+## Review production settings
 
-## Production configuration and security
+- [ ] Confirm `WP_ENVIRONMENT_TYPE`, database settings, URLs, paths, and environment-specific configuration.
+- [ ] Confirm secrets and salts come from the approved source.
+- [ ] Disable visitor-facing debug output.
+- [ ] Confirm production logs do not contain secrets or unnecessary personal data.
+- [ ] Review administrator, editor, service, and former-contributor accounts.
+- [ ] Confirm dashboard editing, updates, APIs, registration, and comments follow the production policy.
+- [ ] Confirm WordPress, PHP, themes, and plugins are supported and have no release-blocking vulnerabilities.
+- [ ] Check file ownership and permissions.
+- [ ] Confirm `wp-config.php`, backups, logs, and administration tools are not publicly exposed.
+- [ ] Test HTTPS, certificates, security headers, cookies, and preferred-domain redirects.
+- [ ] Review Site Health. Note and address any production issues.
 
-- [ ] Verify `WP_ENVIRONMENT_TYPE`, database connection, table prefix, WordPress URLs, canonical domain, paths, salts, secret sources, and environment-specific constants without exposing secret values.
-- [ ] Disable visitor-facing debug output and verify production logging is access-controlled and excludes secrets and unnecessary personal data.
-- [ ] Audit administrator, editor, service, integration, and former-contributor accounts and confirm least-privilege roles and working recovery addresses.
-- [ ] Confirm the production policy for dashboard code editing, installation, updates, automatic updates, XML-RPC, application passwords, REST access, registration, and comments.
-- [ ] Verify WordPress core, required themes, plugins, and runtime components are supported and free of unresolved release-blocking vulnerabilities.
-- [ ] Verify file ownership and permissions and protect `wp-config.php`, backups, logs, source maps, storage, and administrative endpoints from unintended public access.
-- [ ] Verify HTTPS, certificate chain and renewal, security headers, cookies, and canonical-host redirects from outside the internal network.
-- [ ] Review Tools > Site Health and resolve or document material production issues.
+## Review services
 
-## Search, email, integrations, and operations
+- [ ] Check permalinks, redirects, canonicals, XML sitemaps, `robots.txt`, and indexing settings.
+- [ ] Remove production `noindex` settings only when the site is ready.
+- [ ] Test production email delivery, recipients, sender authentication, and failure reporting.
+- [ ] Test analytics, tag management, consent, and important business events.
+- [ ] Test important integrations with production credentials and endpoints.
+- [ ] Confirm WP-Cron or the replacement scheduler runs the required tasks.
+- [ ] Confirm the old or staging site cannot duplicate scheduled tasks or integrations.
+- [ ] Configure page, CDN, browser, and object caching.
+- [ ] Test cache exclusions and invalidation.
+- [ ] Test uptime, error, certificate, domain, backup, email, and scheduled-task alerts.
 
-- [ ] Verify the production permalink structure, redirect map, canonical URLs, XML sitemap, `robots.txt`, indexing directives, and structured data.
-- [ ] Remove production `noindex` settings only when the site is ready for users and search engines.
-- [ ] Verify production email credentials, sender authentication, recipients, reply-to behavior, templates, failure monitoring, and suppression removal.
-- [ ] Verify production analytics, tag management, consent, privacy controls, and critical business events without exposing unnecessary personal data.
-- [ ] Verify production credentials, endpoints, scopes, signatures, webhooks, retries, rate limits, and failure monitoring for critical integrations.
-- [ ] Verify WP-Cron or the replacement system scheduler runs required tasks and will not duplicate jobs on an old or staging environment.
-- [ ] Configure page caching, CDN, persistent object caching, cache exclusions, invalidation, and optional cache warming for the production architecture.
-- [ ] Verify uptime, application-error, certificate, domain, backup, security, email, scheduled-task, and critical-journey monitoring and test alert routing.
+## Go or no-go
 
-## Go/no-go gate
+- [ ] Confirm CI and the required WordPress tests pass.
+- [ ] Confirm the deployment, test, monitoring, communication, and rollback instructions are ready.
+- [ ] Confirm any DNS, certificate, redirect, and old-site changes are ready.
+- [ ] Confirm no unresolved issue meets a no-go or rollback condition.
+- [ ] Record the final launch decision.
 
-- [ ] Confirm CI and the required WordPress testing checklist pass against the release candidate.
-- [ ] Confirm the production backup, deploy, test, communication, monitoring, and rollback procedures are open and accessible to the launch team.
-- [ ] Confirm DNS changes, TTL planning, certificate coverage, redirect activation, and old-site handling when domains or hosting are changing.
-- [ ] Confirm no unresolved issue meets a rollback trigger or violates an acceptance criterion.
-- [ ] Record the go/no-go decision and the artifact, data, approvals, exceptions, and people covered by it.
+## Launch
 
-## Launch execution
+- [ ] Announce the start of the launch.
+- [ ] Deploy the approved code, configuration, database changes, media, and content.
+- [ ] Apply planned DNS, CDN, certificate, firewall, and redirect changes.
+- [ ] Remove temporary maintenance content when the site is ready.
+- [ ] Clear caches and rebuild search indexes.
+- [ ] Run production smoke tests for pages, editing, forms, email, search, and integrations.
+- [ ] Confirm HTTPS, redirects, sitemaps, robots directives, canonicals, analytics, and consent from outside the network.
+- [ ] Monitor errors, uptime, resources, email, scheduled tasks, integrations, and support reports.
+- [ ] Record launch problems and decisions.
 
-- [ ] Announce the start of the approved launch window and capture the operational baseline needed to identify regressions.
-- [ ] Deploy the approved code, configuration, database changes, media, and content through the approved process and retain relevant logs.
-- [ ] Apply planned DNS, routing, certificate, CDN, firewall, redirect, and hosting changes in the approved order.
-- [ ] Remove temporary maintenance content and unintended production `noindex` settings only after the site is ready.
-- [ ] Invalidate caches, warm critical public paths where justified, rebuild search indexes, and run due scheduled tasks as planned.
-- [ ] Run production smoke tests for important pages, editing, forms, email, search, integrations, and scheduled tasks.
-- [ ] Verify HTTPS, canonical host, redirects, sitemap, robots directives, canonicals, analytics, consent, and critical events from an external visitor context.
-- [ ] Monitor errors, availability, latency, resource use, database health, cache behavior, cron, queues, email, search, integrations, conversions, and support reports.
-- [ ] Record launch results, evidence, issues, decisions, and owners.
+## After launch
 
-## Post-launch and rollback
-
-- [ ] Repeat critical tests after DNS, caches, traffic, scheduled tasks, and search indexes stabilize.
-- [ ] Review logs, monitoring, Site Health, forms, email, integrations, analytics, consent, backups, and scheduled tasks at risk-appropriate intervals.
-- [ ] Crawl production, submit or refresh sitemaps through applicable webmaster tools, and verify redirects, canonicals, directives, metadata, broken links, and unexpected indexable URLs.
-- [ ] Review production content and media and obtain field performance data when enough real-user traffic is available.
-- [ ] Restore temporary DNS settings after rollback risk passes and close, prioritize, or schedule every launch finding.
-- [ ] If a rollback trigger is met, preserve evidence and run the approved recovery plan.
-- [ ] After rollback, test the site, reconcile changed data, communicate status, and document the next steps.
-- [ ] Hold a retrospective and update runbooks, tests, monitoring, and checklists with material lessons.
+- [ ] Repeat important tests after DNS, caches, scheduled tasks, and search indexes settle.
+- [ ] Review logs, monitoring, Site Health, forms, email, analytics, backups, and scheduled tasks.
+- [ ] Crawl production for broken links, redirects, missing pages, and indexing problems.
+- [ ] Submit or refresh XML sitemaps in the applicable search tools.
+- [ ] Restore temporary DNS settings after the rollback window passes.
+- [ ] Assign owners to remaining launch issues.
+- [ ] Run the rollback plan when a rollback condition is met.
+- [ ] Test the restored site and reconcile any data changed during a failed launch.
 
 ## References
 
