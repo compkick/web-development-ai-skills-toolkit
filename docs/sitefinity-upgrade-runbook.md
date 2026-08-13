@@ -14,7 +14,7 @@ The upgraded code and upgraded database must move together. Do not point old cod
 
 Run Visual Studio as administrator only when the local IIS or file-system operation requires elevation.
 
-For file system and Sitefinity libraries, ensure no files are stored directly on app service file system. These could be lost as part of the upgrade.
+Confirm that uploaded media and other mutable Sitefinity data use the project's documented persistent storage provider rather than an ephemeral deployment location.
 
 Production upgrades should be scheduled during a maintenance window or other approved low-traffic window. Make sure the client, project owner, and QA contact know when the database upgrade will happen.
 

@@ -18,7 +18,7 @@ Use this checklist to start a new Sitefinity project with enough structure to de
 - [ ] Create the repository and project in the approved source-control platform; for ADO, initialize the ADO project and repository.
 - [ ] Create a practical local structure, such as `/Docs`, `/Sitebuild`, and `/Web`, or document the structure selected for the CMS and renderer repositories.
 - [ ] Initialize Git locally, connect the remote, and add the correct `.gitignore` before the first commit.
-- [ ] Protect the primary branch and require pull-request review and successful validation; create `develop` or feature branches only when the team's workflow uses them.
+- [ ] Protect the primary branch and require review and successful checks before merging.
 - [ ] Add a CI pipeline that restores dependencies, builds all applications, runs the available automated tests, and produces a deployable artifact.
 - [ ] Configure environments and deployment approvals for development, test, UAT, and production as applicable.
 - [ ] Keep environment-specific settings in the approved configuration and secret stores; use transforms such as SlowCheetah only when the project deliberately adopts them.
@@ -53,7 +53,7 @@ Use this checklist to start a new Sitefinity project with enough structure to de
 
 ## Prepare hosted environments
 
-- [ ] Provision the approved application, database, storage, search, email, identity, logging, and monitoring resources; for the example Azure model, configure App Service and Azure SQL.
+- [ ] Provision the hosting, database, storage, search, email, identity, logging, and monitoring resources the project needs.
 - [ ] Configure environment settings, licenses, domains, HTTPS, health checks, and least-privilege service connections.
 - [ ] Confirm persistent media and required Sitefinity data are stored in the documented provider rather than an ephemeral deployment location.
 - [ ] Deploy through the pipeline to development and run the [Sitefinity testing checklist](sitefinity-testing-checklist.md).

@@ -4,7 +4,7 @@
 
 Use this checklist to establish and verify a maintainable self-hosted WordPress site before feature development or content entry is considered ready. Adapt it to the site's risk, hosting model, editorial workflow, and whether it is a single site or Multisite network. Mark non-applicable items explicitly.
 
-This checklist covers WordPress-specific setup. The repository's general coding standards and website development checklist still apply.
+This checklist covers WordPress-specific setup. Also apply the [web coding standards](web-coding-standards.md), [website development checklist](website-development-checklist.md), and general launch checklist.
 
 ## Scope and ownership
 
@@ -43,7 +43,7 @@ This checklist covers WordPress-specific setup. The repository's general coding 
 - [ ] Create named administrator accounts, require strong authentication, and enable multifactor authentication when the project's risk and tooling support it.
 - [ ] Assign the lowest practical WordPress role or custom capability set to each editor, author, integration, and service account.
 - [ ] Remove unused accounts and installation-time credentials and verify account-recovery addresses.
-- [ ] Decide whether public registration, comments, application passwords, XML-RPC, REST API access, and remote publishing are needed; configure and protect only the required features.
+- [ ] Enable and protect only the public registration, comments, APIs, and remote-publishing features the site needs.
 - [ ] Decide whether production administrators may install, update, or edit code from the dashboard; disable file editing when code is managed through deployment.
 - [ ] Define WordPress core, theme, and plugin update responsibilities, test requirements, maintenance windows, and emergency security-update process.
 - [ ] Enable vulnerability and update monitoring appropriate to the hosting model and review material findings.
@@ -62,7 +62,7 @@ This checklist covers WordPress-specific setup. The repository's general coding 
 ## Email, scheduling, caching, privacy, and operations
 
 - [ ] Configure transactional email through an approved SMTP or email API service and verify sender-domain authentication, routing, and failure visibility.
-- [ ] Inventory scheduled WordPress and plugin tasks and confirm WP-Cron is reliable enough for their timing and traffic needs; use a controlled system scheduler when required.
+- [ ] Review scheduled tasks and use a system scheduler when WP-Cron is not reliable enough.
 - [ ] Configure page caching, browser caching, CDN behavior, and persistent object caching only where the architecture benefits, with documented exclusions and invalidation.
 - [ ] Configure analytics, tag management, cookies, consent, privacy notices, data retention, and data-subject workflows according to approved requirements.
 - [ ] Configure backups for the database, uploads, custom code, and required configuration; store copies outside the application host.

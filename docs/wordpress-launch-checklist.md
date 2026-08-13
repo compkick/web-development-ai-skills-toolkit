@@ -8,7 +8,7 @@ A checked item means the outcome was verified with the production release candid
 
 ## Launch scope and control
 
-- [ ] Identify the exact code artifact or commit, WordPress and runtime versions, theme, plugins, configuration, database change, media set, and content snapshot proposed for production.
+- [ ] Identify the exact release, WordPress version, theme, plugins, configuration, database changes, media, and content going to production.
 - [ ] Assign the launch lead, deployer, tester, content owner, infrastructure or DNS owner, incident contact, communication channel, decision authority, and rollback authority.
 - [ ] Define the launch window, expected impact, checkpoints, go/no-go criteria, measurable rollback triggers, and final rollback decision time.
 - [ ] Confirm required technical, content, accessibility, security, privacy, performance, SEO, and stakeholder approvals.
@@ -21,7 +21,7 @@ A checked item means the outcome was verified with the production release candid
 - [ ] Complete the final approved content synchronization and confirm its direction, scope, conflict handling, and audit record.
 - [ ] Review the homepage, navigation, shared layout, forms, legal and privacy content, cornerstone content, contact details, media, downloads, and time-sensitive content.
 - [ ] Remove placeholder, duplicate, expired, test, draft-only, unlicensed, and unintended environment-specific content.
-- [ ] Create matching backups or snapshots of the production database, uploads, custom code, and required configuration and verify they can be accessed for rollback.
+- [ ] Back up the production database, uploads, custom code, and configuration needed for rollback.
 - [ ] Rehearse deployment, database or content migration, cache invalidation, search indexing, smoke tests, and rollback in a production-like environment.
 - [ ] Confirm application and database versions remain compatible during rollout or document an atomic deployment and rollback sequence.
 - [ ] Verify the approved artifact can be deployed without rebuilding different code.
@@ -40,7 +40,7 @@ A checked item means the outcome was verified with the production release candid
 ## Search, email, integrations, and operations
 
 - [ ] Verify the production permalink structure, redirect map, canonical URLs, XML sitemap, `robots.txt`, indexing directives, and structured data.
-- [ ] Confirm non-production search protections will not be promoted and remove production `noindex` settings only when the site is ready for users and crawlers.
+- [ ] Remove production `noindex` settings only when the site is ready for users and search engines.
 - [ ] Verify production email credentials, sender authentication, recipients, reply-to behavior, templates, failure monitoring, and suppression removal.
 - [ ] Verify production analytics, tag management, consent, privacy controls, and critical business events without exposing unnecessary personal data.
 - [ ] Verify production credentials, endpoints, scopes, signatures, webhooks, retries, rate limits, and failure monitoring for critical integrations.
@@ -63,7 +63,7 @@ A checked item means the outcome was verified with the production release candid
 - [ ] Apply planned DNS, routing, certificate, CDN, firewall, redirect, and hosting changes in the approved order.
 - [ ] Remove temporary maintenance content and unintended production `noindex` settings only after the site is ready.
 - [ ] Invalidate caches, warm critical public paths where justified, rebuild search indexes, and run due scheduled tasks as planned.
-- [ ] Run production smoke tests for the homepage, navigation, representative templates, authentication, editor, forms, email, search, integrations, media, downloads, scheduled tasks, and error handling.
+- [ ] Run production smoke tests for important pages, editing, forms, email, search, integrations, and scheduled tasks.
 - [ ] Verify HTTPS, canonical host, redirects, sitemap, robots directives, canonicals, analytics, consent, and critical events from an external visitor context.
 - [ ] Monitor errors, availability, latency, resource use, database health, cache behavior, cron, queues, email, search, integrations, conversions, and support reports.
 - [ ] Record launch results, evidence, issues, decisions, and owners.
@@ -75,8 +75,8 @@ A checked item means the outcome was verified with the production release candid
 - [ ] Crawl production, submit or refresh sitemaps through applicable webmaster tools, and verify redirects, canonicals, directives, metadata, broken links, and unexpected indexable URLs.
 - [ ] Review production content and media and obtain field performance data when enough real-user traffic is available.
 - [ ] Restore temporary DNS settings after rollback risk passes and close, prioritize, or schedule every launch finding.
-- [ ] If a rollback trigger is met, preserve evidence and execute the approved code, configuration, database, media, DNS, redirect, cache, and search recovery steps under the named authority.
-- [ ] After rollback, verify service health, reconcile content or data changed during the failed window, communicate status, and document corrective actions before another attempt.
+- [ ] If a rollback trigger is met, preserve evidence and run the approved recovery plan.
+- [ ] After rollback, test the site, reconcile changed data, communicate status, and document the next steps.
 - [ ] Hold a retrospective and update runbooks, tests, monitoring, and checklists with material lessons.
 
 ## References

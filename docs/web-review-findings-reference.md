@@ -6,13 +6,11 @@ Use this result model with the repository's audit and review checklists so diffe
 
 A completed checkbox means the reviewer verified the stated outcome. It does not mean the topic was merely discussed or that an automated tool reported no issue.
 
-## Checklist labels
+## Using the checklists
 
-- **Baseline requirement** applies to every in-scope production system unless the check is genuinely not applicable or a stricter approved requirement supersedes it.
-- **Conditional requirement** applies when the stated feature, data, risk, contract, jurisdiction, or technology is in scope.
-- **Recommendation** improves quality or assurance but may be deferred through the project's normal prioritization process.
+Every applicable checklist item is expected unless it is marked **Recommended**. Mark an item not applicable when its feature or condition is outside the recorded scope, and explain why when that is not obvious.
 
-Applicable laws, regulations, contracts, policies, and formally adopted standards override these general labels. Obtain qualified review when determining a legal or regulatory obligation.
+Applicable laws, regulations, contracts, policies, and formally adopted standards take precedence over this general guidance. Obtain qualified review when determining a legal or regulatory obligation.
 
 ## Review record
 
@@ -52,7 +50,6 @@ Create one finding for each failed check, material warning, or recommendation se
 | Field | Value |
 | --- | --- |
 | Finding ID and checklist check | |
-| Requirement classification | Baseline requirement, conditional requirement, or recommendation |
 | Result | Fail or warning |
 | Severity | Critical, high, medium, or low |
 | Affected scope | |

@@ -148,7 +148,9 @@ CONTRIBUTING.md
 .markdownlint.jsonc
 docs/
   git-best-practices.md
+  git-command-cheatsheet.md
   web-coding-standards.md
+  website-development-checklist.md
   website-launch-checklist.md
   playwright-testing-guide.md
   wordpress-setup-checklist.md
@@ -382,5 +384,6 @@ Add a specialized skill only when:
 | 2026-07-24 | Preserve critical risk coverage while keeping checklists assessable, security-conscious, and tied to meaningful outcomes. | Long inventories create review fatigue, but an arbitrary length target must not create blind spots. |
 | 2026-07-24 | Keep human documentation flat under `docs/` and reserve `skills/` for packaged workflows. | The current library is easier to scan by filename and README category than through a premature directory hierarchy. |
 | 2026-07-24 | Own documentation linting and link validation in the repository and CI. | Repeatable checks make reorganizations and source maintenance deterministic for humans and agents. |
-| 2026-07-25 | Use one shared result model and label checklist items as baseline requirements, conditional requirements, or recommendations. | Review evidence, severity, ownership, and exceptions need consistent meaning without repeating reporting instructions in every checklist. |
+| 2026-07-25 | Use one shared result model for review evidence, severity, ownership, and exceptions. | Checklist items should remain plain-language actions rather than repeating formal requirement labels. |
 | 2026-07-25 | Refactor the general website checklist into a launch gate and preserve its broader concepts in focused Phase 3 checklists. | Humans need a runnable launch checklist, while future skills need clear specialist boundaries and one canonical home for detailed guidance. |
+| 2026-07-28 | Restore a compact website development checklist. | The original repository included a practical build checklist whose purpose was lost when development and launch guidance were split into specialist reviews. |

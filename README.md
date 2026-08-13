@@ -5,6 +5,7 @@ Reusable standards, checklists, guides, runbooks, and cheatsheets for web develo
 ## General web guidance
 
 - [Web development and CMS coding standards](docs/web-coding-standards.md)
+- [Website development checklist](docs/website-development-checklist.md)
 - [Web project audit checklist](docs/web-project-audit-checklist.md)
 - [Website release and launch checklist](docs/website-launch-checklist.md)
 - [Web review findings reference](docs/web-review-findings-reference.md)

@@ -11,11 +11,11 @@ Mark non-applicable items explicitly. Do not copy commands without confirming th
 - [ ] Define the migration goal, source, destination, domain and URL changes, acceptable downtime, content freeze, success criteria, and rollback triggers.
 - [ ] Assign migration leadership, source and destination access, database, DNS, testing, content, security, communications, and rollback authority.
 - [ ] Record whether the source is single-site or Multisite and whether the destination changes that model.
-- [ ] Inventory WordPress core and runtime versions, database engine and size, web server, filesystem size, uploads, custom code, must-use plugins, drop-ins, theme, plugins, and licenses.
+- [ ] Inventory WordPress, the runtime, database, storage, uploads, custom code, theme, plugins, and licenses.
 - [ ] Inventory users and roles, forms, email, search, analytics, consent, APIs, webhooks, scheduled tasks, queues, payments, ecommerce, memberships, and other data-writing features.
 - [ ] Review source Site Health, users, roles, active and inactive themes and plugins, and remove or document obsolete components before the final backup.
 - [ ] Identify content or transactions that can change during migration, including posts, comments, users, orders, form entries, uploads, and scheduled publishing.
-- [ ] Verify the destination meets WordPress's current recommended requirements and the capacity, PHP extensions, limits, storage, networking, and vendor support needed by the site.
+- [ ] Confirm the destination meets WordPress requirements and has enough capacity, storage, networking, and vendor support.
 - [ ] Confirm compatibility of every required theme, plugin, integration, and custom component with the destination runtime and hosting restrictions.
 - [ ] Identify privacy, residency, retention, contractual, and secure-transfer requirements for the data being moved.
 
@@ -25,7 +25,7 @@ Mark non-applicable items explicitly. Do not copy commands without confirming th
 - [ ] Complete a staging rehearsal from representative source backups and record timings, commands, warnings, failures, validation results, and corrections.
 - [ ] Define the final synchronization and freeze method so content and transactional data are not silently lost or overwritten.
 - [ ] Define how source and destination email, cron, webhooks, payments, and other writers will be suppressed or coordinated to prevent duplicate actions.
-- [ ] Prepare a DNS and TTL plan based on the current TTL, provider behavior, cutover design, and rollback needs; do not assume one universal TTL value.
+- [ ] Prepare a DNS and TTL plan for the cutover and rollback.
 - [ ] Define old-site behavior during and after cutover, including maintenance, read-only mode, redirects, access, and retention.
 - [ ] Document the exact rollback sequence for application files, database, configuration, DNS, redirects, caches, search indexes, scheduled tasks, and communications.
 - [ ] Confirm the rollback point, decision authority, decision deadline, recovery-time objective, and handling of data created during the cutover window.
@@ -44,19 +44,19 @@ Mark non-applicable items explicitly. Do not copy commands without confirming th
 - [ ] Provision the destination runtime, database, storage, certificates, logging, monitoring, WP-CLI access, and environment protections.
 - [ ] Prevent the destination from sending real email, executing duplicate transactions or webhooks, polluting analytics, or becoming publicly indexable during rehearsal.
 - [ ] Transfer files and backups through an approved encrypted method such as SSH, SFTP, or a secure provider-side migration channel.
-- [ ] Transfer the required WordPress files, uploads, custom themes, plugins, must-use plugins, and drop-ins; exclude obsolete caches, logs, temporary files, and backup archives unless required.
+- [ ] Transfer the required WordPress files and uploads without moving obsolete caches, logs, or backups.
 - [ ] Import the database using a method appropriate to its size, character set, collation, timeout limits, and destination tooling.
 - [ ] Configure destination database credentials, URLs, paths, environment type, secret sources, salts, cache settings, and other environment-specific values.
 - [ ] Translate Apache `.htaccess` behavior into the destination web-server configuration when moving to Nginx or another server that does not use `.htaccess`.
 - [ ] Set file ownership and permissions and protect configuration, backups, logs, and administrative tooling from public access.
-- [ ] Avoid combining the migration with unrelated database cleanup or optimization, or with WordPress, theme, plugin, PHP, or database upgrades, unless the combined change was rehearsed and approved.
-- [ ] Test the destination through a safe preview method that preserves the intended host behavior without pointing normal visitors or production integrations to it.
+- [ ] Keep unrelated cleanup and software upgrades out of the migration unless the combined change was tested and approved.
+- [ ] Test the destination without sending normal visitors or production integrations to it.
 
 ## URL replacement and Multisite
 
 - [ ] Back up the imported database immediately before changing URLs.
 - [ ] Use a serialized-data-aware tool such as `wp search-replace`; do not perform a blanket text-editor replacement in an SQL export.
-- [ ] Run a dry run first, review the affected tables and row counts, and exclude columns such as `guid` when they should retain their original values.
+- [ ] Dry-run database replacements and review the affected tables, rows, and excluded columns.
 - [ ] Select the table scope deliberately. Include plugin tables when required, and use the network-aware options and a per-site URL context for Multisite.
 - [ ] Verify WordPress Address and Site Address, content URLs, widgets, block content, menus, theme options, plugin settings, uploads, and custom tables after replacement.
 - [ ] For Multisite, verify network and site domains and paths, `wp-config.php`, server rewrite rules, domain mapping, upload locations, network-activated components, users, and capabilities.
@@ -87,12 +87,12 @@ Use `--network` and the appropriate `--url` context for Multisite only after rev
 
 ## Validation
 
-- [ ] Test the homepage, header, footer, navigation, representative templates, search, forms, email, authentication, administration, editing, publishing, media, downloads, integrations, scheduled tasks, and error pages.
-- [ ] Confirm the expected theme, required plugins, must-use plugins, and drop-ins are present and active as intended, with no migration-related activation or licensing failures.
+- [ ] Test important pages, editing, forms, email, search, authentication, integrations, scheduled tasks, and error pages.
+- [ ] Confirm the expected theme and plugins are installed, active, and licensed.
 - [ ] Verify users, roles, capabilities, passwords or sessions as expected, and remove obsolete or temporary migration accounts.
 - [ ] Review Tools > Site Health, PHP and JavaScript errors, server and application logs, failed cron events, queue failures, and integration errors.
 - [ ] Search the database and rendered site for unexpected old domains, paths, mixed content, localhost values, staging values, and broken media URLs.
-- [ ] Crawl the site and verify status codes, redirect behavior, canonicals, titles, headings, robots directives, XML sitemaps, structured data, broken links, and unexpected indexable URLs.
+- [ ] Crawl the site for bad responses, redirects, canonicals, metadata, broken links, and indexing problems.
 - [ ] Verify accessibility and performance on representative templates and critical journeys against the pre-migration baseline and acceptance criteria.
 - [ ] Verify HTTPS, security headers, cookies, file permissions, public endpoints, backups, logs, account access, and destination monitoring.
 - [ ] Verify page, CDN, browser, and object caches vary and invalidate correctly for public, authenticated, personalized, and dynamic responses.

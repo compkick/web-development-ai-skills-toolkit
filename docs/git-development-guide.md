@@ -11,6 +11,8 @@ Use a documented Git workflow that matches the project's release process. The go
 - Do not add permanent branches unless they represent a real release, support, or environment need.
 - Document the target branch, merge method, release path, and hotfix path in the repository.
 
+## Branching strategy
+
 This repository uses an integration-branch workflow: ordinary changes merge into `develop`, and tested releases merge from `develop` into `main`. The `main` branch represents stable, releasable production code.
 
 ## Standard change workflow

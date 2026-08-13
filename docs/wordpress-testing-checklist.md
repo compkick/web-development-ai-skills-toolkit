@@ -11,7 +11,7 @@ Run destructive tests only in an isolated environment with controlled data.
 - [ ] Identify the release artifact or commit, WordPress and runtime versions, active theme, active plugins, environment, database snapshot, and test-data version.
 - [ ] Map the site's critical frontend, editorial, administrative, integration, and scheduled workflows to test coverage.
 - [ ] Define supported browsers, devices, assistive technologies, roles, locales, and network conditions.
-- [ ] Confirm the test environment represents production closely enough for the risks being tested and cannot send unintended email, analytics, payments, webhooks, or indexing signals.
+- [ ] Confirm the test environment represents production without sending real email, payments, webhooks, analytics, or indexing signals.
 - [ ] Enable appropriate non-production debugging and logging and begin with no unexplained PHP errors, deprecated notices, JavaScript errors, or failed requests.
 - [ ] Verify backups or snapshots exist before tests that change content, configuration, users, plugins, themes, or database state.
 
@@ -38,7 +38,7 @@ Run destructive tests only in an isolated environment with controlled data.
 ## Administration and editing
 
 - [ ] Test administrator and editor sign-in, sign-out, account recovery, session expiry, and multifactor authentication where applicable.
-- [ ] Create or edit representative content using the block editor or approved editor, preview it, save a draft, schedule or publish it, revise it, and view the public result.
+- [ ] Create, preview, publish, revise, and view representative content through the normal editorial workflow.
 - [ ] Test reusable blocks or patterns, template parts, navigation editing, featured images, media replacement, revisions, autosave, and preview where used.
 - [ ] Verify required custom fields, validation, conditional controls, editorial guidance, and relationships between content.
 - [ ] Test bulk actions, imports, exports, comments, moderation, and user management only when the editorial workflow depends on them.
@@ -57,7 +57,7 @@ Run destructive tests only in an isolated environment with controlled data.
 
 ## Accessibility, performance, SEO, and caching
 
-- [ ] Run automated accessibility tests on representative templates and states, then complete manual keyboard, focus, zoom, reflow, contrast, motion, and assistive-technology checks for critical journeys.
+- [ ] Run automated and manual accessibility checks on representative templates and important journeys.
 - [ ] Test frontend and editor workflows with real content and confirm third-party widgets, cookie notices, dialogs, and overlays do not create accessibility barriers.
 - [ ] Measure critical templates and journeys against project performance budgets on representative mobile hardware and constrained networks.
 - [ ] Review page weight, requests, images, fonts, scripts, styles, database queries, object-cache behavior, and material third-party costs when budgets fail.

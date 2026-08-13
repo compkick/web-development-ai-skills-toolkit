@@ -8,7 +8,7 @@ Use this guide to prepare a local development environment and understand the mai
 
 ## Choose the project architecture
 
-- For a new project, prefer the decoupled ASP.NET Core Renderer architecture recommended by Progress unless project constraints require another supported renderer.
+- For a new project, consider the production-ready ASP.NET Core Renderer first unless project constraints favor another supported renderer.
 - Use hybrid ASP.NET Core and classic MVC when an existing MVC implementation needs a gradual migration.
 - Treat MVC-only projects as legacy maintenance work, not the default for new development.
 - Identify the CMS, renderer, custom modules, integrations, search provider, media storage provider, and hosting model before setting up a workstation.

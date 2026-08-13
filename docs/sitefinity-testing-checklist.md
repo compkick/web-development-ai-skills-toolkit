@@ -27,14 +27,14 @@ Use this plan for a project milestone, release candidate, upgrade, or production
 
 ## Pages, navigation, and content
 
-- [ ] Load the home page, Tier 1 pages, representative Tier 2 pages, and the highest-value special pages without server, console, or visible rendering errors.
+- [ ] Load the homepage and representative page types without server, console, or rendering errors.
 - [ ] Verify primary navigation, utility navigation, footer navigation, breadcrumbs, internal links, redirects, canonical URLs, and intentional 404 behavior.
-- [ ] Create or edit a draft page, apply the correct template, preview it, publish it through the configured workflow, view it on the frontend, and confirm another editor can continue work after it is unlocked.
+- [ ] Create, preview, publish, and view a page through the normal editorial workflow.
 - [ ] Verify scheduled publishing or unpublishing, localization, multisite behavior, and approval workflows when the project uses them.
 
 ## Widgets and structured content
 
-- [ ] On dedicated test pages, add each changed custom widget, configure its important properties and error states, publish it, and verify both backend editing and frontend rendering.
+- [ ] Add and configure each changed widget, then verify editing and frontend rendering.
 - [ ] Test the Sitefinity default widgets used by the project, such as content blocks, navigation, lists, cards, events, blogs, news, forms, and search.
 - [ ] Verify representative structured-content detail and list views, filters, pagination, empty states, and links.
 - [ ] Confirm widget designers and properties enforce expected defaults, validation, permissions, and safe output handling.
@@ -49,7 +49,7 @@ Use this plan for a project milestone, release candidate, upgrade, or production
 
 - [ ] Verify administrator, editor, approver, service, and public users can perform only the actions their roles require.
 - [ ] Confirm `/Sitefinity` and non-production environments use the intended authentication and access restrictions, secure transport, and session behavior.
-- [ ] Check that secrets, connection strings, license files, stack traces, and sensitive logs or form data are not exposed to users or included in deployment artifacts.
+- [ ] Keep secrets, license files, stack traces, and sensitive data out of pages and deployment artifacts.
 - [ ] Verify scheduled tasks, background jobs, SiteSync, email, identity, analytics, APIs, and other integrations used by the site.
 - [ ] Review CMS, renderer, hosting, pipeline, browser-console, and application-monitoring output for repeated or release-blocking errors.
 
@@ -57,7 +57,7 @@ Use this plan for a project milestone, release candidate, upgrade, or production
 
 - [ ] Run the project's accessibility checks on representative templates, navigation, forms, dialogs, and changed widgets, including keyboard and screen-reader spot checks.
 - [ ] Run performance checks on representative high-value pages and investigate material regressions in rendering, assets, caching, or backend response time.
-- [ ] Crawl the site to identify broken links, unexpected status codes, incorrect canonicals, unexpected multiple H1 elements or other semantic/DOM-structure problems, duplicate metadata, or unintended indexing directives.
+- [ ] Crawl the site for broken links, bad responses, incorrect canonicals, structural problems, duplicate metadata, and indexing mistakes.
 - [ ] Run the applicable security review and automated dependency, secret, and vulnerability scans; triage findings before release.
 - [ ] Complete the critical end-to-end smoke path, document defects and residual risk, and obtain the required QA or project-owner sign-off.
 
