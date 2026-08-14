@@ -18,7 +18,6 @@ Use this checklist to start a new Sitefinity project with enough structure to de
 - [ ] Provision the hosting, database, storage, search, email, identity, logging, and monitoring resources the project needs.
 - [ ] Configure settings, licenses, domains, HTTPS, health checks, and service connections.
 - [ ] Confirm persistent media and required Sitefinity data are stored in the documented provider rather than an ephemeral deployment location.
-- [ ] Deploy through the pipeline to development and run the [Sitefinity testing checklist](sitefinity-testing-checklist.md).
 - [ ] Document backups, restores, deployments, rollbacks, content synchronization, and incident response.
 
 ## Create source control and repo
@@ -44,6 +43,7 @@ Use this checklist to start a new Sitefinity project with enough structure to de
 - [ ] Add a pipeline that restores, builds, tests, and creates a deployable artifact.
 - [ ] Configure development, test, UAT, and production environments as needed.
 - [ ] Keep environment settings and secrets outside source control.
+- [ ] Deploy through the pipeline to development and run the [Sitefinity testing checklist](sitefinity-testing-checklist.md).
 
 ## Establish access and security
 

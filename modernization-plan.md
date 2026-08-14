@@ -20,7 +20,7 @@ the authoritative plan when this file contains a newer decision.
 ## Guiding decisions
 
 - Correct and normalize the human documentation before encoding it in skills.
-- Keep one canonical copy of detailed guidance in the final repository.
+- Keep detailed human guidance canonical in `docs/` and generate any skill-local copies during packaging.
 - Make the core library useful to web developers regardless of framework or CMS.
 - Keep checklists concise, high-impact, security-conscious, and realistically assessable; exclude items that do not support a decision, verify a meaningful outcome, or prevent a material failure, but never remove critical risk coverage merely to reduce length.
 - Make WordPress the primary CMS documentation track.
@@ -260,7 +260,7 @@ For every skill:
 - [ ] Define realistic triggering prompts and non-triggering boundaries.
 - [ ] Initialize the folder with the official skill scaffolding tool.
 - [ ] Write concise, imperative `SKILL.md` instructions.
-- [ ] Put detailed guidance in skill-local `references/`.
+- [ ] Keep detailed guidance canonical in `docs/` and generate skill-local references for packaging.
 - [ ] Add scripts only for deterministic, repeatable checks.
 - [ ] Test every included script.
 - [ ] Generate and verify `agents/openai.yaml`.
@@ -269,9 +269,7 @@ For every skill:
 - [ ] Avoid unsupported compliance or certification claims.
 - [ ] Run the skill validator.
 
-When an existing human checklist becomes a skill reference, move the canonical
-checklist into the skill and replace the former document with an appropriate
-human-facing index link. Do not maintain independent copies of the same rules.
+When an existing human checklist becomes a skill reference, keep the canonical checklist in `docs/`. During packaging, generate the required skill-local copy under `references/` and verify that it matches the canonical source. Do not hand-maintain two authoritative copies of the same guidance.
 
 ### Phase 4 exit criteria
 

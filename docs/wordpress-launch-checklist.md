@@ -50,6 +50,13 @@ Use this checklist when launching a new or materially changed WordPress site. Us
 - [ ] Test cache exclusions and invalidation.
 - [ ] Test uptime, error, certificate, domain, backup, email, and scheduled-task alerts.
 
+## Complete final reviews
+
+- [ ] Review representative pages and important workflows with the [web accessibility review checklist](web-accessibility-review-checklist.md).
+- [ ] Review important pages with the [web performance review checklist](web-performance-review-checklist.md).
+- [ ] Review public pages with the [technical SEO review checklist](technical-seo-review-checklist.md).
+- [ ] Review the production site and configuration with the [web security review checklist](web-security-review-checklist.md).
+
 ## Go or no-go
 
 - [ ] Confirm CI and the required WordPress tests pass.

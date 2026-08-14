@@ -86,6 +86,13 @@ wp search-replace 'https://old.example' 'https://new.example' --all-tables-with-
 - [ ] Test backups and monitoring on the destination.
 - [ ] Monitor traffic, errors, email, scheduled tasks, integrations, and support reports.
 
+## Review migration quality
+
+- [ ] Check representative pages and important workflows with the [web accessibility review checklist](web-accessibility-review-checklist.md).
+- [ ] Review important pages with the [web performance review checklist](web-performance-review-checklist.md).
+- [ ] Review public URLs and migration signals with the [technical SEO review checklist](technical-seo-review-checklist.md).
+- [ ] Review the new hosting and site configuration with the [web security review checklist](web-security-review-checklist.md).
+
 ## Finish or roll back
 
 - [ ] Restore temporary DNS TTL settings after the rollback window has passed.
