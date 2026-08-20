@@ -1,0 +1,41 @@
+{
+  "pluginRoot": "plugins/web-dev-checklists",
+  "skills": {
+    "review-web-accessibility": [
+      "docs/web-accessibility-review-checklist.md",
+      "docs/web-review-findings-reference.md",
+      "plugins/web-dev-checklists/shared/web-review-contract.md",
+      "plugins/web-dev-checklists/shared/website-audit-runtime.md"
+    ],
+    "review-web-security": [
+      "docs/web-security-review-checklist.md",
+      "docs/web-review-findings-reference.md",
+      "plugins/web-dev-checklists/shared/web-review-contract.md",
+      "plugins/web-dev-checklists/shared/website-audit-runtime.md"
+    ],
+    "review-web-performance": [
+      "docs/web-performance-review-checklist.md",
+      "docs/web-review-findings-reference.md",
+      "plugins/web-dev-checklists/shared/web-review-contract.md",
+      "plugins/web-dev-checklists/shared/website-audit-runtime.md"
+    ],
+    "review-technical-seo": [
+      "docs/technical-seo-review-checklist.md",
+      "docs/web-review-findings-reference.md",
+      "plugins/web-dev-checklists/shared/web-review-contract.md",
+      "plugins/web-dev-checklists/shared/website-audit-runtime.md"
+    ],
+    "prepare-website-launch": [
+      "docs/website-launch-checklist.md",
+      "docs/web-review-findings-reference.md",
+      "plugins/web-dev-checklists/shared/web-review-contract.md",
+      "plugins/web-dev-checklists/shared/website-audit-runtime.md"
+    ],
+    "audit-web-project": [
+      "docs/web-project-audit-checklist.md",
+      "docs/web-review-findings-reference.md",
+      "plugins/web-dev-checklists/shared/web-review-contract.md",
+      "plugins/web-dev-checklists/shared/website-audit-runtime.md"
+    ]
+  }
+}

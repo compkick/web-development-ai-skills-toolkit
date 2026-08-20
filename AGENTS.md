@@ -2,7 +2,7 @@
 
 ## Scope
 
-These instructions apply to the entire repository. This repository contains human documentation now and will later contain packaged Codex skills. Keep those concerns distinct.
+These instructions apply to the entire repository. This repository contains human documentation and packaged Codex skills. Keep those concerns distinct.
 
 ## Preserve the source material
 
@@ -17,7 +17,10 @@ These instructions apply to the entire repository. This repository contains huma
 - Use lowercase kebab-case filenames following `<area>-<purpose>-<type>.md`, omitting redundant words when the filename remains clear.
 - Prefer the type suffixes `checklist`, `guide`, `standards`, `cheatsheet`, `plan`, `runbook`, and `reference`.
 - Keep repository governance, plans, validation configuration, and automation at the root or in their conventional tool directories.
-- Keep future Codex skills under `skills/`; do not place skill packages in `docs/`.
+- Keep packaged Codex skills under `plugins/web-dev-checklists/skills/`; do not place skill packages in `docs/`.
+- Keep human-readable guidance canonical in `docs/` and use `npm run skills:refs` to generate skill-local reference copies.
+- Keep the plugin-owned website audit runtime under `plugins/web-dev-checklists/runtime/`; never install its dependencies into the website project being reviewed.
+- Obtain user approval before bootstrapping the audit runtime, downloading a browser, or running it against a target URL.
 - Add documentation subdirectories only when a category or its supporting assets have become materially difficult to navigate in the flat index.
 
 ## Authoring style
@@ -45,11 +48,11 @@ These instructions apply to the entire repository. This repository contains huma
 
 ## Validation
 
-Run the complete validation suite after changing documentation, links, filenames, repository instructions, or validation tooling:
+Run the complete validation suite after changing documentation, skills, links, filenames, repository instructions, or validation tooling:
 
 ```bash
 npm ci
-npm run docs:check
+npm run repo:check
 ```
 
 For focused work, use:
@@ -58,6 +61,11 @@ For focused work, use:
 npm run docs:lint
 npm run docs:links:internal
 npm run docs:links:external
+npm run skills:refs:check
+npm run runtime:check
+npm run deps:audit
 ```
+
+After changing the website audit runtime, bootstrap it in an isolated cache and run `npm run runtime:test` against its local fixture. This integration test requires Chrome, Edge, or Playwright Chromium.
 
 Also run `git diff --check` and inspect `git diff --stat` plus the relevant content diff. Do not mark a roadmap item complete until the associated work and validation are complete.

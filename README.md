@@ -56,9 +56,29 @@ Sitefinity is retained as specialist maintenance guidance. New general and WordP
 - [Agent authoring instructions](AGENTS.md)
 - [Modernization plan](modernization-plan.md)
 
-Human-facing documentation lives in the flat `docs/` directory and uses lowercase kebab-case filenames. Future Codex skills will live separately under `skills/`.
+Human-facing documentation lives in the flat `docs/` directory and uses lowercase kebab-case filenames. The Codex plugin lives under `plugins/web-dev-checklists/`, with packaged skills kept separately from their canonical human-readable guidance.
 
-## Validate the documentation
+Phase 4A establishes the plugin manifest, repository-local marketplace entry, shared review contract, generated-reference checks, and a plugin-owned website audit runtime. The individual review skills will be added next.
+
+## Agent website audit runtime
+
+The plugin includes a generic Playwright, axe, and Lighthouse runner that audits an authorized URL without adding dependencies to the website project. After approval, it installs pinned Node.js dependencies and Playwright Chromium into the user's cache, prefers that matching browser, and falls back to Chrome or Edge.
+
+From the repository root, bootstrap the runtime once:
+
+```bash
+npm run runtime:bootstrap
+```
+
+Then run an audit into a new or empty output directory:
+
+```bash
+npm run runtime:audit -- --url https://site.example --output ./website-audit
+```
+
+See [website audit runtime guidance](plugins/web-dev-checklists/shared/website-audit-runtime.md) for permissions, optional Chromium installation, outputs, and limitations.
+
+## Validate the repository
 
 Install the current Node.js LTS release and the locked development dependency:
 
@@ -66,10 +86,10 @@ Install the current Node.js LTS release and the locked development dependency:
 npm ci
 ```
 
-Run every documentation check:
+Run every documentation and skill-reference check:
 
 ```bash
-npm run docs:check
+npm run repo:check
 ```
 
 Individual commands are available for Markdown linting and internal or external link checks:
@@ -78,6 +98,9 @@ Individual commands are available for Markdown linting and internal or external 
 npm run docs:lint
 npm run docs:links:internal
 npm run docs:links:external
+npm run skills:refs:check
+npm run runtime:check
+npm run deps:audit
 ```
 
 The same checks run in GitHub Actions. See [CONTRIBUTING.md](CONTRIBUTING.md) for the branch, sourcing, review, and maintenance workflow.

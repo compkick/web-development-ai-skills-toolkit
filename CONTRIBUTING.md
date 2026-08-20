@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Use this guide when adding, correcting, reorganizing, or reviewing repository documentation.
+Use this guide when adding, correcting, reorganizing, or reviewing repository documentation and Codex skills.
 
 ## Branch and review workflow
 
@@ -24,7 +24,17 @@ Do not commit directly to `main`. Repository owners may adjust this workflow whe
 - Choose a filename that describes the reader's task, not the internal team that created it.
 - Add the document to the appropriate categorized section in `README.md`.
 - Update every relative link in the same change.
-- Keep future Codex skill packages under `skills/`, separate from their human-readable source guidance.
+- Keep Codex skill packages under `plugins/web-dev-checklists/skills/`, separate from their human-readable source guidance.
+
+## Add or update a Codex skill
+
+- Keep the detailed human checklist canonical in `docs/`.
+- Add the skill's canonical document mappings to `scripts/skill-reference-map.json`.
+- Run `npm run skills:refs` after changing a mapped source document or adding a skill.
+- Follow the shared safety, evidence, findings, and reporting rules in `plugins/web-dev-checklists/shared/web-review-contract.md`.
+- Keep generic browser-audit dependencies in the plugin-owned runtime rather than adding them to a reviewed website project.
+- Get approval before bootstrapping the runtime, downloading a browser, or auditing a live URL.
+- Keep each skill independently usable and add scripts only for deterministic, repeatable checks.
 
 ## Write useful guidance
 
@@ -52,19 +62,24 @@ Install the current Node.js LTS release, then install the locked dependency:
 npm ci
 ```
 
-Run the full documentation suite:
+Run the full repository suite:
 
 ```bash
-npm run docs:check
+npm run repo:check
 ```
 
-The full suite checks Markdown structure plus internal and external links. Focused commands are also available:
+The full suite checks Markdown structure, internal and external links, and generated skill references. Focused commands are also available:
 
 ```bash
 npm run docs:lint
 npm run docs:links:internal
 npm run docs:links:external
+npm run skills:refs:check
+npm run runtime:check
+npm run deps:audit
 ```
+
+After changing the website audit runtime, bootstrap it in an isolated cache and run `npm run runtime:test` against its local fixture.
 
 Before requesting review, also run:
 
@@ -80,5 +95,5 @@ git status --short
 - [ ] New or changed claims use current primary sources.
 - [ ] Checklists remain high-impact and realistically assessable.
 - [ ] Filenames, the README index, and internal links agree.
-- [ ] `npm run docs:check` passes.
+- [ ] `npm run repo:check` passes.
 - [ ] No credentials, private data, backups, licenses, or organization-specific secrets are included.

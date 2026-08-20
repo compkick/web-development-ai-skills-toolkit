@@ -13,9 +13,9 @@ the authoritative plan when this file contains a newer decision.
 ## Status
 
 - Plan status: In progress
-- Current phase: Phase 4
+- Current phase: Phase 4B
 - Next work item: Design and scaffold `review-web-accessibility`
-- Last reviewed: 2026-07-25
+- Last reviewed: 2026-08-19
 
 ## Guiding decisions
 
@@ -146,6 +146,9 @@ AGENTS.md
 CONTRIBUTING.md
 .editorconfig
 .markdownlint.jsonc
+.agents/
+  plugins/
+    marketplace.json
 docs/
   git-best-practices.md
   git-command-cheatsheet.md
@@ -157,11 +160,15 @@ docs/
   wordpress-cli-cheatsheet.md
   sitefinity-upgrade-runbook.md
   ...
-skills/
-  ...
+plugins/
+  web-dev-checklists/
+    .codex-plugin/
+      plugin.json
+    skills/
+      ...
 ```
 
-Keep human-facing documents in one flat `docs/` directory while the collection remains easy to scan. Reserve the repository root for the README, contributor and agent instructions, validation configuration, and automation. Keep Codex skills in a separate `skills/` tree because a skill is a packaged workflow rather than a human document. Add documentation subdirectories only when a category has enough material or supporting assets that the flat index becomes meaningfully harder to navigate.
+Keep human-facing documents in one flat `docs/` directory while the collection remains easy to scan. Reserve the repository root for the README, contributor and agent instructions, validation configuration, and automation. Keep packaged Codex skills under `plugins/web-dev-checklists/skills/` because a skill is a packaged workflow rather than a human document. Add documentation subdirectories only when a category has enough material or supporting assets that the flat index becomes meaningfully harder to navigate.
 
 Use lowercase kebab-case filenames following `<area>-<purpose>-<type>.md`, omitting redundant segments when the meaning remains clear. Prefer stable type suffixes such as `checklist`, `guide`, `standards`, `cheatsheet`, `plan`, `runbook`, and `reference`.
 
@@ -233,6 +240,24 @@ Every checklist should capture:
 
 ## Phase 4: Build the core skills
 
+### Phase 4A: Plugin foundation
+
+- [x] Scaffold `plugins/web-dev-checklists/` with a valid plugin manifest.
+- [x] Add a repository-local marketplace entry for development and testing.
+- [x] Define shared read-only defaults, safety boundaries, evidence rules, finding fields, and report structure.
+- [x] Add deterministic generation and drift checking for skill-local copies of canonical references.
+- [x] Add skill-reference validation to the local and CI repository checks.
+- [x] Add a plugin-owned Playwright, axe, and Lighthouse audit runtime whose dependencies are installed in a user cache rather than the target project.
+- [x] Require explicit approval before runtime bootstrap, browser download, or live-site execution.
+- [x] Download and prefer the matching Playwright Chromium build after approval, with Chrome and Edge as launch-tested fallbacks.
+- [x] Enable Chromium sandboxing by default and require an explicit isolated-environment override for an unsandboxed root run.
+- [x] Record browser-error counts by default and make potentially sensitive error details opt-in.
+- [x] Verify the runtime against a local website fixture with real browser, screenshot, axe, console, HTTP, and Lighthouse evidence.
+
+The skills should combine the plugin-owned generic audit runtime, an available interactive browser, target-repository inspection, and existing project tools as appropriate. Project-specific Playwright tests remain valuable for authentication and important user journeys, but the target project does not need Playwright merely for the plugin to audit a URL. Missing credentials, inaccessible environments, unsupported journeys, or unavailable tools must be reported as `Not checked`, not treated as a pass.
+
+### Phase 4B: Core skill build-out
+
 Build the specialist skills before the cross-discipline audit skill:
 
 1. [ ] `review-web-accessibility`
@@ -291,12 +316,13 @@ When an existing human checklist becomes a skill reference, keep the canonical c
 - [ ] Obtain approval before independent-agent forward testing if that testing
       could be lengthy or modify live systems.
 - [ ] Forward-test skills using fresh context and raw artifacts.
-- [ ] Add `.codex-plugin/plugin.json`.
-- [ ] Add a repository or personal marketplace entry for local installation.
+- [x] Add `.codex-plugin/plugin.json`.
+- [x] Add a repository or personal marketplace entry for local installation.
 - [ ] Choose and add a license.
 - [ ] Adopt semantic versioning.
 - [ ] Add plugin installation and usage guidance to the repository README.
-- [ ] Add plugin metadata and presentation assets.
+- [x] Add basic plugin metadata.
+- [ ] Add presentation assets if they materially improve discovery.
 - [ ] Validate Markdown, links, manifests, and skills in CI.
 
 ### Phase 5 exit criteria
@@ -380,7 +406,9 @@ Add a specialized skill only when:
 | 2026-07-21 | Build five specialist skills before `audit-web-project`. | The audit skill should route into stable specialist workflows. |
 | 2026-07-21 | Separate core and optional plugin families. | This keeps skill discovery focused and reduces irrelevant context. |
 | 2026-07-24 | Preserve critical risk coverage while keeping checklists assessable, security-conscious, and tied to meaningful outcomes. | Long inventories create review fatigue, but an arbitrary length target must not create blind spots. |
-| 2026-07-24 | Keep human documentation flat under `docs/` and reserve `skills/` for packaged workflows. | The current library is easier to scan by filename and README category than through a premature directory hierarchy. |
+| 2026-07-24 | Keep human documentation flat under `docs/` and reserve the plugin's `skills/` directory for packaged workflows. | The current library is easier to scan by filename and README category than through a premature directory hierarchy. |
+| 2026-08-19 | Package the core skills under `plugins/web-dev-checklists/` and treat browser and project test tooling as runtime capabilities. | A publishable plugin needs a normalized package identity, while installing Playwright in this repository would not make it available in a reviewed project. |
+| 2026-08-19 | Add a plugin-owned, user-cached Playwright, axe, and Lighthouse runner. | Generic URL audits should work without modifying the target project, while project-owned tests remain available for application-specific journeys. |
 | 2026-07-24 | Own documentation linting and link validation in the repository and CI. | Repeatable checks make reorganizations and source maintenance deterministic for humans and agents. |
 | 2026-07-25 | Use one shared result model for review evidence, severity, ownership, and exceptions. | Checklist items should remain plain-language actions rather than repeating formal requirement labels. |
 | 2026-07-25 | Refactor the general website checklist into a launch gate and preserve its broader concepts in focused Phase 3 checklists. | Humans need a runnable launch checklist, while future skills need clear specialist boundaries and one canonical home for detailed guidance. |

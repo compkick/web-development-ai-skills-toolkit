@@ -1,0 +1,18 @@
+{
+  "name": "web-dev-checklists",
+  "version": "0.1.0",
+  "description": "Focused website review and launch-readiness skills with a plugin-owned browser audit runtime.",
+  "author": {
+    "name": "Dev Docs and Checklists contributors"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Web Dev Checklists",
+    "shortDescription": "Review website quality and launch readiness.",
+    "longDescription": "Practical Codex skills for accessibility, security, performance, technical SEO, launch readiness, and whole-project web reviews, backed by a plugin-owned Playwright, axe, and Lighthouse runtime.",
+    "developerName": "Dev Docs and Checklists contributors",
+    "category": "Productivity",
+    "capabilities": ["Website review", "Browser audit", "Launch readiness"],
+    "defaultPrompt": "Review this web project and give me evidence-backed, prioritized recommendations."
+  }
+}

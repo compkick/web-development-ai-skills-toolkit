@@ -8,13 +8,20 @@
     "docs:links": "node scripts/check-doc-links.mjs",
     "docs:links:internal": "node scripts/check-doc-links.mjs --internal-only",
     "docs:links:external": "node scripts/check-doc-links.mjs --external-only",
-    "docs:check": "npm run docs:lint && npm run docs:links"
+    "docs:check": "npm run docs:lint && npm run docs:links",
+    "skills:refs": "node scripts/sync-skill-references.mjs",
+    "skills:refs:check": "node scripts/sync-skill-references.mjs --check",
+    "runtime:bootstrap": "node plugins/web-dev-checklists/runtime/scripts/bootstrap.mjs",
+    "runtime:audit": "node plugins/web-dev-checklists/runtime/scripts/audit.mjs",
+    "runtime:check": "node scripts/check-audit-runtime.mjs",
+    "runtime:test": "node plugins/web-dev-checklists/runtime/scripts/test-runtime.mjs",
+    "deps:audit": "npm audit --audit-level=high && npm audit --prefix plugins/web-dev-checklists/runtime --audit-level=high",
+    "repo:check": "npm run docs:check && npm run skills:refs:check && npm run runtime:check && npm run deps:audit"
   },
   "devDependencies": {
-    "markdownlint-cli2": "0.22.1"
+    "markdownlint-cli2": "0.23.2"
   },
   "overrides": {
-    "js-yaml": "4.3.0",
     "markdown-it": "14.3.0"
   },
   "engines": {
