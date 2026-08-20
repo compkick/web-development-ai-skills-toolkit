@@ -58,7 +58,9 @@ Sitefinity is retained as specialist maintenance guidance. New general and WordP
 
 Human-facing documentation lives in the flat `docs/` directory and uses lowercase kebab-case filenames. The Codex plugin lives under `plugins/web-dev-checklists/`, with packaged skills kept separately from their canonical human-readable guidance.
 
-Phase 4A establishes the plugin manifest, repository-local marketplace entry, shared review contract, generated-reference checks, and a plugin-owned website audit runtime. The individual review skills will be added next.
+Phase 4A established the plugin manifest, repository-local marketplace entry, shared review contract, generated-reference checks, and plugin-owned website audit runtime. Phase 4B is adding the individual review skills:
+
+- [`review-web-accessibility`](plugins/web-dev-checklists/skills/review-web-accessibility/SKILL.md) — produce an evidence-backed accessibility review that separates automated, source-based, interactive, assistive-technology, and untested results.
 
 ## Agent website audit runtime
 

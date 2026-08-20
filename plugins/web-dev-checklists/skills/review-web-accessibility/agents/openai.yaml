@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Web Accessibility"
+  short_description: "Review website accessibility with evidence"
+  default_prompt: "Use $review-web-accessibility to review this website and prioritize its accessibility findings."

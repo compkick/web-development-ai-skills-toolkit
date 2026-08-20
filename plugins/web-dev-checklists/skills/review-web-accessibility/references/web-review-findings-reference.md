@@ -1,3 +1,5 @@
+<!-- Generated from docs/web-review-findings-reference.md by scripts/sync-skill-references.mjs. Do not edit this copy. -->
+
 # Web review findings reference
 
 ## Purpose

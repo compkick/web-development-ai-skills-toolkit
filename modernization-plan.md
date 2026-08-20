@@ -14,8 +14,8 @@ the authoritative plan when this file contains a newer decision.
 
 - Plan status: In progress
 - Current phase: Phase 4B
-- Next work item: Design and scaffold `review-web-accessibility`
-- Last reviewed: 2026-08-19
+- Next work item: Design and scaffold `review-web-security`
+- Last reviewed: 2026-08-20
 
 ## Guiding decisions
 
@@ -260,7 +260,7 @@ The skills should combine the plugin-owned generic audit runtime, an available i
 
 Build the specialist skills before the cross-discipline audit skill:
 
-1. [ ] `review-web-accessibility`
+1. [x] `review-web-accessibility`
 2. [ ] `review-web-security`
 3. [ ] `review-web-performance`
 4. [ ] `review-technical-seo`

@@ -1,3 +1,5 @@
+<!-- Generated from plugins/web-dev-checklists/shared/web-review-contract.md by scripts/sync-skill-references.mjs. Do not edit this copy. -->
+
 # Web review skill contract
 
 ## Purpose
