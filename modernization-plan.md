@@ -256,6 +256,17 @@ Every checklist should capture:
 
 The skills should combine the plugin-owned generic audit runtime, an available interactive browser, target-repository inspection, and existing project tools as appropriate. Project-specific Playwright tests remain valuable for authentication and important user journeys, but the target project does not need Playwright merely for the plugin to audit a URL. Missing credentials, inaccessible environments, unsupported journeys, or unavailable tools must be reported as `Not checked`, not treated as a pass.
 
+### Phase 4A.1: Deterministic evidence runner
+
+- [x] Define versioned evidence and checklist-coverage schemas shared by the core skills.
+- [x] Add a profile-based command that converts raw browser output into normalized evidence with stable check identifiers.
+- [x] Add a `review-web-accessibility` profile that maps every canonical checklist item to automated, partial, or manual coverage.
+- [x] Add local accessibility pass and fail fixtures with deterministic result and artifact assertions.
+- [x] Add profile validation and reference-drift checks to the repository suite.
+- [x] Update `review-web-accessibility` to consume the normalized evidence package without treating automation as a complete review.
+
+The runner makes the procedure, profile, schema, browser configuration, and check identifiers repeatable. Live content, network conditions, Lighthouse measurements, and the agent's final judgment can still vary. Every later core skill should add or reuse a deterministic profile for its meaningful automatable subset and identify the checks that remain partial or manual.
+
 ### Phase 4B: Core skill build-out
 
 Build the specialist skills before the cross-discipline audit skill:
@@ -286,6 +297,7 @@ For every skill:
 - [ ] Initialize the folder with the official skill scaffolding tool.
 - [ ] Write concise, imperative `SKILL.md` instructions.
 - [ ] Keep detailed guidance canonical in `docs/` and generate skill-local references for packaging.
+- [ ] Add or reuse a deterministic evidence profile and map automated, partial, and manual coverage.
 - [ ] Add scripts only for deterministic, repeatable checks.
 - [ ] Test every included script.
 - [ ] Generate and verify `agents/openai.yaml`.
@@ -409,6 +421,7 @@ Add a specialized skill only when:
 | 2026-07-24 | Keep human documentation flat under `docs/` and reserve the plugin's `skills/` directory for packaged workflows. | The current library is easier to scan by filename and README category than through a premature directory hierarchy. |
 | 2026-08-19 | Package the core skills under `plugins/web-dev-checklists/` and treat browser and project test tooling as runtime capabilities. | A publishable plugin needs a normalized package identity, while installing Playwright in this repository would not make it available in a reviewed project. |
 | 2026-08-19 | Add a plugin-owned, user-cached Playwright, axe, and Lighthouse runner. | Generic URL audits should work without modifying the target project, while project-owned tests remain available for application-specific journeys. |
+| 2026-08-20 | Add a shared deterministic evidence runner before building the remaining specialist skills. | Each skill needs a repeatable machine-evidence layer with stable schemas and explicit automation limits, while the agent retains responsibility for judgment and recommendations. |
 | 2026-07-24 | Own documentation linting and link validation in the repository and CI. | Repeatable checks make reorganizations and source maintenance deterministic for humans and agents. |
 | 2026-07-25 | Use one shared result model for review evidence, severity, ownership, and exceptions. | Checklist items should remain plain-language actions rather than repeating formal requirement labels. |
 | 2026-07-25 | Refactor the general website checklist into a launch gate and preserve its broader concepts in focused Phase 3 checklists. | Humans need a runnable launch checklist, while future skills need clear specialist boundaries and one canonical home for detailed guidance. |

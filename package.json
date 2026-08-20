@@ -15,8 +15,11 @@
     "runtime:audit": "node plugins/web-dev-checklists/runtime/scripts/audit.mjs",
     "runtime:check": "node scripts/check-audit-runtime.mjs",
     "runtime:test": "node plugins/web-dev-checklists/runtime/scripts/test-runtime.mjs",
+    "review:website": "node plugins/web-dev-checklists/runtime/scripts/review.mjs",
+    "reviews:check": "node scripts/check-review-runner.mjs",
+    "reviews:test": "node plugins/web-dev-checklists/runtime/scripts/test-review-runner.mjs",
     "deps:audit": "npm audit --audit-level=high && npm audit --prefix plugins/web-dev-checklists/runtime --audit-level=high",
-    "repo:check": "npm run docs:check && npm run skills:refs:check && npm run runtime:check && npm run deps:audit"
+    "repo:check": "npm run docs:check && npm run skills:refs:check && npm run runtime:check && npm run reviews:check && npm run deps:audit"
   },
   "devDependencies": {
     "markdownlint-cli2": "0.23.2"

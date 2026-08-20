@@ -80,6 +80,20 @@ npm run runtime:audit -- --url https://site.example --output ./website-audit
 
 See [website audit runtime guidance](plugins/web-dev-checklists/shared/website-audit-runtime.md) for permissions, optional Chromium installation, outputs, and limitations.
 
+Run a deterministic skill evidence profile into a new or empty output directory:
+
+```bash
+npm run review:website -- --profile review-web-accessibility --url https://site.example --output ./accessibility-evidence
+```
+
+The profile produces normalized `evidence.json` and checklist `coverage.json` files alongside the raw browser, axe, screenshot, and Lighthouse artifacts. It identifies manual and partially automated checklist coverage instead of treating automated evidence as a complete skill result.
+
+After bootstrapping the runtime, verify the deterministic profiles against their local pass and fail fixtures:
+
+```bash
+npm run reviews:test
+```
+
 ## Validate the repository
 
 Install the current Node.js LTS release and the locked development dependency:
@@ -102,6 +116,7 @@ npm run docs:links:internal
 npm run docs:links:external
 npm run skills:refs:check
 npm run runtime:check
+npm run reviews:check
 npm run deps:audit
 ```
 

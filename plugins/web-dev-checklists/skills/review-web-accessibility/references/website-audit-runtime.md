@@ -41,6 +41,18 @@ Automatic selection prefers the downloaded Playwright Chromium build and falls b
 
 The runner navigates to the supplied URL without signing in, clicking controls, submitting forms, creating content, or modifying the target website. The page and Lighthouse can reload the URL, request page subresources and third-party services, generate traffic, and affect analytics. Prefer a staging environment when representative results do not require production.
 
+## Run a deterministic review profile
+
+Use the profile runner when a skill needs normalized, repeatable evidence rather than only raw collector output:
+
+```bash
+node runtime/scripts/review.mjs --profile review-web-accessibility --url https://site.example --output ./accessibility-evidence
+```
+
+The output directory must be new or empty. The procedure, browser configuration, profile version, check identifiers, and JSON shape are controlled, but live website content, network conditions, and Lighthouse measurements can still vary between runs.
+
+The accessibility profile maps every canonical checklist item to automated, partial, or manual coverage. A machine `pass` proves only the named automated check; it does not prove that the corresponding human checklist item or the whole website passes.
+
 ## Browser sandbox
 
 Chromium sandboxing is enabled by default. The runtime refuses to run as root because root Chromium commonly requires disabling that sandbox.
@@ -60,6 +72,8 @@ Screenshots, Lighthouse reports, URLs, and optional browser-error details can co
 - `axe-results.json` contains reduced axe findings without copied HTML snippets.
 - `lighthouse-report.json` and `lighthouse-report.html` contain the Lighthouse results.
 - `browser-errors.json` is created only when `--include-error-details` is explicitly requested.
+- `evidence.json` is created by the deterministic profile runner and contains normalized machine observations with stable check identifiers.
+- `coverage.json` is created by the deterministic profile runner and shows which canonical checklist items remain partial or manual.
 
 Treat Lighthouse accessibility results and axe findings as automated evidence only. Manual accessibility review is still required. A single-URL audit does not prove that every template, route, state, breakpoint, or authenticated journey works.
 

@@ -63,9 +63,10 @@ npm run docs:links:internal
 npm run docs:links:external
 npm run skills:refs:check
 npm run runtime:check
+npm run reviews:check
 npm run deps:audit
 ```
 
-After changing the website audit runtime, bootstrap it in an isolated cache and run `npm run runtime:test` against its local fixture. This integration test requires Chrome, Edge, or Playwright Chromium.
+After changing the website audit runtime or deterministic review profiles, bootstrap it in an isolated cache and run `npm run runtime:test` plus `npm run reviews:test` against the local fixtures. These integration tests require Chrome, Edge, or Playwright Chromium.
 
 Also run `git diff --check` and inspect `git diff --stat` plus the relevant content diff. Do not mark a roadmap item complete until the associated work and validation are complete.

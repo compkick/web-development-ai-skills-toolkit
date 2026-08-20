@@ -35,13 +35,15 @@ Use the least intrusive combination that answers the request:
 
 - Inspect source, components, styles, configuration, tests, and documentation when repository access is available.
 - Run existing project accessibility or browser tests when they are already configured and safe to execute.
-- Use the plugin-owned audit runtime for authorized pages when its screenshot, HTTP, browser-error, axe, or Lighthouse evidence adds value. Resolve the plugin root from this skill directory; do not assume the target project's working directory contains the runtime.
+- Use the plugin-owned deterministic review runner with the `review-web-accessibility` profile for authorized pages when screenshot, HTTP, browser-error, axe, or Lighthouse evidence adds value. Resolve the plugin root from this skill directory; do not assume the target project's working directory contains the runtime.
 - Put runtime artifacts in a task-specific temporary directory outside the target repository unless the user requests another location. Report the artifact path and treat its contents as potentially sensitive.
 - Use an available interactive browser for keyboard navigation, focus behavior, responsive states, menus, dialogs, forms, and complete journeys that a single-page scan cannot establish.
 - Use actual screen-reader or other assistive-technology results only when that technology was genuinely available and used. An accessibility tree, ARIA snapshot, axe result, or code inspection is not a screen-reader test.
 - Review supplied audit reports or human test evidence when direct access is unavailable.
 
 Treat axe and Lighthouse as overlapping automated evidence. Do not double-count the same underlying problem, use a score as proof of accessibility, or convert a clean automated scan into a pass for manual checks.
+
+Read the profile's `evidence.json` for normalized observations and `coverage.json` for the automation boundary. A machine `pass` applies only to its named automated check. Apply the canonical checklist separately and keep partial or manual items `Not checked` until sufficient evidence exists.
 
 ## Run the review
 

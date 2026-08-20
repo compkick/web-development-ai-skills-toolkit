@@ -52,6 +52,15 @@ try {
   const response = await page.goto(options.url, { timeout: options.timeoutMs, waitUntil: "domcontentloaded" });
   await page.waitForTimeout(1000);
   await page.screenshot({ fullPage: true, path: path.join(options.outputDirectory, "page.png") });
+  const documentDetails = await page.evaluate(() => ({
+    language: document.documentElement.lang.trim() || null,
+    structure: {
+      h1Count: document.querySelectorAll("h1").length,
+      headingCount: document.querySelectorAll("h1, h2, h3, h4, h5, h6").length,
+      landmarkCount: document.querySelectorAll("header, nav, main, aside, footer, [role='banner'], [role='navigation'], [role='main'], [role='complementary'], [role='contentinfo'], [role='search'], [role='region'], [role='form']").length,
+      mainCount: document.querySelectorAll("main, [role='main']").length
+    }
+  }));
 
   pageResult = {
     browserErrors: {
@@ -61,6 +70,8 @@ try {
     },
     finalUrl: page.url(),
     httpStatus: response?.status() ?? null,
+    language: documentDetails.language,
+    structure: documentDetails.structure,
     title: await page.title()
   };
 

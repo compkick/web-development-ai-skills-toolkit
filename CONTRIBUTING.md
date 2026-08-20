@@ -76,10 +76,11 @@ npm run docs:links:internal
 npm run docs:links:external
 npm run skills:refs:check
 npm run runtime:check
+npm run reviews:check
 npm run deps:audit
 ```
 
-After changing the website audit runtime, bootstrap it in an isolated cache and run `npm run runtime:test` against its local fixture.
+After changing the website audit runtime or deterministic review profiles, bootstrap it in an isolated cache and run `npm run runtime:test` plus `npm run reviews:test` against the local fixtures.
 
 Before requesting review, also run:
 

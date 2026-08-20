@@ -1,0 +1,184 @@
+{
+  "id": "review-web-accessibility",
+  "version": "1.0.0",
+  "checklistSource": "docs/web-accessibility-review-checklist.md",
+  "standard": "WCAG 2.2 Level AA",
+  "coverage": [
+    {
+      "id": "a11y-prepare-scope",
+      "section": "Prepare",
+      "checklistItem": "Record the accessibility target and choose representative pages, workflows, states, browsers, and assistive technologies.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The runner records one target URL but cannot decide whether the review sample is representative."
+    },
+    {
+      "id": "a11y-prepare-limitations",
+      "section": "Prepare",
+      "checklistItem": "Record anything that could not be tested.",
+      "automation": "partial",
+      "evidenceCheckIds": ["automated-axe-scan", "lighthouse-accessibility"],
+      "note": "The package records automated collector errors and skipped evidence; the reviewer must add broader limitations."
+    },
+    {
+      "id": "a11y-qualified-reviewer",
+      "section": "Prepare",
+      "checklistItem": "Involve a qualified accessibility reviewer when the risk or required conformance claim calls for one.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Reviewer qualifications and project risk require human judgment."
+    },
+    {
+      "id": "a11y-title-language",
+      "section": "Page structure and content",
+      "checklistItem": "Confirm every page has a useful title and language.",
+      "automation": "partial",
+      "evidenceCheckIds": ["document-title", "document-language"],
+      "note": "The runner detects missing values; a reviewer must judge whether the title and language are useful and correct."
+    },
+    {
+      "id": "a11y-structure-controls",
+      "section": "Page structure and content",
+      "checklistItem": "Check headings, landmarks, reading order, and the name and role of controls.",
+      "automation": "partial",
+      "evidenceCheckIds": ["document-structure", "automated-axe-scan"],
+      "note": "Counts and axe rules provide evidence, but meaningful structure and reading order require review."
+    },
+    {
+      "id": "a11y-alternative-text",
+      "section": "Page structure and content",
+      "checklistItem": "Write meaningful alternative text and mark decorative images appropriately.",
+      "automation": "partial",
+      "evidenceCheckIds": ["automated-axe-scan"],
+      "note": "Automation detects some missing or invalid alternatives but cannot judge meaning in context."
+    },
+    {
+      "id": "a11y-media-alternatives",
+      "section": "Page structure and content",
+      "checklistItem": "Provide captions, transcripts, or audio description for media when required.",
+      "automation": "partial",
+      "evidenceCheckIds": ["automated-axe-scan"],
+      "note": "Automation may detect some missing tracks but cannot assess completeness or accuracy."
+    },
+    {
+      "id": "a11y-keyboard-tasks",
+      "section": "Keyboard and interaction",
+      "checklistItem": "Complete important tasks using only the keyboard.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The generic single-page runner does not execute project-specific journeys."
+    },
+    {
+      "id": "a11y-focus",
+      "section": "Keyboard and interaction",
+      "checklistItem": "Confirm focus is visible, sensible, and not hidden by other content.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Focus behavior must be reviewed through representative keyboard interaction."
+    },
+    {
+      "id": "a11y-custom-controls",
+      "section": "Keyboard and interaction",
+      "checklistItem": "Test the site's menus, dialogs, and other custom controls.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Custom-control behavior requires interaction in each relevant state."
+    },
+    {
+      "id": "a11y-pointer-motion-alternatives",
+      "section": "Keyboard and interaction",
+      "checklistItem": "Provide alternatives for dragging, complex gestures, and motion controls.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The runner cannot determine whether equivalent interactions exist across workflows."
+    },
+    {
+      "id": "a11y-contrast",
+      "section": "Visual presentation",
+      "checklistItem": "Check text, control, and focus-indicator contrast.",
+      "automation": "partial",
+      "evidenceCheckIds": ["automated-axe-scan"],
+      "note": "axe detects many rendered contrast failures, but states and custom focus indicators still require review."
+    },
+    {
+      "id": "a11y-zoom-spacing",
+      "section": "Visual presentation",
+      "checklistItem": "Test browser zoom to 200 percent and text spacing overrides.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The baseline profile does not apply and assess zoom or text-spacing overrides."
+    },
+    {
+      "id": "a11y-reflow",
+      "section": "Visual presentation",
+      "checklistItem": "Confirm content reflows without losing information at narrow widths.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "A reviewer must inspect representative responsive states and interactions."
+    },
+    {
+      "id": "a11y-motion-target-size",
+      "section": "Visual presentation",
+      "checklistItem": "Respect reduced-motion preferences and make controls reasonably easy to target.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The baseline profile does not judge motion alternatives or target usability."
+    },
+    {
+      "id": "a11y-form-labels-errors",
+      "section": "Forms and messages",
+      "checklistItem": "Give fields clear labels and connect understandable errors to the affected fields.",
+      "automation": "partial",
+      "evidenceCheckIds": ["automated-axe-scan"],
+      "note": "Automation detects some label and relationship failures; error quality and workflow require interaction."
+    },
+    {
+      "id": "a11y-input-status",
+      "section": "Forms and messages",
+      "checklistItem": "Preserve valid input and announce important status changes when needed.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "State preservation and announcements require workflow testing."
+    },
+    {
+      "id": "a11y-review-submissions",
+      "section": "Forms and messages",
+      "checklistItem": "Let users review or correct submissions that create legal or financial commitments.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The relevant commitments and correction workflow require product and legal context."
+    },
+    {
+      "id": "a11y-accessible-authentication",
+      "section": "Forms and messages",
+      "checklistItem": "Do not block paste, password managers, or accessible authentication methods.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Authentication behavior requires authorized interaction and appropriate test accounts."
+    },
+    {
+      "id": "a11y-automated-screen-reader",
+      "section": "Finish the review",
+      "checklistItem": "Run an automated scan, review the results, and test important workflows with a screen reader.",
+      "automation": "partial",
+      "evidenceCheckIds": ["automated-axe-scan", "lighthouse-accessibility"],
+      "note": "The runner completes automated scans but does not claim screen-reader testing."
+    },
+    {
+      "id": "a11y-retest-components",
+      "section": "Finish the review",
+      "checklistItem": "Retest fixes and check shared components for the same problem.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Retesting depends on the changed release and representative component usage."
+    },
+    {
+      "id": "a11y-record-findings",
+      "section": "Finish the review",
+      "checklistItem": "Record affected users, evidence, severity, and any testing limitations.",
+      "automation": "partial",
+      "evidenceCheckIds": ["page-http-status", "document-title", "document-language", "document-structure", "automated-axe-scan", "lighthouse-accessibility", "browser-errors"],
+      "note": "The evidence package records observations and limitations; the reviewer determines affected users and severity."
+    }
+  ]
+}

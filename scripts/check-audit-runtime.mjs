@@ -27,6 +27,8 @@ const scripts = [
   "lib/runtime-location.mjs",
   "scripts/audit.mjs",
   "scripts/bootstrap.mjs",
+  "scripts/review.mjs",
+  "scripts/test-review-runner.mjs",
   "scripts/test-runtime.mjs",
   "scripts/worker.mjs"
 ];
