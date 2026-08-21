@@ -196,11 +196,22 @@ function parseArguments(argumentsToParse) {
     else throw new Error(`Unknown argument: ${argument}`);
   }
 
-  if (!optionsToReturn.profile || !optionsToReturn.url || !optionsToReturn.outputDirectory) throw new Error("--profile, --url, and --output are required.");
+  if (!optionsToReturn.profile || !optionsToReturn.url) throw new Error("--profile and --url are required.");
   if (!new Set(["auto", "chrome", "edge", "chromium"]).has(optionsToReturn.browser)) throw new Error("--browser must be auto, chrome, edge, or chromium.");
   if (!Number.isInteger(optionsToReturn.timeoutMs) || optionsToReturn.timeoutMs < 1000 || optionsToReturn.timeoutMs > 120000) throw new Error("--timeout-ms must be an integer from 1000 through 120000.");
 
+  if (!optionsToReturn.outputDirectory) {
+    optionsToReturn.outputDirectory = getDefaultOutputDirectory(optionsToReturn.profile, new URL(optionsToReturn.url));
+  }
+
   return optionsToReturn;
+}
+
+function getDefaultOutputDirectory(profileId, targetUrl) {
+  const targetName = `${targetUrl.hostname}${targetUrl.port ? `-${targetUrl.port}` : ""}`.replace(/[^a-zA-Z0-9.-]+/g, "-").replace(/^-+|-+$/g, "") || "site";
+  const isoTimestamp = new Date().toISOString();
+  const runId = `${isoTimestamp.slice(0, 10).replaceAll("-", "")}-${isoTimestamp.slice(11, 19).replaceAll(":", "")}-${isoTimestamp.slice(20, 23)}Z`;
+  return path.resolve(".output", profileId, targetName, runId);
 }
 
 async function loadProfile(profileId) {
@@ -233,9 +244,10 @@ async function exists(filePath) {
 }
 
 function printUsage() {
-  console.log("Usage: node runtime/scripts/review.mjs --profile <profile-id> --url <https://site.example> --output <directory> [options]");
+  console.log("Usage: node runtime/scripts/review.mjs --profile <profile-id> --url <https://site.example> [options]");
   console.log("");
   console.log("Options:");
+  console.log("  --output <directory>                    Override the default .output/<profile>/<host>/<run-id> directory");
   console.log("  --browser <auto|chrome|edge|chromium>  Browser selection; default: auto");
   console.log("  --allow-no-sandbox                       Allow an unsandboxed root run in an isolated environment");
   console.log("  --include-error-details                  Write truncated console/page error details");

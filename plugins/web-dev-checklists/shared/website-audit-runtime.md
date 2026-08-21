@@ -44,10 +44,10 @@ The runner navigates to the supplied URL without signing in, clicking controls, 
 Use the profile runner when a skill needs normalized, repeatable evidence rather than only raw collector output:
 
 ```bash
-node runtime/scripts/review.mjs --profile review-web-accessibility --url https://site.example --output ./accessibility-evidence
+node runtime/scripts/review.mjs --profile review-web-accessibility --url https://site.example
 ```
 
-The output directory must be new or empty. The procedure, browser configuration, profile version, check identifiers, and JSON shape are controlled, but live website content, network conditions, and Lighthouse measurements can still vary between runs.
+By default, the runner creates `.output/<profile>/<host>/<run-id>/` under the current working directory. Use `--output <directory>` to choose another new or empty directory. The procedure, browser configuration, profile version, check identifiers, and JSON shape are controlled, but live website content, network conditions, and Lighthouse measurements can still vary between runs.
 
 The accessibility profile maps every canonical checklist item to automated, partial, or manual coverage. A machine `pass` proves only the named automated check; it does not prove that the corresponding human checklist item or the whole website passes.
 

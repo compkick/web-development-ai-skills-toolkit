@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { mkdtemp, readFile, rm, stat } from "node:fs/promises";
+import { mkdtemp, readFile, readdir, rm, stat } from "node:fs/promises";
 import http from "node:http";
 import os from "node:os";
 import path from "node:path";
@@ -12,7 +12,7 @@ const reviewScript = path.join(scriptsDirectory, "review.mjs");
 const passFixture = await readFile(path.join(runtimeDirectory, "fixtures", "accessibility-pass.html"), "utf8");
 const failFixture = await readFile(path.join(runtimeDirectory, "fixtures", "accessibility-fail.html"), "utf8");
 const testDirectory = await mkdtemp(path.join(os.tmpdir(), "web-dev-checklists-review-test-"));
-const passOutputDirectory = path.join(testDirectory, "pass-output");
+let passOutputDirectory;
 const failOutputDirectory = path.join(testDirectory, "fail-output");
 const server = http.createServer((request, response) => {
   if (request.url === "/favicon.ico") {
@@ -34,7 +34,8 @@ try {
 
   const address = server.address();
   const baseUrl = `http://127.0.0.1:${address.port}`;
-  await run(process.execPath, [reviewScript, "--profile", "review-web-accessibility", "--url", `${baseUrl}/pass`, "--output", passOutputDirectory]);
+  await run(process.execPath, [reviewScript, "--profile", "review-web-accessibility", "--url", `${baseUrl}/pass`], testDirectory);
+  passOutputDirectory = await findSingleDefaultOutputDirectory(testDirectory, "review-web-accessibility");
   await run(process.execPath, [reviewScript, "--profile", "review-web-accessibility", "--url", `${baseUrl}/fail`, "--output", failOutputDirectory]);
 
   const passEvidence = await readJson(path.join(passOutputDirectory, "evidence.json"));
@@ -105,12 +106,28 @@ function validateEvidenceShape(evidence) {
   }
 }
 
-function run(command, argumentsToRun) {
+function run(command, argumentsToRun, workingDirectory = process.cwd()) {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, argumentsToRun, { env: process.env, stdio: "inherit" });
+    const child = spawn(command, argumentsToRun, { cwd: workingDirectory, env: process.env, stdio: "inherit" });
     child.once("error", reject);
     child.once("exit", (code) => code === 0 ? resolve() : reject(new Error(`Review command exited with code ${code}.`)));
   });
+}
+
+async function findSingleDefaultOutputDirectory(workingDirectory, profileId) {
+  const profileDirectory = path.join(workingDirectory, ".output", profileId);
+  const targetEntries = (await readdir(profileDirectory, { withFileTypes: true })).filter((entry) => entry.isDirectory());
+
+  if (targetEntries.length !== 1) throw new Error(`Expected one default target directory under ${profileDirectory}, found ${targetEntries.length}.`);
+  if (!/^127\.0\.0\.1-\d+$/.test(targetEntries[0].name)) throw new Error(`Default target directory does not contain the fixture host and port: ${targetEntries[0].name}`);
+
+  const targetDirectory = path.join(profileDirectory, targetEntries[0].name);
+  const entries = await readdir(targetDirectory, { withFileTypes: true });
+  const runDirectories = entries.filter((entry) => entry.isDirectory());
+
+  if (runDirectories.length !== 1) throw new Error(`Expected one default run directory under ${targetDirectory}, found ${runDirectories.length}.`);
+  if (!/^\d{8}-\d{6}-\d{3}Z$/.test(runDirectories[0].name)) throw new Error(`Default run directory has an invalid timestamp: ${runDirectories[0].name}`);
+  return path.join(targetDirectory, runDirectories[0].name);
 }
 
 async function readJson(filePath) {

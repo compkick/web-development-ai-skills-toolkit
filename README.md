@@ -1,4 +1,6 @@
-# Dev Docs and Checklists
+# Website Readiness Toolkit
+
+Full title: Website Readiness Toolkit: Checklists & Agent Skills
 
 Reusable standards, checklists, guides, runbooks, and cheatsheets for web development and CMS work. The library emphasizes high-impact, observable checks; secure defaults; current primary sources; and workflows that remain practical for humans.
 
@@ -80,11 +82,13 @@ npm run runtime:audit -- --url https://site.example --output ./website-audit
 
 See [website audit runtime guidance](plugins/web-dev-checklists/shared/website-audit-runtime.md) for permissions, optional Chromium installation, outputs, and limitations.
 
-Run a deterministic skill evidence profile into a new or empty output directory:
+Run a deterministic skill evidence profile:
 
 ```bash
-npm run review:website -- --profile review-web-accessibility --url https://site.example --output ./accessibility-evidence
+npm run review:website -- --profile review-web-accessibility --url https://site.example
 ```
+
+The profile creates a timestamped `.output/<profile>/<host>/<run-id>/` directory by default. This repository ignores `/.output/` because screenshots and reports may be large or sensitive. Pass `--output <new-or-empty-directory>` to override the location.
 
 The profile produces normalized `evidence.json` and checklist `coverage.json` files alongside the raw browser, axe, screenshot, and Lighthouse artifacts. It identifies manual and partially automated checklist coverage instead of treating automated evidence as a complete skill result.
 
