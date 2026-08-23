@@ -1,7 +1,7 @@
 {
   "name": "dev-docs-and-checklists",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Validation tooling for the web development documentation library.",
   "scripts": {
     "docs:lint": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
