@@ -105,7 +105,7 @@ This profile collects a rendered screenshot, page title and language, heading an
 npm run review:website -- --profile review-web-security --url https://site.example
 ```
 
-This profile collects a rendered screenshot, browser-error counts, HTTPS and certificate evidence, negotiated TLS and application protocols, a bounded same-host HTTP redirect check, insecure-resource observations, selected security headers, public-cookie attributes, CORS headers, software-disclosure headers, and `security.txt` evidence. It maps the evidence to the [web security review checklist](docs/web-security-review-checklist.md). It skips axe and Lighthouse and does not enumerate endpoints, send attack payloads, sign in, submit forms, or replace source, authenticated, or operational review.
+This profile collects a rendered screenshot, browser-error counts, HTTPS and certificate evidence, negotiated TLS and application protocols, a bounded same-host HTTP redirect check, insecure-resource observations, selected security headers, public-cookie attributes, CORS headers, software-disclosure headers, and `security.txt` evidence. It creates `security-report.html` with failures and warnings, passes, informational and not-checked results, checklist coverage, limitations, and supporting artifact links. It maps the evidence to the [web security review checklist](docs/web-security-review-checklist.md). It skips axe and Lighthouse and does not enumerate endpoints, send attack payloads, sign in, submit forms, or replace source, authenticated, or operational review.
 
 #### Checklist runner output
 

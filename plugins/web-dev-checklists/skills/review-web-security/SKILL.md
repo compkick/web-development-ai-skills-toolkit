@@ -39,7 +39,7 @@ Do not imply that a public URL check covers the other sections. Ask only for mis
 Use the least intrusive combination that answers the request:
 
 - Use the plugin-owned deterministic runner with the `review-web-security` profile for an authorized public URL. Resolve the plugin root from this skill directory; do not assume the target project's working directory contains the runtime.
-- Read `evidence.json` for stable public observations and `coverage.json` for the automation boundary. A machine `pass` applies only to its named check.
+- Read `evidence.json` for stable public observations, `coverage.json` for the automation boundary, and `security-report.html` for the human-readable evidence summary. A machine `pass` applies only to its named check.
 - Inspect source, dependency manifests, lockfiles, framework and runtime versions, configuration, infrastructure definitions, tests, and deployment guidance when repository access is available.
 - Prefer the project's existing dependency, static-analysis, and secret-scanning tools when they are configured and safe. Do not install new project dependencies or copy secret values into evidence without approval.
 - Use an available interactive browser for approved public or authenticated workflows that require interaction. Use only supplied or explicitly approved test accounts and safe test data.

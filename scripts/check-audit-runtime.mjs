@@ -26,6 +26,7 @@ for (const [dependency, version] of Object.entries(packageJson.dependencies ?? {
 const scripts = [
   "config/runtime-config.mjs",
   "reporting/axe-report.mjs",
+  "reporting/security-report.mjs",
   "scripts/audit.mjs",
   "scripts/bootstrap.mjs",
   "scripts/review.mjs",

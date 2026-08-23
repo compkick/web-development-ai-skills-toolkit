@@ -81,6 +81,7 @@ Screenshots, including axe element screenshots, Lighthouse reports, URLs, and op
 - `security-results.json` contains reduced transport, selected response-header, public-cookie-attribute, disclosure, redirect, and `security.txt` observations when security collection is enabled. Cookie values are not stored.
 - `evidence.json` is created by the deterministic profile runner and contains normalized machine observations with stable check identifiers.
 - `coverage.json` is created by the deterministic profile runner and shows which canonical checklist items remain partial or manual.
+- `security-report.html` is created by the security profile and presents normalized pass, fail, warning, informational, and not-checked results with checklist coverage and limitations.
 
 The runtime prioritizes confirmed violations and then incomplete checks for element screenshots, with a default limit of 25 candidates per page. The report records elements that were skipped by the limit, could not be found after the scan, used unsupported nested targets, or failed during capture.
 

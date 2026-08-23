@@ -57,6 +57,8 @@ try {
 
   const passEvidence = await readJson(path.join(passOutputDirectory, "evidence.json"));
   const failEvidence = await readJson(path.join(failOutputDirectory, "evidence.json"));
+  const passReport = await readFile(path.join(passOutputDirectory, "security-report.html"), "utf8");
+  const failReport = await readFile(path.join(failOutputDirectory, "security-report.html"), "utf8");
   const coverage = await readJson(path.join(failOutputDirectory, "coverage.json"));
 
   validateEvidenceShape(passEvidence);
@@ -72,6 +74,21 @@ try {
   assertCheckStatus(failEvidence, "framing-protection", "warning");
   assertCheckStatus(failEvidence, "content-type-protection", "warning");
   assertCheckStatus(failEvidence, "response-disclosure", "warning");
+  assertCheckTitle(failEvidence, "http-to-https-redirect", "Site redirects plain HTTP to HTTPS");
+  assertCheckTitle(failEvidence, "strict-transport-security", "Site presents an active HSTS policy");
+  assertCheckTitle(failEvidence, "content-security-policy", "Site includes an enforced Content Security Policy");
+
+  for (const check of [...passEvidence.checks, ...failEvidence.checks]) {
+    if (!/^(Site|Runner) /.test(check.title)) throw new Error(`Security check title is not declarative: ${check.title}`);
+  }
+
+  if (!passReport.includes("Web security review evidence") || !failReport.includes("Checks requiring attention") || !failReport.includes("Content Security Policy") || !failReport.includes("Canonical checklist coverage") || /<script(?:\s|>)/i.test(`${passReport}${failReport}`)) {
+    throw new Error("Security review runner did not produce the expected safe human-readable report.");
+  }
+
+  if (!failEvidence.artifacts.some((artifact) => artifact.path === "security-report.html")) {
+    throw new Error("Security evidence does not reference the human-readable report.");
+  }
 
   if (coverage.schemaVersion !== "1.0.0" || coverage.profile.id !== "review-web-security" || coverage.items.length !== 36) {
     throw new Error("Coverage output does not contain the complete security profile.");
@@ -82,7 +99,7 @@ try {
   }
 
   for (const outputDirectory of [passOutputDirectory, failOutputDirectory]) {
-    for (const artifact of ["evidence.json", "coverage.json", "summary.json", "page.png", "security-results.json"]) {
+    for (const artifact of ["evidence.json", "coverage.json", "summary.json", "page.png", "security-results.json", "security-report.html"]) {
       const artifactStats = await stat(path.join(outputDirectory, artifact));
 
       if (!artifactStats.isFile() || artifactStats.size === 0) throw new Error(`Security review runner produced an empty or invalid artifact: ${artifact}`);
@@ -103,6 +120,12 @@ function assertCheckStatus(evidence, checkId, expectedStatus) {
   const check = evidence.checks.find((candidate) => candidate.id === checkId);
 
   if (!check || check.status !== expectedStatus) throw new Error(`Expected ${checkId} to be ${expectedStatus}, found ${check?.status ?? "missing"}.`);
+}
+
+function assertCheckTitle(evidence, checkId, expectedTitle) {
+  const check = evidence.checks.find((candidate) => candidate.id === checkId);
+
+  if (!check || check.title !== expectedTitle) throw new Error(`Expected ${checkId} title to be "${expectedTitle}", found "${check?.title ?? "missing"}".`);
 }
 
 function validateEvidenceShape(evidence) {
