@@ -41,6 +41,7 @@ try {
 
   const passEvidence = await readJson(path.join(passOutputDirectory, "evidence.json"));
   const failEvidence = await readJson(path.join(failOutputDirectory, "evidence.json"));
+  const failAxeResult = await readJson(path.join(failOutputDirectory, "axe-results.json"));
   const coverage = await readJson(path.join(failOutputDirectory, "coverage.json"));
 
   validateEvidenceShape(passEvidence);
@@ -71,11 +72,17 @@ try {
   }
 
   for (const outputDirectory of [passOutputDirectory, failOutputDirectory]) {
-    for (const artifact of ["evidence.json", "coverage.json", "summary.json", "page.png", "axe-results.json", "lighthouse-report.json", "lighthouse-report.html"]) {
+    for (const artifact of ["evidence.json", "coverage.json", "summary.json", "page.png", "axe-results.json", "axe-report.html", "lighthouse-report.json", "lighthouse-report.html"]) {
       const artifactStats = await stat(path.join(outputDirectory, artifact));
 
       if (!artifactStats.isFile() || artifactStats.size === 0) throw new Error(`Review runner produced an empty or invalid artifact: ${artifact}`);
     }
+  }
+
+  const capturedScreenshot = [...failAxeResult.violations, ...failAxeResult.incomplete].flatMap((rule) => rule.nodes).find((node) => node.screenshot?.status === "captured")?.screenshot.path;
+
+  if (!capturedScreenshot || !(await stat(path.join(failOutputDirectory, ...capturedScreenshot.split("/")))).isFile()) {
+    throw new Error("Accessibility fail fixture did not produce a referenced axe element screenshot.");
   }
 
   console.log("Deterministic review runner self-test passed for accessibility pass and fail fixtures.");

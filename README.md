@@ -85,7 +85,7 @@ Use `runtime:audit` for runtime troubleshooting, profile development, or an ad h
 npm run runtime:audit -- --url https://site.example
 ```
 
-This command writes to `.output/runtime-audit/<host>/<run-id>/` by default. Pass `--output <new-or-empty-directory>` to override the location. It does not apply a checklist profile and does not create normalized `evidence.json` or `coverage.json` files. Its output includes `summary.json`, `page.png`, reduced axe results, and Lighthouse JSON and HTML reports. Collector flags can add public security observations or skip evidence that is not needed.
+This command writes to `.output/runtime-audit/<host>/<run-id>/` by default. Pass `--output <new-or-empty-directory>` to override the location. It does not apply a checklist profile and does not create normalized `evidence.json` or `coverage.json` files. Its output includes `summary.json`, `page.png`, reduced axe results, a human-readable axe HTML report with bounded element screenshots, and Lighthouse JSON and HTML reports. Collector flags can add public security observations or skip evidence that is not needed.
 
 ### Deterministic checklist evidence
 
@@ -97,7 +97,7 @@ Use `review:website` for normal human or agent checklist work. It runs the appro
 npm run review:website -- --profile review-web-accessibility --url https://site.example
 ```
 
-This profile collects a rendered screenshot, page title and language, heading and landmark counts, browser-error counts, reduced axe results, and Lighthouse reports. It maps the evidence to the [web accessibility review checklist](docs/web-accessibility-review-checklist.md). Keyboard, zoom, reflow, content quality, important workflows, and assistive-technology testing remain manual.
+This profile collects a rendered screenshot, page title and language, heading and landmark counts, browser-error counts, reduced axe results, a human-readable axe report with element screenshots, and Lighthouse reports. It maps the evidence to the [web accessibility review checklist](docs/web-accessibility-review-checklist.md). Keyboard, zoom, reflow, content quality, important workflows, and assistive-technology testing remain manual.
 
 #### Security checklist runner
 

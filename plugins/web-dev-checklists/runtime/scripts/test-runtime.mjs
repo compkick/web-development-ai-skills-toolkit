@@ -28,12 +28,24 @@ try {
   await run(process.execPath, [auditScript, "--url", url], testDirectory);
   outputDirectory = await findSingleDefaultOutputDirectory(testDirectory, RAW_AUDIT_OUTPUT_GROUP);
   const summary = JSON.parse(await readFile(path.join(outputDirectory, "summary.json"), "utf8"));
+  const axeResult = JSON.parse(await readFile(path.join(outputDirectory, "axe-results.json"), "utf8"));
+  const axeReport = await readFile(path.join(outputDirectory, "axe-report.html"), "utf8");
 
   if (summary.browser.sandboxed !== true || summary.page.httpStatus !== 200 || summary.page.browserErrors.consoleErrorCount < 1 || summary.page.browserErrors.pageErrorCount < 1 || summary.page.browserErrors.detailsFile !== null || summary.axe.status !== "completed" || summary.axe.violations < 1 || summary.lighthouse.status !== "completed" || typeof summary.lighthouse.scores.performance !== "number") {
     throw new Error("Audit runtime self-test did not produce the expected browser, axe, and Lighthouse evidence.");
   }
 
-  for (const artifact of ["summary.json", "page.png", "axe-results.json", "lighthouse-report.json", "lighthouse-report.html"]) {
+  if (axeResult.elementScreenshots.captured < 1 || !axeReport.includes("Confirmed violations") || !axeReport.includes("Needs manual review") || /<script(?:\s|>)/i.test(axeReport)) {
+    throw new Error("Audit runtime self-test did not produce the expected safe human-readable axe report and element screenshots.");
+  }
+
+  const capturedScreenshot = [...axeResult.violations, ...axeResult.incomplete].flatMap((rule) => rule.nodes).find((node) => node.screenshot?.status === "captured")?.screenshot.path;
+
+  if (!capturedScreenshot || !(await stat(path.join(outputDirectory, ...capturedScreenshot.split("/")))).isFile()) {
+    throw new Error("Audit runtime self-test did not produce a referenced axe element screenshot.");
+  }
+
+  for (const artifact of ["summary.json", "page.png", "axe-results.json", "axe-report.html", "lighthouse-report.json", "lighthouse-report.html"]) {
     const artifactStats = await stat(path.join(outputDirectory, artifact));
 
     if (!artifactStats.isFile() || artifactStats.size === 0) {

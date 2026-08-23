@@ -68,18 +68,21 @@ Run as a non-root user whenever possible. Use `--allow-no-sandbox` only after ex
 
 The summary records console-error and page-error counts without their message text. If the details are necessary, get permission and add `--include-error-details`; the runtime then writes up to 20 truncated messages of each type to `browser-errors.json`.
 
-Screenshots, Lighthouse reports, URLs, and optional browser-error details can contain rendered content, personal data, query strings, private endpoints, or secrets exposed by the page. Store and share audit artifacts accordingly.
+Screenshots, including axe element screenshots, Lighthouse reports, URLs, and optional browser-error details can contain rendered content, personal data, query strings, private endpoints, or secrets exposed by the page. Store and share audit artifacts accordingly.
 
 ## Outputs
 
 - `summary.json` contains the page result, browser used, Lighthouse scores, and automated accessibility counts.
 - `page.png` is a full-page screenshot of the rendered page.
 - `axe-results.json` contains reduced axe findings without copied HTML snippets.
+- `axe-report.html` presents confirmed violations and incomplete checks in a human-readable format and links to bounded screenshots under `axe-elements/`.
 - `lighthouse-report.json` and `lighthouse-report.html` contain the Lighthouse results.
 - `browser-errors.json` is created only when `--include-error-details` is explicitly requested.
 - `security-results.json` contains reduced transport, selected response-header, public-cookie-attribute, disclosure, redirect, and `security.txt` observations when security collection is enabled. Cookie values are not stored.
 - `evidence.json` is created by the deterministic profile runner and contains normalized machine observations with stable check identifiers.
 - `coverage.json` is created by the deterministic profile runner and shows which canonical checklist items remain partial or manual.
+
+The runtime prioritizes confirmed violations and then incomplete checks for element screenshots, with a default limit of 25 candidates per page. The report records elements that were skipped by the limit, could not be found after the scan, used unsupported nested targets, or failed during capture.
 
 Treat Lighthouse accessibility results and axe findings as automated evidence only. Manual accessibility review is still required. Treat security headers, cookie attributes, and the negotiated TLS connection as bounded configuration observations rather than proof that the application is secure. A single-URL audit does not prove that every template, route, state, breakpoint, authenticated journey, source-code control, or operational control works.
 

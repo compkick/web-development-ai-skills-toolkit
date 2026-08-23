@@ -10,7 +10,7 @@ if (process.argv.includes("--help") || process.argv.includes("-h")) {
 }
 
 const { browserDirectory, runtimeDirectory } = await getRuntimeLocation();
-const workerPath = path.join(runtimeDirectory, "worker.mjs");
+const workerPath = path.join(runtimeDirectory, "scripts", "worker.mjs");
 const readyMarkerPath = path.join(runtimeDirectory, "runtime-ready.json");
 const workerArguments = [...process.argv.slice(2)];
 

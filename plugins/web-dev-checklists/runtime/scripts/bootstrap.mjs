@@ -15,7 +15,7 @@ if (currentMarker?.runtimeKey !== runtimeKey || !(await exists(path.join(runtime
   await mkdir(runtimeDirectory, { recursive: true });
 
   for (const sourceFile of sourceFiles) {
-    const targetPath = path.join(runtimeDirectory, sourceFile === "scripts/worker.mjs" ? "worker.mjs" : sourceFile);
+    const targetPath = path.join(runtimeDirectory, sourceFile);
     await mkdir(path.dirname(targetPath), { recursive: true });
     await copyFile(path.join(runtimeSourceDirectory, sourceFile), targetPath);
   }

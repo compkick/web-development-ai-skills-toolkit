@@ -7,6 +7,8 @@ import path from "node:path";
 import process from "node:process";
 import lighthouse from "lighthouse";
 import { chromium } from "playwright";
+import { DEFAULT_AXE_ELEMENT_SCREENSHOT_LIMIT } from "../config/runtime-config.mjs";
+import { captureAxeElementScreenshots, writeAxeHtmlReport } from "../reporting/axe-report.mjs";
 
 const options = parseArguments(process.argv.slice(2));
 const startedAt = new Date().toISOString();
@@ -102,8 +104,25 @@ try {
     try {
       const rawAxeResult = await new AxeBuilder({ page }).analyze();
       const axeResult = summarizeAxe(rawAxeResult);
+      let elementScreenshots;
+
+      try {
+        elementScreenshots = await captureAxeElementScreenshots(page, axeResult, options.outputDirectory, DEFAULT_AXE_ELEMENT_SCREENSHOT_LIMIT);
+      } catch (error) {
+        elementScreenshots = { captured: 0, error: truncate(error.message, 300), failed: 0, limit: DEFAULT_AXE_ELEMENT_SCREENSHOT_LIMIT, skippedByLimit: 0, totalCandidates: 0, unsupported: 0 };
+      }
+
+      axeResult.elementScreenshots = elementScreenshots;
       await writeJson(path.join(options.outputDirectory, "axe-results.json"), axeResult);
-      axeSummary = { incomplete: axeResult.incomplete.length, passes: axeResult.passes, status: "completed", violations: axeResult.violations.length };
+      let report = { status: "completed" };
+
+      try {
+        await writeAxeHtmlReport(axeResult, path.join(options.outputDirectory, "axe-report.html"));
+      } catch (error) {
+        report = { error: truncate(error.message, 300), status: "error" };
+      }
+
+      axeSummary = { elementScreenshots, incomplete: axeResult.incomplete.length, passes: axeResult.passes, report, status: "completed", violations: axeResult.violations.length };
     } catch (error) {
       axeSummary = { error: truncate(error.message, 500), status: "error" };
     }

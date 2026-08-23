@@ -52,6 +52,10 @@ console.log(`Deterministic ${profile.id} evidence package ready at ${options.out
 
 async function buildAccessibilityEvidence(profileToUse, summary, axeResult, outputDirectory) {
   const checks = [];
+  const axeArtifacts = ["axe-results.json"];
+
+  if (await exists(path.join(outputDirectory, "axe-report.html"))) axeArtifacts.push("axe-report.html");
+
   const httpStatus = summary.page.httpStatus;
   const normalizedTitle = summary.page.title?.trim() ?? "";
   const normalizedLanguage = summary.page.language?.trim() ?? "";
@@ -96,7 +100,7 @@ async function buildAccessibilityEvidence(profileToUse, summary, axeResult, outp
       status: axeResult.violations.length === 0 ? "pass" : "fail",
       method: "axe",
       evidence: { incomplete: axeResult.incomplete.length, passes: axeResult.passes, violations: axeResult.violations.length },
-      artifacts: ["axe-results.json"]
+      artifacts: axeArtifacts
     });
 
     for (const violation of axeResult.violations) {
@@ -106,7 +110,7 @@ async function buildAccessibilityEvidence(profileToUse, summary, axeResult, outp
         status: "fail",
         method: "axe",
         evidence: { affectedNodes: violation.nodes.length, description: violation.description, helpUrl: violation.helpUrl, impact: violation.impact, ruleId: violation.id, tags: violation.tags },
-        artifacts: ["axe-results.json"]
+        artifacts: axeArtifacts
       });
     }
   } else {
@@ -143,6 +147,7 @@ async function buildAccessibilityEvidence(profileToUse, summary, axeResult, outp
     ["summary.json", "Low-level browser and collector summary"],
     ["page.png", "Full-page rendered screenshot"],
     ["axe-results.json", "Reduced axe rule evidence"],
+    ["axe-report.html", "Human-readable axe report with bounded element screenshots"],
     ["lighthouse-report.json", "Machine-readable Lighthouse report"],
     ["lighthouse-report.html", "Human-readable Lighthouse report"],
     ["browser-errors.json", "Opt-in truncated browser error details"]
