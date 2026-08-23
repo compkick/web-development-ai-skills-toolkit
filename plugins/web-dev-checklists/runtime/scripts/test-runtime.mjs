@@ -1,15 +1,16 @@
 import { spawn } from "node:child_process";
-import { access, mkdtemp, readFile, rm, stat } from "node:fs/promises";
+import { access, mkdtemp, readFile, readdir, rm, stat } from "node:fs/promises";
 import http from "node:http";
 import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
+import { DEFAULT_EVIDENCE_ROOT_DIRECTORY, RAW_AUDIT_OUTPUT_GROUP } from "../config/runtime-config.mjs";
 
 const scriptsDirectory = path.dirname(fileURLToPath(import.meta.url));
 const auditScript = path.join(scriptsDirectory, "audit.mjs");
 const testDirectory = await mkdtemp(path.join(os.tmpdir(), "web-dev-checklists-runtime-test-"));
-const outputDirectory = path.join(testDirectory, "output");
+let outputDirectory;
 const detailedOutputDirectory = path.join(testDirectory, "output-with-error-details");
 const server = http.createServer((request, response) => {
   response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
@@ -24,7 +25,8 @@ try {
 
   const address = server.address();
   const url = `http://127.0.0.1:${address.port}/`;
-  await run(process.execPath, [auditScript, "--url", url, "--output", outputDirectory]);
+  await run(process.execPath, [auditScript, "--url", url], testDirectory);
+  outputDirectory = await findSingleDefaultOutputDirectory(testDirectory, RAW_AUDIT_OUTPUT_GROUP);
   const summary = JSON.parse(await readFile(path.join(outputDirectory, "summary.json"), "utf8"));
 
   if (summary.browser.sandboxed !== true || summary.page.httpStatus !== 200 || summary.page.browserErrors.consoleErrorCount < 1 || summary.page.browserErrors.pageErrorCount < 1 || summary.page.browserErrors.detailsFile !== null || summary.axe.status !== "completed" || summary.axe.violations < 1 || summary.lighthouse.status !== "completed" || typeof summary.lighthouse.scores.performance !== "number") {
@@ -65,12 +67,27 @@ try {
   await rm(testDirectory, { recursive: true, force: true });
 }
 
-function run(command, argumentsToRun) {
+function run(command, argumentsToRun, workingDirectory = process.cwd()) {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, argumentsToRun, { env: process.env, stdio: "inherit" });
+    const child = spawn(command, argumentsToRun, { cwd: workingDirectory, env: process.env, stdio: "inherit" });
     child.once("error", reject);
     child.once("exit", (code) => code === 0 ? resolve() : reject(new Error(`Audit command exited with code ${code}.`)));
   });
+}
+
+async function findSingleDefaultOutputDirectory(workingDirectory, outputGroup) {
+  const outputGroupDirectory = path.join(workingDirectory, DEFAULT_EVIDENCE_ROOT_DIRECTORY, outputGroup);
+  const targetEntries = (await readdir(outputGroupDirectory, { withFileTypes: true })).filter((entry) => entry.isDirectory());
+
+  if (targetEntries.length !== 1) throw new Error(`Expected one default target directory under ${outputGroupDirectory}, found ${targetEntries.length}.`);
+  if (!/^127\.0\.0\.1-\d+$/.test(targetEntries[0].name)) throw new Error(`Default target directory does not contain the fixture host and port: ${targetEntries[0].name}`);
+
+  const targetDirectory = path.join(outputGroupDirectory, targetEntries[0].name);
+  const runDirectories = (await readdir(targetDirectory, { withFileTypes: true })).filter((entry) => entry.isDirectory());
+
+  if (runDirectories.length !== 1) throw new Error(`Expected one default run directory under ${targetDirectory}, found ${runDirectories.length}.`);
+  if (!/^\d{8}-\d{6}-\d{3}Z$/.test(runDirectories[0].name)) throw new Error(`Default run directory has an invalid timestamp: ${runDirectories[0].name}`);
+  return path.join(targetDirectory, runDirectories[0].name);
 }
 
 async function exists(filePath) {

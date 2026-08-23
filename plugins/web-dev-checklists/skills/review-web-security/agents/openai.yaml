@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Web Security"
+  short_description: "Review website security with bounded evidence"
+  default_prompt: "Use $review-web-security to review this website and prioritize its security findings."

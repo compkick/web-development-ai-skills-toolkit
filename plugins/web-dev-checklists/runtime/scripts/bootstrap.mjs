@@ -2,7 +2,7 @@ import { access, copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { spawnSync } from "node:child_process";
-import { getRuntimeLocation, runtimeSourceDirectory } from "../lib/runtime-location.mjs";
+import { getRuntimeLocation, runtimeSourceDirectory } from "../config/runtime-config.mjs";
 
 const skipBrowserDownload = parseArguments(process.argv.slice(2));
 requireSupportedNode();
@@ -36,7 +36,7 @@ if (!skipBrowserDownload) {
 }
 
 console.log(`Website audit runtime is ready at ${runtimeDirectory}`);
-console.log("Run an audit with `node runtime/scripts/audit.mjs --url <https://site.example> --output <directory>`.");
+console.log("Run an audit with `node runtime/scripts/audit.mjs --url <https://site.example>`. Add `--output <directory>` only to override the default output location.");
 
 function parseArguments(argumentsToParse) {
   if (argumentsToParse.length === 0) {

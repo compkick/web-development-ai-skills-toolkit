@@ -63,6 +63,7 @@ Human-facing documentation lives in the flat `docs/` directory and uses lowercas
 Phase 4A established the plugin manifest, repository-local marketplace entry, shared review contract, generated-reference checks, and plugin-owned website audit runtime. Phase 4B is adding the individual review skills:
 
 - [`review-web-accessibility`](plugins/web-dev-checklists/skills/review-web-accessibility/SKILL.md) — produce an evidence-backed accessibility review that separates automated, source-based, interactive, assistive-technology, and untested results.
+- [`review-web-security`](plugins/web-dev-checklists/skills/review-web-security/SKILL.md) — combine bounded public checks, source and configuration evidence, approved authenticated testing, and operational evidence without claiming a penetration test.
 
 ## Agent website audit runtime
 
@@ -74,29 +75,57 @@ From the repository root, bootstrap the runtime once:
 npm run runtime:bootstrap
 ```
 
-Then run an audit into a new or empty output directory:
+The runtime has two entry points. Most checklist reviews should use `review:website`; `runtime:audit` is the lower-level collector used underneath it. Runtime cache locations, the `WEB_DEV_CHECKLISTS_CACHE` override, and the default `.output` evidence location are centralized in [runtime configuration](plugins/web-dev-checklists/runtime/config/runtime-config.mjs).
+
+### Low-level raw audit
+
+Use `runtime:audit` for runtime troubleshooting, profile development, or an ad hoc collection of raw browser, axe, Lighthouse, screenshot, and console-error evidence:
 
 ```bash
-npm run runtime:audit -- --url https://site.example --output ./website-audit
+npm run runtime:audit -- --url https://site.example
 ```
 
-See [website audit runtime guidance](plugins/web-dev-checklists/shared/website-audit-runtime.md) for permissions, optional Chromium installation, outputs, and limitations.
+This command writes to `.output/runtime-audit/<host>/<run-id>/` by default. Pass `--output <new-or-empty-directory>` to override the location. It does not apply a checklist profile and does not create normalized `evidence.json` or `coverage.json` files. Its output includes `summary.json`, `page.png`, reduced axe results, and Lighthouse JSON and HTML reports. Collector flags can add public security observations or skip evidence that is not needed.
 
-Run a deterministic skill evidence profile:
+### Deterministic checklist evidence
+
+Use `review:website` for normal human or agent checklist work. It runs the appropriate low-level collectors, normalizes their results, and maps the evidence to the selected canonical checklist:
+
+#### Accessibility checklist runner
 
 ```bash
 npm run review:website -- --profile review-web-accessibility --url https://site.example
 ```
 
-The profile creates a timestamped `.output/<profile>/<host>/<run-id>/` directory by default. This repository ignores `/.output/` because screenshots and reports may be large or sensitive. Pass `--output <new-or-empty-directory>` to override the location.
+This profile collects a rendered screenshot, page title and language, heading and landmark counts, browser-error counts, reduced axe results, and Lighthouse reports. It maps the evidence to the [web accessibility review checklist](docs/web-accessibility-review-checklist.md). Keyboard, zoom, reflow, content quality, important workflows, and assistive-technology testing remain manual.
 
-The profile produces normalized `evidence.json` and checklist `coverage.json` files alongside the raw browser, axe, screenshot, and Lighthouse artifacts. It identifies manual and partially automated checklist coverage instead of treating automated evidence as a complete skill result.
+#### Security checklist runner
+
+```bash
+npm run review:website -- --profile review-web-security --url https://site.example
+```
+
+This profile collects a rendered screenshot, browser-error counts, HTTPS and certificate evidence, negotiated TLS and application protocols, a bounded same-host HTTP redirect check, insecure-resource observations, selected security headers, public-cookie attributes, CORS headers, software-disclosure headers, and `security.txt` evidence. It maps the evidence to the [web security review checklist](docs/web-security-review-checklist.md). It skips axe and Lighthouse and does not enumerate endpoints, send attack payloads, sign in, submit forms, or replace source, authenticated, or operational review.
+
+#### Checklist runner output
+
+Each profile creates a timestamped `.output/<profile>/<host>/<run-id>/` directory by default. This repository ignores `/.output/` because screenshots and reports may be large or sensitive. Pass `--output <new-or-empty-directory>` to override the location.
+
+The profiles produce normalized `evidence.json` and checklist `coverage.json` files alongside their relevant raw artifacts. They identify manual and partially automated checklist coverage instead of treating automated evidence as a complete skill result.
+
+See [website audit runtime guidance](plugins/web-dev-checklists/shared/website-audit-runtime.md) for permissions, optional Chromium installation, collector flags, outputs, and limitations.
+
+### Test the checklist runners
 
 After bootstrapping the runtime, verify the deterministic profiles against their local pass and fail fixtures:
 
 ```bash
 npm run reviews:test
+npm run reviews:test-accessibility
+npm run reviews:test-security
 ```
+
+Use `reviews:test` to run every profile fixture, or use a profile-specific command while working on one review.
 
 ## Validate the repository
 

@@ -14,8 +14,8 @@ the authoritative plan when this file contains a newer decision.
 
 - Plan status: In progress
 - Current phase: Phase 4B
-- Next work item: Design and scaffold `review-web-security`
-- Last reviewed: 2026-08-20
+- Next work item: Design and scaffold `review-web-performance`
+- Last reviewed: 2026-08-22
 
 ## Guiding decisions
 
@@ -272,7 +272,7 @@ The runner makes the procedure, profile, schema, browser configuration, and chec
 Build the specialist skills before the cross-discipline audit skill:
 
 1. [x] `review-web-accessibility`
-2. [ ] `review-web-security`
+2. [x] `review-web-security`
 3. [ ] `review-web-performance`
 4. [ ] `review-technical-seo`
 5. [ ] `prepare-website-launch`

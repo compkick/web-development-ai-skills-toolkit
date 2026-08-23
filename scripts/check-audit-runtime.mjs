@@ -24,11 +24,12 @@ for (const [dependency, version] of Object.entries(packageJson.dependencies ?? {
 }
 
 const scripts = [
-  "lib/runtime-location.mjs",
+  "config/runtime-config.mjs",
   "scripts/audit.mjs",
   "scripts/bootstrap.mjs",
   "scripts/review.mjs",
   "scripts/test-review-runner.mjs",
+  "scripts/test-security-review-runner.mjs",
   "scripts/test-runtime.mjs",
   "scripts/worker.mjs"
 ];

@@ -22,6 +22,7 @@ let selectedBrowser;
 let pageResult;
 let axeSummary = { status: options.skipAccessibility ? "skipped" : "not-run" };
 let lighthouseSummary = { status: options.skipLighthouse ? "skipped" : "not-run" };
+let securitySummary = { status: options.collectSecurity ? "not-run" : "skipped" };
 
 try {
   ({ browser, selectedBrowser } = await launchBrowser(options.browser, options.allowNoSandbox));
@@ -29,6 +30,7 @@ try {
   const page = await context.newPage();
   const consoleErrors = [];
   const pageErrors = [];
+  const requestProtocolCounts = { http: 0, https: 0, other: 0 };
   let consoleErrorCount = 0;
   let pageErrorCount = 0;
 
@@ -47,6 +49,13 @@ try {
     if (options.includeErrorDetails && pageErrors.length < 20) {
       pageErrors.push(truncate(error.message, 500));
     }
+  });
+  page.on("request", (request) => {
+    const protocol = new URL(request.url()).protocol;
+
+    if (protocol === "http:") requestProtocolCounts.http += 1;
+    else if (protocol === "https:") requestProtocolCounts.https += 1;
+    else requestProtocolCounts.other += 1;
   });
 
   const response = await page.goto(options.url, { timeout: options.timeoutMs, waitUntil: "domcontentloaded" });
@@ -77,6 +86,16 @@ try {
 
   if (options.includeErrorDetails) {
     await writeJson(path.join(options.outputDirectory, "browser-errors.json"), { consoleErrors, pageErrors });
+  }
+
+  if (options.collectSecurity) {
+    try {
+      const securityResult = await collectSecurityEvidence({ context, page, requestProtocolCounts, requestedUrl: options.url, response, timeoutMs: options.timeoutMs });
+      await writeJson(path.join(options.outputDirectory, "security-results.json"), securityResult);
+      securitySummary = { status: "completed" };
+    } catch (error) {
+      securitySummary = { error: truncate(error.message, 500), status: "error" };
+    }
   }
 
   if (!options.skipAccessibility) {
@@ -111,6 +130,7 @@ const summary = {
   lighthouse: lighthouseSummary,
   page: pageResult,
   requestedUrl: options.url,
+  security: securitySummary,
   startedAt
 };
 
@@ -224,6 +244,231 @@ async function stopChrome(chrome) {
   }
 }
 
+async function collectSecurityEvidence({ context, page, requestProtocolCounts, requestedUrl, response, timeoutMs }) {
+  const finalUrl = new URL(page.url());
+  const responseHeaders = response ? await response.allHeaders() : {};
+  const responseHeaderEntries = response ? await response.headersArray() : [];
+  const securityDetails = response ? await response.securityDetails() : null;
+  const navigationProtocol = await page.evaluate(() => performance.getEntriesByType("navigation")[0]?.nextHopProtocol || null);
+  const documentSecurity = await page.evaluate(() => {
+    const insecureResourceCounts = {};
+    const resourceSelectors = [
+      ["audio", "src"],
+      ["embed", "src"],
+      ["iframe", "src"],
+      ["img", "src"],
+      ["link[rel~='stylesheet']", "href"],
+      ["link[rel~='preload']", "href"],
+      ["link[rel~='modulepreload']", "href"],
+      ["link[rel~='icon']", "href"],
+      ["object", "data"],
+      ["script", "src"],
+      ["source", "src"],
+      ["video", "src"]
+    ];
+
+    for (const [selector, attribute] of resourceSelectors) {
+      for (const element of document.querySelectorAll(`${selector}[${attribute}]`)) {
+        try {
+          if (new URL(element.getAttribute(attribute), document.baseURI).protocol === "http:") insecureResourceCounts[selector] = (insecureResourceCounts[selector] ?? 0) + 1;
+        } catch {
+          // Invalid URLs are outside this transport-only observation.
+        }
+      }
+    }
+
+    let insecureFormActionCount = 0;
+
+    for (const form of document.forms) {
+      try {
+        if (new URL(form.getAttribute("action") || document.URL, document.baseURI).protocol === "http:") insecureFormActionCount += 1;
+      } catch {
+        // Invalid form actions are outside this transport-only observation.
+      }
+    }
+
+    return {
+      formCount: document.forms.length,
+      insecureFormActionCount,
+      insecureResourceCounts,
+      passwordFieldCount: document.querySelectorAll("input[type='password']").length
+    };
+  });
+  const contextCookies = (await context.cookies(page.url())).map((cookie) => ({
+    domain: cookie.domain,
+    expires: cookie.expires,
+    httpOnly: cookie.httpOnly,
+    name: cookie.name,
+    path: cookie.path,
+    sameSite: cookie.sameSite,
+    secure: cookie.secure,
+    session: cookie.expires === -1
+  }));
+
+  return {
+    certificate: securityDetails ? {
+      issuer: securityDetails.issuer ?? null,
+      protocol: securityDetails.protocol ?? null,
+      subjectName: securityDetails.subjectName ?? null,
+      validFrom: toIsoDate(securityDetails.validFrom),
+      validTo: toIsoDate(securityDetails.validTo)
+    } : null,
+    cookies: {
+      accepted: contextCookies,
+      issued: responseHeaderEntries.filter((header) => header.name.toLowerCase() === "set-cookie").map((header) => summarizeSetCookie(header.value))
+    },
+    cors: pickHeaders(responseHeaders, ["access-control-allow-credentials", "access-control-allow-headers", "access-control-allow-methods", "access-control-allow-origin"]),
+    document: documentSecurity,
+    finalUrl: finalUrl.href,
+    headers: pickHeaders(responseHeaders, ["cache-control", "content-security-policy", "content-security-policy-report-only", "content-type", "permissions-policy", "referrer-policy", "server", "strict-transport-security", "x-aspnet-version", "x-content-type-options", "x-frame-options", "x-powered-by", "x-xss-protection"]),
+    httpRedirect: await probeHttpRedirect(requestedUrl, timeoutMs),
+    navigationProtocol,
+    requestProtocolCounts,
+    securityTxt: await probeSecurityTxt(finalUrl, timeoutMs)
+  };
+}
+
+async function probeHttpRedirect(requestedUrl, timeoutMs) {
+  const targetUrl = new URL(requestedUrl);
+
+  if (targetUrl.protocol !== "https:") return { attempted: false, reason: "The supplied URL is not HTTPS." };
+
+  const initialHttpUrl = new URL(targetUrl);
+  initialHttpUrl.protocol = "http:";
+  const seen = new Set();
+  const chain = [];
+  let currentUrl = initialHttpUrl;
+
+  try {
+    for (let redirectCount = 0; redirectCount <= 10; redirectCount += 1) {
+      const currentKey = currentUrl.href;
+
+      if (seen.has(currentKey)) return { attempted: true, chain, error: "Redirect loop detected." };
+      seen.add(currentKey);
+
+      const response = await fetch(currentUrl, { headers: { "user-agent": "Website-Readiness-Toolkit/0.1" }, redirect: "manual", signal: AbortSignal.timeout(timeoutMs) });
+      await response.body?.cancel();
+      const location = response.headers.get("location");
+      const entry = { host: currentUrl.host, protocol: currentUrl.protocol, status: response.status };
+
+      if (location) {
+        const nextUrl = new URL(location, currentUrl);
+        entry.locationHost = nextUrl.host;
+        entry.locationProtocol = nextUrl.protocol;
+        chain.push(entry);
+
+        if (nextUrl.hostname !== targetUrl.hostname) return { attempted: true, chain, error: "Redirect left the authorized hostname." };
+        currentUrl = nextUrl;
+        continue;
+      }
+
+      chain.push(entry);
+      return { attempted: true, chain, finalHost: currentUrl.host, finalProtocol: currentUrl.protocol, finalStatus: response.status };
+    }
+
+    return { attempted: true, chain, error: "More than 10 redirects were returned." };
+  } catch (error) {
+    return { attempted: true, chain, error: truncate(error.message, 300) };
+  }
+}
+
+async function probeSecurityTxt(finalUrl, timeoutMs) {
+  if (finalUrl.protocol !== "https:") {
+    return { found: false, reason: "security.txt is defined for an HTTPS origin.", transportSecure: false };
+  }
+
+  const securityTxtUrl = new URL("/.well-known/security.txt", finalUrl.origin);
+
+  try {
+    const result = await fetchLimitedText(securityTxtUrl, timeoutMs, 131072);
+
+    if (result.status !== 200) return { contentType: result.contentType, finalHost: result.finalUrl.host, finalStatus: result.status, found: false, transportSecure: true };
+
+    const fields = result.text.split(/\r?\n/).map((line) => line.match(/^([A-Za-z][A-Za-z0-9-]*):\s*(.+)$/)).filter(Boolean).map((match) => ({ name: match[1].toLowerCase(), value: match[2].trim() }));
+    const contactCount = fields.filter((field) => field.name === "contact").length;
+    const expiresField = fields.find((field) => field.name === "expires")?.value ?? null;
+    const expiresAt = expiresField && !Number.isNaN(Date.parse(expiresField)) ? new Date(expiresField).toISOString() : null;
+    const contentTypeValid = result.contentType.toLowerCase().startsWith("text/plain");
+    const current = expiresAt !== null && new Date(expiresAt).getTime() > Date.now();
+
+    return { contactCount, contentType: result.contentType, contentTypeValid, current, expiresAt, finalHost: result.finalUrl.host, finalStatus: result.status, found: true, transportSecure: true, valid: contactCount > 0 && contentTypeValid && current };
+  } catch (error) {
+    return { error: truncate(error.message, 300), found: false, transportSecure: true };
+  }
+}
+
+async function fetchLimitedText(initialUrl, timeoutMs, maximumBytes) {
+  let currentUrl = new URL(initialUrl);
+
+  for (let redirectCount = 0; redirectCount <= 5; redirectCount += 1) {
+    const response = await fetch(currentUrl, { headers: { accept: "text/plain", "user-agent": "Website-Readiness-Toolkit/0.1" }, redirect: "manual", signal: AbortSignal.timeout(timeoutMs) });
+    const location = response.headers.get("location");
+
+    if (location && response.status >= 300 && response.status < 400) {
+      await response.body?.cancel();
+      const nextUrl = new URL(location, currentUrl);
+
+      if (nextUrl.origin !== initialUrl.origin) throw new Error("security.txt redirected outside the authorized origin.");
+      currentUrl = nextUrl;
+      continue;
+    }
+
+    const contentType = response.headers.get("content-type") ?? "";
+    const contentLength = Number.parseInt(response.headers.get("content-length") ?? "0", 10);
+
+    if (contentLength > maximumBytes) {
+      await response.body?.cancel();
+      throw new Error(`security.txt exceeds ${maximumBytes} bytes.`);
+    }
+
+    if (!response.body) return { contentType, finalUrl: currentUrl, status: response.status, text: "" };
+
+    const reader = response.body.getReader();
+    const chunks = [];
+    let totalBytes = 0;
+
+    while (true) {
+      const { done, value } = await reader.read();
+
+      if (done) break;
+      totalBytes += value.byteLength;
+
+      if (totalBytes > maximumBytes) {
+        await reader.cancel();
+        throw new Error(`security.txt exceeds ${maximumBytes} bytes.`);
+      }
+
+      chunks.push(value);
+    }
+
+    return { contentType, finalUrl: currentUrl, status: response.status, text: Buffer.concat(chunks.map((chunk) => Buffer.from(chunk))).toString("utf8") };
+  }
+
+  throw new Error("security.txt returned more than 5 redirects.");
+}
+
+function pickHeaders(headers, names) {
+  return Object.fromEntries(names.filter((name) => headers[name] !== undefined).map((name) => [name, headers[name]]));
+}
+
+function summarizeSetCookie(value) {
+  const segments = value.split(";").map((segment) => segment.trim());
+  const name = segments.shift()?.split("=", 1)[0] || "unnamed";
+  const attributeNames = segments.map((segment) => segment.split("=", 1)[0].toLowerCase());
+  const sameSiteSegment = segments.find((segment) => segment.toLowerCase().startsWith("samesite="));
+
+  return {
+    httpOnly: attributeNames.includes("httponly"),
+    name,
+    sameSite: sameSiteSegment ? sameSiteSegment.slice(sameSiteSegment.indexOf("=") + 1) : null,
+    secure: attributeNames.includes("secure")
+  };
+}
+
+function toIsoDate(unixSeconds) {
+  return typeof unixSeconds === "number" && unixSeconds > 0 ? new Date(unixSeconds * 1000).toISOString() : null;
+}
+
 function summarizeAxe(result) {
   return {
     incomplete: result.incomplete.map(summarizeAxeRule),
@@ -253,6 +498,7 @@ function parseArguments(argumentsToParse) {
   const optionsToReturn = {
     allowNoSandbox: false,
     browser: "auto",
+    collectSecurity: false,
     includeErrorDetails: false,
     outputDirectory: null,
     skipAccessibility: false,
@@ -282,6 +528,11 @@ function parseArguments(argumentsToParse) {
 
     if (argument === "--skip-accessibility") {
       optionsToReturn.skipAccessibility = true;
+      continue;
+    }
+
+    if (argument === "--collect-security") {
+      optionsToReturn.collectSecurity = true;
       continue;
     }
 

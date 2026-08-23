@@ -3,9 +3,9 @@ import path from "node:path";
 import process from "node:process";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { DEFAULT_EVIDENCE_ROOT_DIRECTORY, getDefaultEvidenceOutputDirectory, runtimeSourceDirectory } from "../config/runtime-config.mjs";
 
 const scriptsDirectory = path.dirname(fileURLToPath(import.meta.url));
-const runtimeSourceDirectory = path.resolve(scriptsDirectory, "..");
 const auditScript = path.join(scriptsDirectory, "audit.mjs");
 
 if (process.argv.includes("--help") || process.argv.includes("-h")) {
@@ -21,6 +21,9 @@ if (options.browser !== "auto") auditArguments.push("--browser", options.browser
 if (options.timeoutMs !== 45000) auditArguments.push("--timeout-ms", String(options.timeoutMs));
 if (options.allowNoSandbox) auditArguments.push("--allow-no-sandbox");
 if (options.includeErrorDetails) auditArguments.push("--include-error-details");
+if (profile.runtime?.collectSecurity) auditArguments.push("--collect-security");
+if (profile.runtime?.skipAccessibility) auditArguments.push("--skip-accessibility");
+if (profile.runtime?.skipLighthouse) auditArguments.push("--skip-lighthouse");
 
 const auditResult = spawnSync(process.execPath, [auditScript, ...auditArguments], { cwd: process.cwd(), env: process.env, stdio: "inherit" });
 
@@ -34,7 +37,8 @@ if (auditResult.status !== 0) {
 
 const summary = await readJson(path.join(options.outputDirectory, "summary.json"));
 const axeResult = summary.axe.status === "completed" ? await readJson(path.join(options.outputDirectory, "axe-results.json")) : null;
-const evidence = await buildEvidence(profile, summary, axeResult, options.outputDirectory);
+const securityResult = summary.security?.status === "completed" ? await readJson(path.join(options.outputDirectory, "security-results.json")) : null;
+const evidence = profile.id === "review-web-security" ? await buildSecurityEvidence(profile, summary, securityResult, options.outputDirectory) : await buildAccessibilityEvidence(profile, summary, axeResult, options.outputDirectory);
 const coverage = {
   schemaVersion: "1.0.0",
   profile: { id: profile.id, version: profile.version },
@@ -46,7 +50,7 @@ await writeJson(path.join(options.outputDirectory, "evidence.json"), evidence);
 await writeJson(path.join(options.outputDirectory, "coverage.json"), coverage);
 console.log(`Deterministic ${profile.id} evidence package ready at ${options.outputDirectory}`);
 
-async function buildEvidence(profileToUse, summary, axeResult, outputDirectory) {
+async function buildAccessibilityEvidence(profileToUse, summary, axeResult, outputDirectory) {
   const checks = [];
   const httpStatus = summary.page.httpStatus;
   const normalizedTitle = summary.page.title?.trim() ?? "";
@@ -172,6 +176,133 @@ async function buildEvidence(profileToUse, summary, axeResult, outputDirectory) 
   };
 }
 
+async function buildSecurityEvidence(profileToUse, summary, securityResult, outputDirectory) {
+  const checks = [];
+  const finalUrl = new URL(summary.page.finalUrl);
+  const headers = securityResult?.headers ?? {};
+  const addCheck = (id, title, status, method, evidence, artifacts = ["security-results.json"]) => checks.push({ id, title, status, method, evidence, artifacts });
+  const httpStatus = summary.page.httpStatus;
+
+  addCheck("page-http-status", "The target returned a successful HTTP response", typeof httpStatus !== "number" ? "warning" : httpStatus >= 200 && httpStatus < 400 ? "pass" : "fail", "browser", { finalUrl: summary.page.finalUrl, httpStatus }, ["summary.json"]);
+
+  if (!securityResult) {
+    addCheck("security-collection", "Public security evidence collection completed", "not-checked", "browser", { error: summary.security?.error ?? null, runtimeStatus: summary.security?.status ?? "missing" }, ["summary.json"]);
+  } else {
+    addCheck("security-collection", "Public security evidence collection completed", "pass", "browser", { runtimeStatus: "completed" });
+  }
+
+  const certificate = securityResult?.certificate ?? null;
+  addCheck("https-transport", "The rendered page uses HTTPS", finalUrl.protocol === "https:" ? "pass" : "fail", "browser", { certificateObserved: certificate !== null, finalProtocol: finalUrl.protocol });
+
+  if (certificate) {
+    const now = Date.now();
+    const validFrom = certificate.validFrom ? Date.parse(certificate.validFrom) : null;
+    const validTo = certificate.validTo ? Date.parse(certificate.validTo) : null;
+    const certificateDatesKnown = validFrom !== null && validTo !== null;
+    const certificateCurrent = certificateDatesKnown && validFrom <= now && validTo >= now;
+    addCheck("certificate-validity", "The browser accepted a currently valid certificate for the HTTPS response", !certificateDatesKnown ? "warning" : certificateCurrent ? "pass" : "fail", "browser", certificate);
+    addCheck("tls-negotiation", "Negotiated transport protocols", "informational", "browser", { applicationProtocol: securityResult?.navigationProtocol ?? null, tlsProtocol: certificate.protocol });
+  } else {
+    addCheck("certificate-validity", "The browser accepted a currently valid certificate for the HTTPS response", "not-checked", "browser", { reason: finalUrl.protocol === "https:" ? "Certificate details were unavailable." : "The rendered page did not use HTTPS." });
+    addCheck("tls-negotiation", "Negotiated transport protocols", "not-checked", "browser", { applicationProtocol: securityResult?.navigationProtocol ?? null, reason: "No HTTPS certificate details were available." });
+  }
+
+  const redirect = securityResult?.httpRedirect;
+  let redirectStatus = "not-checked";
+
+  if (redirect?.attempted) {
+    if (redirect.error?.toLowerCase().includes("loop") || redirect.error?.includes("More than 10")) redirectStatus = "fail";
+    else if (redirect.error) redirectStatus = "warning";
+    else redirectStatus = redirect.chain?.[0]?.status >= 300 && redirect.chain?.[0]?.status < 400 && redirect.finalProtocol === "https:" ? "pass" : "fail";
+  }
+
+  addCheck("http-to-https-redirect", "Plain HTTP redirects to HTTPS", redirectStatus, "http", redirect ?? { attempted: false });
+
+  const insecureResourceCounts = securityResult?.document?.insecureResourceCounts ?? {};
+  const insecureReferenceCount = Object.values(insecureResourceCounts).reduce((total, count) => total + count, 0) + (securityResult?.document?.insecureFormActionCount ?? 0);
+  const insecureRequestCount = finalUrl.protocol === "https:" ? securityResult?.requestProtocolCounts?.http ?? 0 : 0;
+  addCheck("insecure-page-resources", "Rendered resources and forms avoid insecure HTTP", !securityResult || finalUrl.protocol !== "https:" ? "not-checked" : insecureReferenceCount + insecureRequestCount === 0 ? "pass" : "fail", "browser", { insecureFormActionCount: securityResult?.document?.insecureFormActionCount ?? null, insecureRequestCount, insecureResourceCounts });
+
+  const hsts = headers["strict-transport-security"] ?? null;
+  const hstsMaxAge = hsts?.match(/(?:^|;)\s*max-age=(\d+)/i)?.[1] ?? null;
+  addCheck("strict-transport-security", "An active HSTS policy is present", !securityResult || finalUrl.protocol !== "https:" ? "not-checked" : hstsMaxAge && Number(hstsMaxAge) > 0 ? "pass" : "warning", "browser", { header: hsts, maxAge: hstsMaxAge === null ? null : Number(hstsMaxAge) });
+
+  const csp = headers["content-security-policy"] ?? null;
+  const cspConcerns = [];
+
+  if (csp?.includes("'unsafe-eval'")) cspConcerns.push("unsafe-eval");
+  if (csp?.includes("'unsafe-inline'") && !/nonce-|sha(256|384|512)-|'strict-dynamic'/.test(csp)) cspConcerns.push("unsafe-inline without a nonce, hash, or strict-dynamic");
+  addCheck("content-security-policy", "An enforced Content Security Policy is present", !securityResult ? "not-checked" : csp ? cspConcerns.length === 0 ? "pass" : "warning" : "warning", "browser", { concerns: cspConcerns, enforcedPolicy: csp, reportOnlyPolicy: headers["content-security-policy-report-only"] ?? null });
+
+  const frameAncestors = csp?.match(/(?:^|;)\s*frame-ancestors\s+([^;]+)/i)?.[1]?.trim() ?? null;
+  const xFrameOptions = headers["x-frame-options"] ?? null;
+  const framingRestricted = frameAncestors !== null && frameAncestors !== "*" || /^(DENY|SAMEORIGIN)$/i.test(xFrameOptions ?? "");
+  addCheck("framing-protection", "Responses restrict framing", !securityResult ? "not-checked" : framingRestricted ? "pass" : "warning", "browser", { frameAncestors, xFrameOptions });
+
+  const contentTypeOptions = headers["x-content-type-options"] ?? null;
+  addCheck("content-type-protection", "Responses prevent content-type sniffing", !securityResult ? "not-checked" : contentTypeOptions?.toLowerCase() === "nosniff" ? "pass" : "warning", "browser", { xContentTypeOptions: contentTypeOptions });
+
+  const referrerPolicy = headers["referrer-policy"] ?? null;
+  addCheck("referrer-policy", "Referrer policy observation", !securityResult ? "not-checked" : referrerPolicy === null ? "informational" : referrerPolicy.toLowerCase().includes("unsafe-url") ? "warning" : "pass", "browser", { referrerPolicy });
+
+  const issuedCookies = securityResult?.cookies?.issued ?? [];
+  const cookieConcerns = issuedCookies.flatMap((cookie) => {
+    const concerns = [];
+
+    if (finalUrl.protocol === "https:" && !cookie.secure) concerns.push(`${cookie.name}: missing Secure`);
+    if (cookie.sameSite?.toLowerCase() === "none" && !cookie.secure) concerns.push(`${cookie.name}: SameSite=None without Secure`);
+    return concerns;
+  });
+  addCheck("public-cookie-flags", "Public cookie attribute observations", !securityResult ? "not-checked" : cookieConcerns.length > 0 ? "warning" : issuedCookies.length > 0 ? "pass" : "informational", "browser", { accepted: securityResult?.cookies?.accepted ?? [], concerns: cookieConcerns, issued: issuedCookies });
+
+  const cors = securityResult?.cors ?? {};
+  const corsInvalid = cors["access-control-allow-origin"] === "*" && cors["access-control-allow-credentials"]?.toLowerCase() === "true";
+  addCheck("cors-policy", "CORS response-header observation", !securityResult ? "not-checked" : corsInvalid ? "warning" : "informational", "browser", { headers: cors, invalidWildcardWithCredentials: corsInvalid });
+
+  const disclosureHeaders = Object.fromEntries(["server", "x-powered-by", "x-aspnet-version", "x-xss-protection"].filter((name) => headers[name] !== undefined).map((name) => [name, headers[name]]));
+  const disclosureConcerns = [];
+
+  if (headers["x-powered-by"]) disclosureConcerns.push("x-powered-by is exposed");
+  if (headers["x-aspnet-version"]) disclosureConcerns.push("x-aspnet-version is exposed");
+  if (/\d/.test(headers.server ?? "")) disclosureConcerns.push("server appears to expose a version");
+  if (headers["x-xss-protection"] && headers["x-xss-protection"] !== "0") disclosureConcerns.push("deprecated x-xss-protection is enabled");
+  addCheck("response-disclosure", "Response disclosure observation", !securityResult ? "not-checked" : disclosureConcerns.length > 0 ? "warning" : "pass", "browser", { concerns: disclosureConcerns, headers: disclosureHeaders });
+
+  const securityTxt = securityResult?.securityTxt ?? null;
+  addCheck("security-txt", "Vulnerability disclosure file observation", !securityResult ? "not-checked" : securityTxt?.valid ? "pass" : securityTxt?.found ? "warning" : "informational", "http", securityTxt ?? { found: false });
+
+  const browserErrorCount = summary.page.browserErrors.consoleErrorCount + summary.page.browserErrors.pageErrorCount;
+  addCheck("browser-errors", "Browser console and page error counts", browserErrorCount === 0 ? "pass" : "warning", "browser", { consoleErrorCount: summary.page.browserErrors.consoleErrorCount, detailsIncluded: summary.page.browserErrors.detailsFile !== null, pageErrorCount: summary.page.browserErrors.pageErrorCount }, summary.page.browserErrors.detailsFile ? ["summary.json", summary.page.browserErrors.detailsFile] : ["summary.json"]);
+
+  const artifactDefinitions = [
+    ["summary.json", "Low-level browser and collector summary"],
+    ["page.png", "Full-page rendered screenshot"],
+    ["security-results.json", "Reduced public transport, header, cookie, and disclosure evidence"],
+    ["browser-errors.json", "Opt-in truncated browser error details"]
+  ];
+  const artifacts = [];
+
+  for (const [artifactPath, purpose] of artifactDefinitions) {
+    if (await exists(path.join(outputDirectory, artifactPath))) artifacts.push({ path: artifactPath, purpose });
+  }
+
+  return {
+    schemaVersion: "1.0.0",
+    profile: { id: profileToUse.id, standard: profileToUse.standard, version: profileToUse.version },
+    target: { finalUrl: summary.page.finalUrl, requestedUrl: summary.requestedUrl },
+    run: { browser: summary.browser, completedAt: summary.completedAt, startedAt: summary.startedAt },
+    checks,
+    artifacts,
+    limitations: [
+      "This package covers one public URL and does not prove whole-site or whole-application security.",
+      "No injection payloads, authentication attempts, endpoint enumeration, port scans, form submissions, or vulnerability exploitation were performed.",
+      "The runner records the negotiated TLS protocol but does not prove that every deprecated protocol or cipher is disabled.",
+      "Headers, cookies, and browser observations require application context and do not prove that source code, authorization, authenticated workflows, or operational controls are secure.",
+      "The HTTP redirect and security.txt probes are limited to the authorized hostname or origin."
+    ]
+  };
+}
+
 function parseArguments(argumentsToParse) {
   const optionsToReturn = { allowNoSandbox: false, browser: "auto", includeErrorDetails: false, outputDirectory: null, profile: null, timeoutMs: 45000, url: null };
 
@@ -201,17 +332,10 @@ function parseArguments(argumentsToParse) {
   if (!Number.isInteger(optionsToReturn.timeoutMs) || optionsToReturn.timeoutMs < 1000 || optionsToReturn.timeoutMs > 120000) throw new Error("--timeout-ms must be an integer from 1000 through 120000.");
 
   if (!optionsToReturn.outputDirectory) {
-    optionsToReturn.outputDirectory = getDefaultOutputDirectory(optionsToReturn.profile, new URL(optionsToReturn.url));
+    optionsToReturn.outputDirectory = getDefaultEvidenceOutputDirectory(optionsToReturn.profile, new URL(optionsToReturn.url));
   }
 
   return optionsToReturn;
-}
-
-function getDefaultOutputDirectory(profileId, targetUrl) {
-  const targetName = `${targetUrl.hostname}${targetUrl.port ? `-${targetUrl.port}` : ""}`.replace(/[^a-zA-Z0-9.-]+/g, "-").replace(/^-+|-+$/g, "") || "site";
-  const isoTimestamp = new Date().toISOString();
-  const runId = `${isoTimestamp.slice(0, 10).replaceAll("-", "")}-${isoTimestamp.slice(11, 19).replaceAll(":", "")}-${isoTimestamp.slice(20, 23)}Z`;
-  return path.resolve(".output", profileId, targetName, runId);
 }
 
 async function loadProfile(profileId) {
@@ -247,7 +371,7 @@ function printUsage() {
   console.log("Usage: node runtime/scripts/review.mjs --profile <profile-id> --url <https://site.example> [options]");
   console.log("");
   console.log("Options:");
-  console.log("  --output <directory>                    Override the default .output/<profile>/<host>/<run-id> directory");
+  console.log(`  --output <directory>                    Override the default ${DEFAULT_EVIDENCE_ROOT_DIRECTORY}/<profile>/<host>/<run-id> directory`);
   console.log("  --browser <auto|chrome|edge|chromium>  Browser selection; default: auto");
   console.log("  --allow-no-sandbox                       Allow an unsandboxed root run in an isolated environment");
   console.log("  --include-error-details                  Write truncated console/page error details");

@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
+import { DEFAULT_EVIDENCE_ROOT_DIRECTORY } from "../config/runtime-config.mjs";
 
 const scriptsDirectory = path.dirname(fileURLToPath(import.meta.url));
 const runtimeDirectory = path.resolve(scriptsDirectory, "..");
@@ -115,7 +116,7 @@ function run(command, argumentsToRun, workingDirectory = process.cwd()) {
 }
 
 async function findSingleDefaultOutputDirectory(workingDirectory, profileId) {
-  const profileDirectory = path.join(workingDirectory, ".output", profileId);
+  const profileDirectory = path.join(workingDirectory, DEFAULT_EVIDENCE_ROOT_DIRECTORY, profileId);
   const targetEntries = (await readdir(profileDirectory, { withFileTypes: true })).filter((entry) => entry.isDirectory());
 
   if (targetEntries.length !== 1) throw new Error(`Expected one default target directory under ${profileDirectory}, found ${targetEntries.length}.`);
