@@ -52,7 +52,7 @@
           "id": { "type": "string" },
           "title": { "type": "string" },
           "status": { "enum": ["pass", "fail", "warning", "informational", "not-checked"] },
-          "method": { "enum": ["browser", "http", "axe", "lighthouse"] },
+          "method": { "enum": ["browser", "http", "tls", "axe", "lighthouse"] },
           "evidence": { "type": "object" },
           "artifacts": { "type": "array", "items": { "type": "string" } }
         },

@@ -47,13 +47,13 @@ Use the least intrusive combination that answers the request:
 
 Put runtime artifacts in a task-specific temporary directory outside the target repository unless the user requests another location. Report the artifact path and treat screenshots, URLs, headers, cookie names, and optional browser errors as potentially sensitive.
 
-The security profile loads the supplied page, requests its subresources, makes a same-host plain-HTTP redirect probe when the supplied URL is HTTPS, and requests `/.well-known/security.txt` on the same HTTPS origin. It does not submit forms, enumerate endpoints, send injection payloads, scan ports, attempt authentication, or exploit vulnerabilities.
+The security profile loads the supplied page, requests its subresources, makes five bounded TLS handshakes to the rendered HTTPS hostname and port, makes a same-host plain-HTTP redirect probe when the supplied URL is HTTPS, and requests `/.well-known/security.txt` on the same HTTPS origin. The TLS handshakes perform one normal negotiation and one attempt each for TLS 1.3, TLS 1.2, TLS 1.1, and TLS 1.0; they do not enumerate cipher suites or send an HTTP request. The profile does not submit forms, enumerate endpoints, send injection payloads, scan ports, attempt authentication, or exploit vulnerabilities.
 
 ## Run the review
 
 Assess every applicable checklist outcome against recorded evidence. Use `Not checked` when evidence is unavailable and `Not applicable` only when the condition is genuinely outside scope. State whether each result came from browser automation, source inspection, interactive testing, operational evidence, or supplied evidence.
 
-Treat header and cookie results as configuration observations that need application context. A Content Security Policy does not prove that cross-site scripting is impossible. One negotiated TLS connection does not prove that all deprecated protocols and ciphers are disabled. A clean dependency scan does not prove the application is secure.
+Treat header, cookie, and TLS results as bounded configuration observations that need application context. A Content Security Policy does not prove that cross-site scripting is impossible. The TLS baseline checks selected protocol versions and the normally negotiated cipher and key exchange; it does not prove that every accepted cipher suite is strong. A clean dependency scan does not prove the application is secure.
 
 Review automated warnings manually before calling them vulnerabilities. Group symptoms with the same root cause, prioritize exploitable or high-impact issues, and recommend the smallest practical remediation. Map findings to OWASP Top 10 or ASVS only when the mapping has been verified and adds value.
 

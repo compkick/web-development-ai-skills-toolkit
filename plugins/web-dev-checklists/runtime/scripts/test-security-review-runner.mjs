@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
+import { evaluateNegotiatedTls } from "../collectors/tls-baseline.mjs";
 
 const scriptsDirectory = path.dirname(fileURLToPath(import.meta.url));
 const runtimeDirectory = path.resolve(scriptsDirectory, "..");
@@ -44,6 +45,8 @@ const server = http.createServer((request, response) => {
   response.end("Not found");
 });
 
+assertTlsEvaluation();
+
 try {
   await new Promise((resolve, reject) => {
     server.once("error", reject);
@@ -77,12 +80,17 @@ try {
   assertCheckTitle(failEvidence, "http-to-https-redirect", "Site redirects plain HTTP to HTTPS");
   assertCheckTitle(failEvidence, "strict-transport-security", "Site presents an active HSTS policy");
   assertCheckTitle(failEvidence, "content-security-policy", "Site includes an enforced Content Security Policy");
+  assertCheckTitle(failEvidence, "tls-cipher-suite", "Site negotiates a strong cipher suite");
+  assertCheckTitle(failEvidence, "tls-forward-secrecy", "Site uses a forward-secret key exchange");
+  assertCheckTitle(failEvidence, "tls-key-exchange-group", "Site negotiates an approved key-exchange group");
+  assertCheckTitle(failEvidence, "tls-supported-versions", "Site supports TLS 1.3 or TLS 1.2");
+  assertCheckTitle(failEvidence, "tls-deprecated-versions", "Site rejects TLS 1.0 and TLS 1.1");
 
   for (const check of [...passEvidence.checks, ...failEvidence.checks]) {
     if (!/^(Site|Runner) /.test(check.title)) throw new Error(`Security check title is not declarative: ${check.title}`);
   }
 
-  if (!passReport.includes("Web security review evidence") || !failReport.includes("Checks requiring attention") || !failReport.includes("Content Security Policy") || !failReport.includes("Canonical checklist coverage") || /<script(?:\s|>)/i.test(`${passReport}${failReport}`)) {
+  if (!passReport.includes("Web security review evidence") || !failReport.includes("Checks requiring attention") || !failReport.includes("Content Security Policy") || !failReport.includes("Canonical checklist coverage") || !failReport.includes("Partially automated") || /<script(?:\s|>)/i.test(`${passReport}${failReport}`)) {
     throw new Error("Security review runner did not produce the expected safe human-readable report.");
   }
 
@@ -90,12 +98,16 @@ try {
     throw new Error("Security evidence does not reference the human-readable report.");
   }
 
-  if (coverage.schemaVersion !== "1.0.0" || coverage.profile.id !== "review-web-security" || coverage.items.length !== 36) {
+  if (coverage.schemaVersion !== "1.0.0" || coverage.profile.id !== "review-web-security" || coverage.profile.version !== "1.1.0" || coverage.items.length !== 40) {
     throw new Error("Coverage output does not contain the complete security profile.");
   }
 
   if (!coverage.items.some((item) => item.automation === "partial") || !coverage.items.some((item) => item.automation === "manual")) {
     throw new Error("Coverage output must distinguish partial and manual review requirements.");
+  }
+
+  for (const checkId of ["security-tls-supported-versions", "security-tls-deprecated-versions"]) {
+    if (coverage.items.find((item) => item.id === checkId)?.automation !== "automated") throw new Error(`${checkId} must be classified as automated coverage.`);
   }
 
   for (const outputDirectory of [passOutputDirectory, failOutputDirectory]) {
@@ -126,6 +138,16 @@ function assertCheckTitle(evidence, checkId, expectedTitle) {
   const check = evidence.checks.find((candidate) => candidate.id === checkId);
 
   if (!check || check.title !== expectedTitle) throw new Error(`Expected ${checkId} title to be "${expectedTitle}", found "${check?.title ?? "missing"}".`);
+}
+
+function assertTlsEvaluation() {
+  const tls13 = evaluateNegotiatedTls({ cipher: { name: "TLS_AES_128_GCM_SHA256", standardName: "TLS_AES_128_GCM_SHA256" }, ephemeralKey: { name: "X25519", size: 253, type: "ECDH" }, outcome: "accepted", protocol: "TLSv1.3" });
+  const tls12 = evaluateNegotiatedTls({ cipher: { name: "ECDHE-RSA-AES256-GCM-SHA384", standardName: "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384" }, ephemeralKey: { name: "prime256v1", size: 256, type: "ECDH" }, outcome: "accepted", protocol: "TLSv1.2" });
+  const weakTls12 = evaluateNegotiatedTls({ cipher: { name: "AES128-SHA", standardName: "TLS_RSA_WITH_AES_128_CBC_SHA" }, ephemeralKey: null, outcome: "accepted", protocol: "TLSv1.2" });
+
+  if (!tls13.strongCipher || !tls13.forwardSecret || !tls13.approvedKeyExchangeGroup || !tls12.strongCipher || !tls12.forwardSecret || !tls12.approvedKeyExchangeGroup || weakTls12.strongCipher || weakTls12.forwardSecret || weakTls12.approvedKeyExchangeGroup !== null) {
+    throw new Error("TLS baseline evaluation did not distinguish strong, forward-secret negotiations from a weak static-RSA negotiation.");
+  }
 }
 
 function validateEvidenceShape(evidence) {

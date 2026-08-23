@@ -30,7 +30,11 @@ const knownEvidenceCheckIds = new Set([
   "security-collection",
   "security-txt",
   "strict-transport-security",
-  "tls-negotiation"
+  "tls-cipher-suite",
+  "tls-deprecated-versions",
+  "tls-forward-secrecy",
+  "tls-key-exchange-group",
+  "tls-supported-versions"
 ]);
 const profiles = ["review-web-accessibility", "review-web-security"];
 

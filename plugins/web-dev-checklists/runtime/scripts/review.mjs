@@ -216,11 +216,25 @@ async function buildSecurityEvidence(profileToUse, summary, securityResult, outp
     const certificateDatesKnown = validFrom !== null && validTo !== null;
     const certificateCurrent = certificateDatesKnown && validFrom <= now && validTo >= now;
     addCheck("certificate-validity", "Site presents a currently valid HTTPS certificate", !certificateDatesKnown ? "warning" : certificateCurrent ? "pass" : "fail", "browser", certificate);
-    addCheck("tls-negotiation", "Site negotiates HTTP and TLS protocols", "informational", "browser", { applicationProtocol: securityResult?.navigationProtocol ?? null, tlsProtocol: certificate.protocol });
   } else {
     addCheck("certificate-validity", "Site presents a currently valid HTTPS certificate", "not-checked", "browser", { reason: finalUrl.protocol === "https:" ? "Certificate details were unavailable." : "The rendered page did not use HTTPS." });
-    addCheck("tls-negotiation", "Site negotiates HTTP and TLS protocols", "not-checked", "browser", { applicationProtocol: securityResult?.navigationProtocol ?? null, reason: "No HTTPS certificate details were available." });
   }
+
+  const tlsBaseline = securityResult?.tlsBaseline ?? null;
+  const negotiatedTls = tlsBaseline?.negotiated ?? null;
+  const negotiatedTlsAccepted = negotiatedTls?.outcome === "accepted";
+  const modernVersions = [tlsBaseline?.versions?.tls13, tlsBaseline?.versions?.tls12];
+  const deprecatedVersions = [tlsBaseline?.versions?.tls11, tlsBaseline?.versions?.tls10];
+  const supportsModernTls = modernVersions.some((result) => result?.outcome === "accepted");
+  const modernTlsRejected = modernVersions.every((result) => result?.outcome === "rejected");
+  const acceptsDeprecatedTls = deprecatedVersions.some((result) => result?.outcome === "accepted");
+  const rejectsDeprecatedTls = deprecatedVersions.every((result) => result?.outcome === "rejected");
+
+  addCheck("tls-cipher-suite", "Site negotiates a strong cipher suite", !tlsBaseline?.attempted || !negotiatedTlsAccepted ? "not-checked" : negotiatedTls.strongCipher ? "pass" : "fail", "tls", { cipher: negotiatedTls?.cipher ?? null, protocol: negotiatedTls?.protocol ?? null });
+  addCheck("tls-forward-secrecy", "Site uses a forward-secret key exchange", !tlsBaseline?.attempted || !negotiatedTlsAccepted ? "not-checked" : negotiatedTls.forwardSecret ? "pass" : "fail", "tls", { cipher: negotiatedTls?.cipher ?? null, ephemeralKey: negotiatedTls?.ephemeralKey ?? null, protocol: negotiatedTls?.protocol ?? null });
+  addCheck("tls-key-exchange-group", "Site negotiates an approved key-exchange group", !tlsBaseline?.attempted || !negotiatedTlsAccepted || negotiatedTls.approvedKeyExchangeGroup === null ? "not-checked" : negotiatedTls.approvedKeyExchangeGroup ? "pass" : "warning", "tls", { ephemeralKey: negotiatedTls?.ephemeralKey ?? null });
+  addCheck("tls-supported-versions", "Site supports TLS 1.3 or TLS 1.2", !tlsBaseline?.attempted ? "not-checked" : supportsModernTls ? "pass" : modernTlsRejected ? "fail" : "not-checked", "tls", { tls12: tlsBaseline?.versions?.tls12 ?? null, tls13: tlsBaseline?.versions?.tls13 ?? null });
+  addCheck("tls-deprecated-versions", "Site rejects TLS 1.0 and TLS 1.1", !tlsBaseline?.attempted ? "not-checked" : acceptsDeprecatedTls ? "fail" : rejectsDeprecatedTls ? "pass" : "not-checked", "tls", { tls10: tlsBaseline?.versions?.tls10 ?? null, tls11: tlsBaseline?.versions?.tls11 ?? null });
 
   const redirect = securityResult?.httpRedirect;
   let redirectStatus = "not-checked";
@@ -311,7 +325,7 @@ async function buildSecurityEvidence(profileToUse, summary, securityResult, outp
     limitations: [
       "This package covers one public URL and does not prove whole-site or whole-application security.",
       "No injection payloads, authentication attempts, endpoint enumeration, port scans, form submissions, or vulnerability exploitation were performed.",
-      "The runner records the negotiated TLS protocol but does not prove that every deprecated protocol or cipher is disabled.",
+      "The runner performs bounded TLS version handshakes and evaluates the normally negotiated cipher and key exchange; it does not enumerate every accepted cipher suite or test server cipher preference.",
       "Headers, cookies, and browser observations require application context and do not prove that source code, authorization, authenticated workflows, or operational controls are secure.",
       "The HTTP redirect and security.txt probes are limited to the authorized hostname or origin."
     ]

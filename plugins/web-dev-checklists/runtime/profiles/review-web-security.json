@@ -1,6 +1,6 @@
 {
   "id": "review-web-security",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "checklistSource": "docs/web-security-review-checklist.md",
   "standard": "OWASP Top 10 and OWASP ASVS",
   "runtime": {
@@ -50,12 +50,44 @@
       "note": "The runner follows a bounded redirect chain on the authorized hostname; the reviewer confirms the final URL is canonical."
     },
     {
-      "id": "security-tls-options",
+      "id": "security-tls-cipher",
       "section": "Public website baseline",
-      "checklistItem": "Confirm production uses supported TLS protocols and cryptography and does not accept deprecated options.",
+      "checklistItem": "Confirm the site negotiates a strong cipher suite.",
       "automation": "partial",
-      "evidenceCheckIds": ["tls-negotiation"],
-      "note": "The runner records only the protocol negotiated for this request and does not enumerate every accepted protocol or cipher."
+      "evidenceCheckIds": ["tls-cipher-suite"],
+      "note": "The runner evaluates the normally negotiated cipher suite but does not enumerate every suite the server accepts."
+    },
+    {
+      "id": "security-tls-forward-secrecy",
+      "section": "Public website baseline",
+      "checklistItem": "Confirm the site uses a forward-secret key exchange.",
+      "automation": "partial",
+      "evidenceCheckIds": ["tls-forward-secrecy"],
+      "note": "The runner evaluates the negotiated connection; it does not test session resumption or every client configuration."
+    },
+    {
+      "id": "security-tls-key-exchange-group",
+      "section": "Public website baseline",
+      "checklistItem": "Confirm the site negotiates an approved key-exchange group.",
+      "automation": "partial",
+      "evidenceCheckIds": ["tls-key-exchange-group"],
+      "note": "The runner compares the negotiated group with its maintained baseline; project or regulatory policy still requires review."
+    },
+    {
+      "id": "security-tls-supported-versions",
+      "section": "Public website baseline",
+      "checklistItem": "Confirm the site supports TLS 1.3 or TLS 1.2.",
+      "automation": "automated",
+      "evidenceCheckIds": ["tls-supported-versions"],
+      "note": "The runner makes bounded TLS 1.3 and TLS 1.2 handshakes to the reviewed HTTPS hostname and port."
+    },
+    {
+      "id": "security-tls-deprecated-versions",
+      "section": "Public website baseline",
+      "checklistItem": "Confirm the site rejects TLS 1.0 and TLS 1.1.",
+      "automation": "automated",
+      "evidenceCheckIds": ["tls-deprecated-versions"],
+      "note": "The runner makes bounded TLS 1.0 and TLS 1.1 handshakes without sending an HTTP request."
     },
     {
       "id": "security-insecure-resources",
@@ -278,7 +310,7 @@
       "section": "Finish the review",
       "checklistItem": "Review automated findings manually before treating them as confirmed issues.",
       "automation": "partial",
-      "evidenceCheckIds": ["page-http-status", "security-collection", "https-transport", "certificate-validity", "tls-negotiation", "http-to-https-redirect", "insecure-page-resources", "strict-transport-security", "content-security-policy", "framing-protection", "content-type-protection", "referrer-policy", "public-cookie-flags", "cors-policy", "response-disclosure", "security-txt", "browser-errors"],
+      "evidenceCheckIds": ["page-http-status", "security-collection", "https-transport", "certificate-validity", "tls-cipher-suite", "tls-forward-secrecy", "tls-key-exchange-group", "tls-supported-versions", "tls-deprecated-versions", "http-to-https-redirect", "insecure-page-resources", "strict-transport-security", "content-security-policy", "framing-protection", "content-type-protection", "referrer-policy", "public-cookie-flags", "cors-policy", "response-disclosure", "security-txt", "browser-errors"],
       "note": "The evidence package supplies observations; a reviewer must confirm their context and impact."
     },
     {

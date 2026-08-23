@@ -124,9 +124,14 @@ function renderCoverage(coverage, counts) {
   const items = ["automated", "partial", "manual"].flatMap((type) => coverage.items.filter((item) => item.automation === type));
   return `<section>
   <h2>Canonical checklist coverage</h2>
-  <p class="note">${escapeHtml(counts.automated)} automated · ${escapeHtml(counts.partial)} partial · ${escapeHtml(counts.manual)} manual. Coverage describes how an item can be assessed; it is not the item's pass/fail result.</p>
-  ${items.map((item) => `<details class="coverage"><summary><span class="badge badge-${coverageBadge(item.automation)}">${escapeHtml(item.automation)}</span> ${escapeHtml(item.checklistItem)}</summary><p><strong>Section:</strong> ${escapeHtml(item.section)}</p><p>${escapeHtml(item.note)}</p></details>`).join("\n")}
+  <p class="note">${escapeHtml(counts.automated)} automated · ${escapeHtml(counts.partial)} partially automated · ${escapeHtml(counts.manual)} manual. Coverage describes how an item can be assessed; it is not the item's pass/fail result.</p>
+  ${items.map((item) => `<details class="coverage"><summary><span class="badge badge-${coverageBadge(item.automation)}">${escapeHtml(coverageLabel(item.automation))}</span> ${escapeHtml(item.checklistItem)}</summary><p><strong>Section:</strong> ${escapeHtml(item.section)}</p><p>${escapeHtml(item.note)}</p></details>`).join("\n")}
 </section>`;
+}
+
+function coverageLabel(automation) {
+  if (automation === "partial") return "Partially automated";
+  return automation.charAt(0).toUpperCase() + automation.slice(1);
 }
 
 function coverageBadge(automation) {

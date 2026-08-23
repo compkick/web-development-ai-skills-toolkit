@@ -18,7 +18,11 @@ Use the current OWASP Top 10 for awareness and a risk-appropriate version of OWA
 
 - [ ] Confirm the canonical site loads over HTTPS with a certificate that is trusted, valid for the hostname, and within its validity dates.
 - [ ] Confirm plain HTTP redirects to the canonical HTTPS URL without a downgrade or redirect loop.
-- [ ] Confirm production uses supported TLS protocols and cryptography and does not accept deprecated options.
+- [ ] Confirm the site negotiates a strong cipher suite.
+- [ ] Confirm the site uses a forward-secret key exchange.
+- [ ] Confirm the site negotiates an approved key-exchange group.
+- [ ] Confirm the site supports TLS 1.3 or TLS 1.2.
+- [ ] Confirm the site rejects TLS 1.0 and TLS 1.1.
 - [ ] Confirm pages, subresources, and form actions do not use insecure HTTP where HTTPS is required.
 - [ ] Confirm production HTTPS responses send an HSTS policy with the project-approved duration and domain scope.
 - [ ] Review the enforced Content Security Policy and record missing, invalid, or unnecessarily broad directives.
@@ -28,7 +32,7 @@ Use the current OWASP Top 10 for awareness and a risk-appropriate version of OWA
 - [ ] Confirm normal responses and approved error pages do not reveal stack traces, debug details, private data, or unnecessary software versions.
 - [ ] Recommended: publish a current `/.well-known/security.txt` file when the organization accepts vulnerability reports.
 
-Record HTTP/2 or HTTP/3 support when it is useful, but do not fail a security review solely because a site uses HTTP/1.1. Header checks and a Content Security Policy provide evidence, but they do not prove that the application is free of cross-site scripting or other injection vulnerabilities.
+Record HTTP/2 or HTTP/3 support when it is useful, but do not fail a security review solely because a site uses HTTP/1.1. The public runner performs bounded TLS version handshakes and reviews the normally negotiated cipher and key exchange; it does not enumerate every cipher suite or test server cipher preference. Header checks and a Content Security Policy provide evidence, but they do not prove that the application is free of cross-site scripting or other injection vulnerabilities.
 
 ## Source and configuration
 
@@ -71,7 +75,9 @@ Record HTTP/2 or HTTP/3 support when it is useful, but do not fail a security re
 - [OWASP HTTP Security Response Headers Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html)
 - [OWASP Cross Site Scripting Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html)
 - [OWASP Web Security Testing Guide](https://owasp.org/www-project-web-security-testing-guide/)
+- [OWASP Transport Layer Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Security_Cheat_Sheet.html)
 - [MDN Transport Layer Security](https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Transport_Layer_Security)
+- [RFC 9325 Recommendations for Secure Use of TLS](https://www.rfc-editor.org/rfc/rfc9325.html)
 - [RFC 9116 security.txt specification](https://www.rfc-editor.org/rfc/rfc9116.html)
 
 Last verified against official documentation: 2026-08-21. Current stable references at verification: OWASP Top 10:2025 and OWASP ASVS 5.0.0.

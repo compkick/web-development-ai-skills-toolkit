@@ -7,6 +7,7 @@ import path from "node:path";
 import process from "node:process";
 import lighthouse from "lighthouse";
 import { chromium } from "playwright";
+import { collectTlsBaseline } from "../collectors/tls-baseline.mjs";
 import { DEFAULT_AXE_ELEMENT_SCREENSHOT_LIMIT } from "../config/runtime-config.mjs";
 import { captureAxeElementScreenshots, writeAxeHtmlReport } from "../reporting/axe-report.mjs";
 
@@ -323,6 +324,11 @@ async function collectSecurityEvidence({ context, page, requestProtocolCounts, r
     secure: cookie.secure,
     session: cookie.expires === -1
   }));
+  const [httpRedirect, securityTxt, tlsBaseline] = await Promise.all([
+    probeHttpRedirect(requestedUrl, timeoutMs),
+    probeSecurityTxt(finalUrl, timeoutMs),
+    collectTlsBaseline(finalUrl, timeoutMs)
+  ]);
 
   return {
     certificate: securityDetails ? {
@@ -340,10 +346,11 @@ async function collectSecurityEvidence({ context, page, requestProtocolCounts, r
     document: documentSecurity,
     finalUrl: finalUrl.href,
     headers: pickHeaders(responseHeaders, ["cache-control", "content-security-policy", "content-security-policy-report-only", "content-type", "permissions-policy", "referrer-policy", "server", "strict-transport-security", "x-aspnet-version", "x-content-type-options", "x-frame-options", "x-powered-by", "x-xss-protection"]),
-    httpRedirect: await probeHttpRedirect(requestedUrl, timeoutMs),
+    httpRedirect,
     navigationProtocol,
     requestProtocolCounts,
-    securityTxt: await probeSecurityTxt(finalUrl, timeoutMs)
+    securityTxt,
+    tlsBaseline
   };
 }
 

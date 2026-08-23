@@ -12,7 +12,7 @@ export const RAW_AUDIT_OUTPUT_GROUP = "runtime-audit";
 export const RUNTIME_CACHE_ENVIRONMENT_VARIABLE = "WEB_DEV_CHECKLISTS_CACHE";
 export const runtimeSourceDirectory = path.resolve(configDirectory, "..");
 
-const RUNTIME_SOURCE_FILES = ["package.json", "package-lock.json", "config/runtime-config.mjs", "reporting/axe-report.mjs", "scripts/worker.mjs"];
+const RUNTIME_SOURCE_FILES = ["package.json", "package-lock.json", "collectors/tls-baseline.mjs", "config/runtime-config.mjs", "reporting/axe-report.mjs", "scripts/worker.mjs"];
 
 export async function getRuntimeLocation() {
   const hash = createHash("sha256");
