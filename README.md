@@ -65,6 +65,34 @@ Phase 4A established the plugin manifest, repository-local marketplace entry, sh
 - [`review-web-accessibility`](plugins/web-dev-checklists/skills/review-web-accessibility/SKILL.md) — produce an evidence-backed accessibility review that separates automated, source-based, interactive, assistive-technology, and untested results.
 - [`review-web-security`](plugins/web-dev-checklists/skills/review-web-security/SKILL.md) — combine bounded public checks, source and configuration evidence, approved authenticated testing, and operational evidence without claiming a penetration test.
 
+## Install the Codex plugin
+
+The repository includes a local Codex marketplace containing the `web-dev-checklists` plugin. The plugin currently provides the `review-web-accessibility` and `review-web-security` skills. Install the plugin once to use both skills from other Codex tasks and project folders.
+
+Clone or download this repository, install the current [Codex CLI](https://developers.openai.com/codex/cli/), and register the repository as a local marketplace:
+
+```bash
+codex plugin marketplace add "<absolute-path-to-this-repository>"
+```
+
+In the Codex desktop app, refresh Codex, open **Plugins**, select **Personal**, open **Web Dev Checklists**, and select the plus button to install it. Start a new task after installation so Codex loads the bundled skills.
+
+In Codex CLI, start Codex and enter `/plugins`, select the **Personal** marketplace, install **Web Dev Checklists**, and then start a new session.
+
+From any project folder, invoke a skill explicitly:
+
+```text
+$review-web-accessibility Review https://site.example, save the evidence under .output, and give me a prioritized accessibility report.
+```
+
+```text
+$review-web-security Review https://site.example, save the evidence under .output, and give me a prioritized security report.
+```
+
+Codex can also choose an installed skill from a natural-language request such as “Is this website ready to launch from an accessibility perspective?” Explicit invocation is useful when testing a specific skill. The agent asks for approval before bootstrapping the browser runtime when needed. Runtime dependencies stay in the user cache rather than the project being reviewed.
+
+When updating a locally installed development build, validate the plugin, update its Codex cachebuster, reinstall it from the **Personal** marketplace, and start another new task before retesting.
+
 ## Agent website audit runtime
 
 The plugin includes a generic Playwright, axe, and Lighthouse runner that audits an authorized URL without adding dependencies to the website project. After approval, it installs pinned Node.js dependencies and Playwright Chromium into the user's cache, prefers that matching browser, and falls back to Chrome or Edge.
