@@ -78,6 +78,8 @@ Screenshots, including axe element screenshots, Lighthouse reports, URLs, and op
 
 ## Outputs
 
+Treat each run directory as one evidence package. When a user requests `.output` or another durable destination, preserve the complete directory and verify the expected files before reporting success; do not keep only the normalized JSON files or delete the raw axe, Lighthouse, screenshot, or element evidence during the task. If a collector did not complete, retain the partial package and use `summary.json` and `evidence.json` to report its status and error.
+
 - `summary.json` contains the page result, browser used, Lighthouse scores, and automated accessibility counts.
 - `page.png` is a full-page screenshot of the rendered page.
 - `axe-results.json` contains reduced axe findings without copied HTML snippets.

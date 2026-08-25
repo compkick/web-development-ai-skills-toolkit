@@ -38,6 +38,8 @@ Use the least intrusive combination that answers the request:
 - Use the plugin-owned deterministic review runner with the `review-web-accessibility` profile for authorized pages when screenshot, HTTP, browser-error, axe, or Lighthouse evidence adds value. Resolve the plugin root from this skill directory; do not assume the target project's working directory contains the runtime.
 - Before deciding that the plugin runtime is unavailable, run `node runtime/scripts/status.mjs --json` from the resolved plugin root. This read-only command checks the versioned user-cache location. If it reports `ready: true`, run the review profile directly; do not look for `node_modules` under the plugin or run bootstrap.
 - Put runtime artifacts in a task-specific temporary directory outside the target repository unless the user requests another location. Report the artifact path and treat its contents as potentially sensitive.
+- When the user requests `.output` or another durable evidence location, pass an explicit output path under that requested location and preserve the complete per-run directory as one evidence package. Do not retain only `evidence.json` and `coverage.json`, prune raw reports, or place the output under the plugin root by accident.
+- Before reporting that automated evidence was saved, verify the package contains `summary.json`, `evidence.json`, `coverage.json`, and `page.png`; when axe completed, also preserve `axe-results.json`, `axe-report.html`, and any referenced `axe-elements/` screenshots; when Lighthouse completed, also preserve `lighthouse-report.json` and `lighthouse-report.html`. If either collector did not complete, preserve the partial package and report the missing artifacts and recorded error instead of implying they were saved.
 - Use an available interactive browser for keyboard navigation, focus behavior, responsive states, menus, dialogs, forms, and complete journeys that a single-page scan cannot establish.
 - Use actual screen-reader or other assistive-technology results only when that technology was genuinely available and used. An accessibility tree, ARIA snapshot, axe result, or code inspection is not a screen-reader test.
 - Review supplied audit reports or human test evidence when direct access is unavailable.
@@ -65,6 +67,8 @@ Return the readable report in the Codex response by default. Follow the shared r
 7. Retest needs and the location of supporting artifacts
 
 For each material finding, include the result, severity, affected scope, evidence or reproduction steps, user impact, and the smallest practical recommendation. Keep automated and manual results distinguishable.
+
+When the deterministic runner was used, identify the exact evidence-package directory and explicitly state whether the axe JSON/HTML reports and Lighthouse JSON/HTML reports were preserved. Link or name the primary human-readable reports when the delivery surface supports it.
 
 Write a durable Markdown report only when the user asks. Use their requested location, or propose `reports/accessibility-review-YYYY-MM-DD.md` and confirm before adding it to the target repository. Do not place raw audit artifacts in the repository without explicit permission.
 
