@@ -36,6 +36,7 @@ Use the least intrusive combination that answers the request:
 - Inspect source, components, styles, configuration, tests, and documentation when repository access is available.
 - Run existing project accessibility or browser tests when they are already configured and safe to execute.
 - Use the plugin-owned deterministic review runner with the `review-web-accessibility` profile for authorized pages when screenshot, HTTP, browser-error, axe, or Lighthouse evidence adds value. Resolve the plugin root from this skill directory; do not assume the target project's working directory contains the runtime.
+- Before deciding that the plugin runtime is unavailable, run `node runtime/scripts/status.mjs --json` from the resolved plugin root. This read-only command checks the versioned user-cache location. If it reports `ready: true`, run the review profile directly; do not look for `node_modules` under the plugin or run bootstrap.
 - Put runtime artifacts in a task-specific temporary directory outside the target repository unless the user requests another location. Report the artifact path and treat its contents as potentially sensitive.
 - Use an available interactive browser for keyboard navigation, focus behavior, responsive states, menus, dialogs, forms, and complete journeys that a single-page scan cannot establish.
 - Use actual screen-reader or other assistive-technology results only when that technology was genuinely available and used. An accessibility tree, ARIA snapshot, axe result, or code inspection is not a screen-reader test.
@@ -69,7 +70,7 @@ Write a durable Markdown report only when the user asks. Use their requested loc
 
 ## Safety and stopping conditions
 
-Treat an explicit request to review a supplied URL as authorization for read-only navigation to that URL. Otherwise confirm the target before loading it. Obtain separate approval before bootstrapping the runtime, downloading a browser, capturing detailed browser-error messages, using credentials, or taking any action that could modify data or notify people.
+Treat an explicit request to review a supplied URL as authorization for read-only navigation to that URL. Otherwise confirm the target before loading it. If the read-only runtime status reports that the current runtime is not ready, obtain separate approval before bootstrapping it. Also obtain approval before downloading a browser, capturing detailed browser-error messages, using credentials, or taking any action that could modify data or notify people.
 
 Do not submit production forms, create content or accounts, bypass access controls, run an unsandboxed browser without the required isolated-environment approval, or change code unless the user explicitly expands the task to remediation.
 

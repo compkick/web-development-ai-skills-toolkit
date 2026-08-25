@@ -1,17 +1,18 @@
-import { access, copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { spawnSync } from "node:child_process";
 import { getRuntimeLocation, runtimeSourceDirectory } from "../config/runtime-config.mjs";
+import { getRuntimeStatus } from "../config/runtime-status.mjs";
 
 const skipBrowserDownload = parseArguments(process.argv.slice(2));
 requireSupportedNode();
 
 const { browserDirectory, runtimeDirectory, runtimeKey, sourceFiles } = await getRuntimeLocation();
 const readyMarkerPath = path.join(runtimeDirectory, "runtime-ready.json");
-const currentMarker = await readJson(readyMarkerPath);
+const runtimeStatus = await getRuntimeStatus();
 
-if (currentMarker?.runtimeKey !== runtimeKey || !(await exists(path.join(runtimeDirectory, "node_modules", "playwright")))) {
+if (!runtimeStatus.ready) {
   await mkdir(runtimeDirectory, { recursive: true });
 
   for (const sourceFile of sourceFiles) {
@@ -77,22 +78,5 @@ function runCommand(command, argumentsToRun, options) {
 
   if (result.status !== 0) {
     process.exit(result.status ?? 1);
-  }
-}
-
-async function readJson(filePath) {
-  try {
-    return JSON.parse(await readFile(filePath, "utf8"));
-  } catch {
-    return null;
-  }
-}
-
-async function exists(filePath) {
-  try {
-    await access(filePath);
-    return true;
-  } catch {
-    return false;
   }
 }

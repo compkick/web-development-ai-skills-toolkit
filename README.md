@@ -97,7 +97,15 @@ When updating a locally installed development build, validate the plugin, update
 
 The plugin includes a generic Playwright, axe, and Lighthouse runner that audits an authorized URL without adding dependencies to the website project. After approval, it installs pinned Node.js dependencies and Playwright Chromium into the user's cache, prefers that matching browser, and falls back to Chrome or Edge.
 
-From the repository root, bootstrap the runtime once:
+Check whether the runtime matching the current plugin is already installed:
+
+```bash
+npm run runtime:status
+```
+
+This check is read-only and reports the resolved user-cache path. A ready runtime should be used directly without another bootstrap or approval request.
+
+If status reports that the current runtime is not ready, bootstrap it from the repository root after approval:
 
 ```bash
 npm run runtime:bootstrap

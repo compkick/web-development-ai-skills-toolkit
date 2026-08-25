@@ -39,6 +39,7 @@ Do not imply that a public URL check covers the other sections. Ask only for mis
 Use the least intrusive combination that answers the request:
 
 - Use the plugin-owned deterministic runner with the `review-web-security` profile for an authorized public URL. Resolve the plugin root from this skill directory; do not assume the target project's working directory contains the runtime.
+- Before deciding that the plugin runtime is unavailable, run `node runtime/scripts/status.mjs --json` from the resolved plugin root. This read-only command checks the versioned user-cache location. If it reports `ready: true`, run the review profile directly; do not look for `node_modules` under the plugin or run bootstrap.
 - Read `evidence.json` for stable public observations, `coverage.json` for the automation boundary, and `security-report.html` for the human-readable evidence summary. A machine `pass` applies only to its named check.
 - Inspect source, dependency manifests, lockfiles, framework and runtime versions, configuration, infrastructure definitions, tests, and deployment guidance when repository access is available.
 - Prefer the project's existing dependency, static-analysis, and secret-scanning tools when they are configured and safe. Do not install new project dependencies or copy secret values into evidence without approval.
@@ -75,7 +76,7 @@ Write a durable Markdown report only when the user asks. Use their requested loc
 
 ## Safety and stopping conditions
 
-Treat an explicit request to review a supplied URL as authorization for the documented read-only public probes. Otherwise confirm the target before loading it. Obtain separate approval before bootstrapping the runtime, downloading a browser, capturing detailed browser-error messages, using credentials, accessing private operational systems, submitting any form, or performing an action that could modify data or notify people.
+Treat an explicit request to review a supplied URL as authorization for the documented read-only public probes. Otherwise confirm the target before loading it. If the read-only runtime status reports that the current runtime is not ready, obtain separate approval before bootstrapping it. Also obtain approval before downloading a browser, capturing detailed browser-error messages, using credentials, accessing private operational systems, submitting any form, or performing an action that could modify data or notify people.
 
 Never guess credentials, bypass access controls, test rate limits or account lockouts without a specific safe plan, expose secrets, run an unsandboxed browser outside an explicitly approved isolated environment, or expand a public review into endpoint enumeration or exploitation. Stop and request direction if evidence suggests a critical active compromise, if the authorized boundary is unclear, or if safe testing cannot continue.
 

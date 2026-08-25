@@ -15,7 +15,15 @@ Use the plugin-owned audit runtime to collect repeatable browser, Lighthouse, sc
 
 ## Install the runtime
 
-The audit command does not install anything automatically. If the runtime is missing, get permission and run this command from the plugin root:
+The audit command does not install anything automatically. Before requesting installation permission, check the versioned user cache from the plugin root:
+
+```bash
+node runtime/scripts/status.mjs --json
+```
+
+This command is read-only and prints the resolved runtime and browser-cache paths. If it reports `"ready": true`, do not run bootstrap; run the audit or review profile directly. Do not infer readiness by looking for `runtime/node_modules` under the plugin because dependencies are deliberately stored outside the plugin and target project.
+
+If status reports that the current runtime is not ready, get permission and run this command from the plugin root:
 
 ```bash
 node runtime/scripts/bootstrap.mjs
