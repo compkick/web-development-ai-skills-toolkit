@@ -23,20 +23,35 @@ const knownEvidenceCheckIds = new Set([
   "https-transport",
   "insecure-page-resources",
   "lighthouse-accessibility",
+  "lighthouse-performance-run",
+  "lighthouse-performance-score",
+  "lab-cumulative-layout-shift",
+  "lab-largest-contentful-paint",
+  "lab-supporting-metrics",
+  "lab-total-blocking-time",
+  "image-delivery",
+  "layout-stability",
+  "lcp-resource-loading",
+  "main-thread-work",
   "page-http-status",
   "public-cookie-flags",
   "referrer-policy",
   "response-disclosure",
   "security-collection",
   "security-txt",
+  "server-response-and-redirects",
   "strict-transport-security",
+  "render-blocking-resources",
+  "resource-caching-and-compression",
+  "third-party-impact",
   "tls-cipher-suite",
   "tls-deprecated-versions",
   "tls-forward-secrecy",
   "tls-key-exchange-group",
-  "tls-supported-versions"
+  "tls-supported-versions",
+  "unused-code"
 ]);
-const profiles = ["review-web-accessibility", "review-web-security"];
+const profiles = ["review-web-accessibility", "review-web-security", "review-web-performance"];
 
 for (const profileId of profiles) {
   const profilePath = path.join(profileDirectory, `${profileId}.json`);
@@ -90,14 +105,14 @@ for (const schemaName of ["review-evidence-v1.schema.json", "review-coverage-v1.
   }
 }
 
-for (const relativeScriptPath of ["runtime/scripts/review.mjs", "runtime/scripts/test-review-runner.mjs", "runtime/scripts/test-security-review-runner.mjs"]) {
+for (const relativeScriptPath of ["runtime/scripts/review.mjs", "runtime/scripts/test-review-runner.mjs", "runtime/scripts/test-security-review-runner.mjs", "runtime/scripts/test-performance-review-runner.mjs"]) {
   const scriptPath = path.join(repositoryRoot, "plugins", "web-dev-checklists", relativeScriptPath);
   const result = spawnSync(process.execPath, ["--check", scriptPath], { encoding: "utf8" });
 
   if (result.status !== 0) errors.push(`${relativeScriptPath} failed Node.js syntax validation: ${result.stderr.trim()}`);
 }
 
-for (const fixtureName of ["accessibility-pass.html", "accessibility-fail.html", "security-pass.html", "security-fail.html"]) {
+for (const fixtureName of ["accessibility-pass.html", "accessibility-fail.html", "security-pass.html", "security-fail.html", "performance-pass.html", "performance-fail.html"]) {
   try {
     await access(path.join(runtimeDirectory, "fixtures", fixtureName));
   } catch {

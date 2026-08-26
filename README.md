@@ -66,10 +66,11 @@ Phase 4A established the plugin manifest, repository-local marketplace entry, sh
 
 - [`review-web-accessibility`](plugins/web-dev-checklists/skills/review-web-accessibility/SKILL.md) — produce an evidence-backed accessibility review that separates automated, source-based, interactive, assistive-technology, and untested results.
 - [`review-web-security`](plugins/web-dev-checklists/skills/review-web-security/SKILL.md) — combine bounded public checks, source and configuration evidence, approved authenticated testing, and operational evidence without claiming a penetration test.
+- [`review-web-performance`](plugins/web-dev-checklists/skills/review-web-performance/SKILL.md) — combine repeatable desktop Lighthouse evidence with real-user data, source review, budgets, and representative workflows without treating one score as the result.
 
 ## Install the Codex plugin
 
-The repository includes a local Codex marketplace containing the `web-dev-checklists` plugin. The plugin currently provides the `review-web-accessibility` and `review-web-security` skills. Install the plugin once to use both skills from other Codex tasks and project folders.
+The repository includes a local Codex marketplace containing the `web-dev-checklists` plugin. The plugin currently provides the `review-web-accessibility`, `review-web-security`, and `review-web-performance` skills. Install the plugin once to use the skills from other Codex tasks and project folders.
 
 Clone or download this repository, install the current [Codex CLI](https://developers.openai.com/codex/cli/), and register the repository as a local marketplace:
 
@@ -89,6 +90,10 @@ $review-web-accessibility Review https://site.example, save the evidence under .
 
 ```text
 $review-web-security Review https://site.example, save the evidence under .output, and give me a prioritized security report.
+```
+
+```text
+$review-web-performance Review https://site.example, save the evidence under .output, and give me a prioritized performance report.
 ```
 
 Codex can also choose an installed skill from a natural-language request such as “Is this website ready to launch from an accessibility perspective?” Explicit invocation is useful when testing a specific skill. The agent asks for approval before bootstrapping the browser runtime when needed. Runtime dependencies stay in the user cache rather than the project being reviewed.
@@ -151,6 +156,14 @@ npm run review:website -- --profile review-web-security --url https://site.examp
 
 This profile collects a rendered screenshot, browser-error counts, HTTPS and certificate evidence, a bounded TLS baseline, negotiated application protocol, a same-host HTTP redirect check, insecure-resource observations, selected security headers, public-cookie attributes, CORS headers, software-disclosure headers, and `security.txt` evidence. The TLS baseline checks the normally negotiated cipher and key exchange, TLS 1.3 or TLS 1.2 support, and TLS 1.0 and TLS 1.1 rejection without enumerating every cipher suite. It creates `security-report.html` with failures and warnings, passes, informational and not-checked results, checklist coverage, limitations, and supporting artifact links. It maps the evidence to the [web security review checklist](docs/web-security-review-checklist.md). It skips axe and Lighthouse and does not enumerate endpoints, send attack payloads, sign in, submit forms, or replace source, authenticated, or operational review.
 
+#### Performance checklist runner
+
+```bash
+npm run review:website -- --profile review-web-performance --url https://site.example
+```
+
+This profile collects a rendered screenshot, browser-error counts, a desktop Lighthouse report, normalized lab LCP, CLS, TBT, supporting paint metrics, and grouped delivery, rendering, code, main-thread, layout, and third-party observations. It creates `performance-report.html` with metric cards, checks requiring attention, checklist coverage, limitations, and artifact links. It maps the evidence to the [web performance review checklist](docs/web-performance-review-checklist.md). It skips axe. Real-user Core Web Vitals, mobile and warm-cache behavior, important interactions, budgets, source decisions, and production monitoring remain agent or human review work.
+
 #### Checklist runner output
 
 Each profile creates a timestamped `.output/<profile>/<host>/<run-id>/` directory by default. This repository ignores `/.output/` because screenshots and reports may be large or sensitive. Pass `--output <new-or-empty-directory>` to override the location.
@@ -167,6 +180,7 @@ After bootstrapping the runtime, verify the deterministic profiles against their
 npm run reviews:test
 npm run reviews:test-accessibility
 npm run reviews:test-security
+npm run reviews:test-performance
 ```
 
 Use `reviews:test` to run every profile fixture, or use a profile-specific command while working on one review.

@@ -4,6 +4,7 @@ import process from "node:process";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { DEFAULT_EVIDENCE_ROOT_DIRECTORY, getDefaultEvidenceOutputDirectory, runtimeSourceDirectory } from "../config/runtime-config.mjs";
+import { writePerformanceHtmlReport } from "../reporting/performance-report.mjs";
 import { writeSecurityHtmlReport } from "../reporting/security-report.mjs";
 
 const scriptsDirectory = path.dirname(fileURLToPath(import.meta.url));
@@ -38,8 +39,15 @@ if (auditResult.status !== 0) {
 
 const summary = await readJson(path.join(options.outputDirectory, "summary.json"));
 const axeResult = summary.axe.status === "completed" ? await readJson(path.join(options.outputDirectory, "axe-results.json")) : null;
+const lighthouseResult = summary.lighthouse.status === "completed" ? await readJson(path.join(options.outputDirectory, "lighthouse-report.json")) : null;
 const securityResult = summary.security?.status === "completed" ? await readJson(path.join(options.outputDirectory, "security-results.json")) : null;
-const evidence = profile.id === "review-web-security" ? await buildSecurityEvidence(profile, summary, securityResult, options.outputDirectory) : await buildAccessibilityEvidence(profile, summary, axeResult, options.outputDirectory);
+let evidence;
+
+if (profile.id === "review-web-accessibility") evidence = await buildAccessibilityEvidence(profile, summary, axeResult, options.outputDirectory);
+else if (profile.id === "review-web-performance") evidence = await buildPerformanceEvidence(profile, summary, lighthouseResult, options.outputDirectory);
+else if (profile.id === "review-web-security") evidence = await buildSecurityEvidence(profile, summary, securityResult, options.outputDirectory);
+else throw new Error(`The review profile does not have an evidence builder: ${profile.id}`);
+
 const coverage = {
   schemaVersion: "1.0.0",
   profile: { id: profile.id, version: profile.version },
@@ -54,6 +62,15 @@ if (profile.id === "review-web-security") {
     { path: "security-report.html", purpose: "Human-readable normalized security evidence and checklist coverage" }
   );
   await writeSecurityHtmlReport(evidence, coverage, path.join(options.outputDirectory, "security-report.html"));
+}
+
+if (profile.id === "review-web-performance") {
+  evidence.artifacts.push(
+    { path: "evidence.json", purpose: "Normalized performance check results" },
+    { path: "coverage.json", purpose: "Canonical checklist automation map" },
+    { path: "performance-report.html", purpose: "Human-readable normalized performance evidence and checklist coverage" }
+  );
+  await writePerformanceHtmlReport(evidence, coverage, path.join(options.outputDirectory, "performance-report.html"));
 }
 
 await writeJson(path.join(options.outputDirectory, "evidence.json"), evidence);
@@ -188,6 +205,103 @@ async function buildAccessibilityEvidence(profileToUse, summary, axeResult, outp
     checks,
     artifacts,
     limitations
+  };
+}
+
+async function buildPerformanceEvidence(profileToUse, summary, lighthouseResult, outputDirectory) {
+  const checks = [];
+  const lighthouseArtifacts = summary.lighthouse.status === "completed" ? ["lighthouse-report.json", "lighthouse-report.html"] : ["summary.json"];
+  const addCheck = (id, title, status, method, evidenceToAdd, artifacts = lighthouseArtifacts) => checks.push({ id, title, status, method, evidence: evidenceToAdd, artifacts });
+  const httpStatus = summary.page.httpStatus;
+  const audits = lighthouseResult?.audits ?? {};
+  const performanceScore = lighthouseResult?.categories?.performance?.score;
+
+  addCheck("page-http-status", "Site returns a successful HTTP response", typeof httpStatus !== "number" ? "warning" : httpStatus >= 200 && httpStatus < 400 ? "pass" : "fail", "browser", { finalUrl: summary.page.finalUrl, httpStatus }, ["summary.json"]);
+  addCheck("lighthouse-performance-run", "Lighthouse completes a repeatable desktop lab run", lighthouseResult ? "pass" : "not-checked", "lighthouse", lighthouseResult ? { formFactor: summary.lighthouse.formFactor, lighthouseVersion: lighthouseResult.lighthouseVersion, requestedUrl: lighthouseResult.requestedUrl } : { error: summary.lighthouse.error ?? null, runtimeStatus: summary.lighthouse.status });
+  addCheck("lighthouse-performance-score", "Lighthouse reports a desktop performance score", typeof performanceScore === "number" ? "informational" : "not-checked", "lighthouse", { score: typeof performanceScore === "number" ? Math.round(performanceScore * 100) : null });
+
+  const lcp = audits["largest-contentful-paint"];
+  addCheck("lab-largest-contentful-paint", "Desktop lab LCP is within 2.5 seconds", typeof lcp?.numericValue !== "number" ? "not-checked" : lcp.numericValue <= 2500 ? "pass" : "warning", "lighthouse", { audit: summarizeLighthouseAudit(lcp), goodThresholdMilliseconds: 2500 });
+
+  const cls = audits["cumulative-layout-shift"];
+  addCheck("lab-cumulative-layout-shift", "Desktop lab CLS is 0.1 or less", typeof cls?.numericValue !== "number" ? "not-checked" : cls.numericValue <= 0.1 ? "pass" : "warning", "lighthouse", { audit: summarizeLighthouseAudit(cls), goodThreshold: 0.1 });
+
+  const tbt = audits["total-blocking-time"];
+  addCheck("lab-total-blocking-time", "Desktop lab TBT does not trigger Lighthouse attention", lighthouseAuditStatus([tbt]), "lighthouse", { audit: summarizeLighthouseAudit(tbt), note: "TBT is a lab diagnostic for responsiveness risk, not an INP measurement." });
+  addCheck("lab-supporting-metrics", "Desktop lab reports supporting paint metrics", lighthouseResult ? "informational" : "not-checked", "lighthouse", {
+    firstContentfulPaint: summarizeLighthouseAudit(audits["first-contentful-paint"]),
+    speedIndex: summarizeLighthouseAudit(audits["speed-index"])
+  });
+
+  addAuditGroup("server-response-and-redirects", "Initial response and redirects do not trigger Lighthouse attention", ["server-response-time", "redirects", "document-latency-insight"]);
+  addAuditGroup("resource-caching-and-compression", "Caching and compression do not trigger Lighthouse attention", ["cache-insight", "uses-long-cache-ttl", "uses-text-compression"]);
+  addAuditGroup("image-delivery", "Image delivery does not trigger Lighthouse attention", ["image-delivery-insight", "image-size-responsive", "unsized-images"]);
+  addAuditGroup("lcp-resource-loading", "LCP resource loading does not trigger Lighthouse attention", ["lcp-discovery-insight", "lcp-breakdown-insight"]);
+  addAuditGroup("render-blocking-resources", "Render-blocking resources do not trigger Lighthouse attention", ["render-blocking-insight", "network-dependency-tree-insight"]);
+  addAuditGroup("unused-code", "Unused and duplicated code does not trigger Lighthouse attention", ["unused-css-rules", "unused-javascript", "duplicated-javascript-insight", "legacy-javascript-insight"]);
+  addAuditGroup("main-thread-work", "Main-thread work does not trigger Lighthouse attention", ["mainthread-work-breakdown", "long-tasks"]);
+  addAuditGroup("layout-stability", "Layout shifts and animations do not trigger Lighthouse attention", ["layout-shifts", "non-composited-animations"]);
+  addAuditGroup("third-party-impact", "Third-party code does not trigger Lighthouse attention", ["third-parties-insight", "third-party-summary"]);
+
+  const browserErrorCount = summary.page.browserErrors.consoleErrorCount + summary.page.browserErrors.pageErrorCount;
+  addCheck("browser-errors", "Page loads without browser console or page errors", browserErrorCount === 0 ? "pass" : "warning", "browser", { consoleErrorCount: summary.page.browserErrors.consoleErrorCount, detailsIncluded: summary.page.browserErrors.detailsFile !== null, pageErrorCount: summary.page.browserErrors.pageErrorCount }, summary.page.browserErrors.detailsFile ? ["summary.json", summary.page.browserErrors.detailsFile] : ["summary.json"]);
+
+  const artifactDefinitions = [
+    ["summary.json", "Low-level browser and collector summary"],
+    ["page.png", "Full-page rendered screenshot"],
+    ["lighthouse-report.json", "Machine-readable Lighthouse report"],
+    ["lighthouse-report.html", "Detailed human-readable Lighthouse report"],
+    ["browser-errors.json", "Opt-in truncated browser error details"]
+  ];
+  const artifacts = [];
+
+  for (const [artifactPath, purpose] of artifactDefinitions) {
+    if (await exists(path.join(outputDirectory, artifactPath))) artifacts.push({ path: artifactPath, purpose });
+  }
+
+  const limitations = [
+    "This package covers one URL and one 1440 × 900 desktop lab run; it does not prove whole-site or real-user performance.",
+    "Lighthouse does not measure field INP in this page-load run. TBT is a diagnostic proxy, not an INP result.",
+    "The runner does not collect mobile, warm-cache, geographic, authenticated, important-interaction, or degraded-dependency evidence.",
+    "Lab metrics and scores can vary between runs and should be compared only under equivalent conditions.",
+    "Source, CDN, private-cache, performance-budget, and production-monitoring conclusions require additional evidence."
+  ];
+
+  if (summary.lighthouse.status !== "completed") limitations.push(`Lighthouse evidence was not completed: ${summary.lighthouse.error ?? summary.lighthouse.status}`);
+
+  return {
+    schemaVersion: "1.0.0",
+    profile: { id: profileToUse.id, standard: profileToUse.standard, version: profileToUse.version },
+    target: { finalUrl: summary.page.finalUrl, requestedUrl: summary.requestedUrl },
+    run: { browser: summary.browser, completedAt: summary.completedAt, startedAt: summary.startedAt },
+    checks,
+    artifacts,
+    limitations
+  };
+
+  function addAuditGroup(id, title, auditIds) {
+    const selectedAudits = auditIds.map((auditId) => audits[auditId]).filter(Boolean);
+    addCheck(id, title, lighthouseAuditStatus(selectedAudits), "lighthouse", { audits: selectedAudits.map(summarizeLighthouseAudit) });
+  }
+}
+
+function lighthouseAuditStatus(audits) {
+  if (!audits.some(Boolean)) return "not-checked";
+  const scoredAudits = audits.filter((audit) => typeof audit?.score === "number" && !new Set(["informative", "manual", "notApplicable"]).has(audit.scoreDisplayMode));
+  if (scoredAudits.some((audit) => audit.score < 0.9)) return "warning";
+  return scoredAudits.length > 0 ? "pass" : "informational";
+}
+
+function summarizeLighthouseAudit(audit) {
+  if (!audit) return null;
+  return {
+    displayValue: audit.displayValue ?? null,
+    id: audit.id,
+    numericUnit: audit.numericUnit ?? null,
+    numericValue: typeof audit.numericValue === "number" ? audit.numericValue : null,
+    score: typeof audit.score === "number" ? audit.score : null,
+    scoreDisplayMode: audit.scoreDisplayMode,
+    title: audit.title
   };
 }
 

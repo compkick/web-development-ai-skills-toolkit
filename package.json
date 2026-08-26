@@ -22,9 +22,10 @@
     "runtime:test": "node plugins/web-dev-checklists/runtime/scripts/test-runtime.mjs",
     "review:website": "node plugins/web-dev-checklists/runtime/scripts/review.mjs",
     "reviews:check": "node scripts/check-review-runner.mjs",
-    "reviews:test": "npm run reviews:test-accessibility && npm run reviews:test-security",
+    "reviews:test": "npm run reviews:test-accessibility && npm run reviews:test-security && npm run reviews:test-performance",
     "reviews:test-accessibility": "node plugins/web-dev-checklists/runtime/scripts/test-review-runner.mjs",
     "reviews:test-security": "node plugins/web-dev-checklists/runtime/scripts/test-security-review-runner.mjs",
+    "reviews:test-performance": "node plugins/web-dev-checklists/runtime/scripts/test-performance-review-runner.mjs",
     "versions:check": "node scripts/check-versions.mjs",
     "deps:audit": "npm audit --audit-level=high && npm audit --prefix plugins/web-dev-checklists/runtime --audit-level=high",
     "repo:check": "npm run docs:check && npm run skills:refs:check && npm run runtime:check && npm run reviews:check && npm run versions:check && npm run deps:audit"

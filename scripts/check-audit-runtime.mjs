@@ -28,6 +28,7 @@ const scripts = [
   "config/runtime-config.mjs",
   "config/runtime-status.mjs",
   "reporting/axe-report.mjs",
+  "reporting/performance-report.mjs",
   "reporting/security-report.mjs",
   "scripts/audit.mjs",
   "scripts/bootstrap.mjs",
@@ -35,6 +36,7 @@ const scripts = [
   "scripts/status.mjs",
   "scripts/test-runtime-status.mjs",
   "scripts/test-review-runner.mjs",
+  "scripts/test-performance-review-runner.mjs",
   "scripts/test-security-review-runner.mjs",
   "scripts/test-runtime.mjs",
   "scripts/worker.mjs"

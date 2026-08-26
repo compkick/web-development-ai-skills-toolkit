@@ -1,0 +1,155 @@
+{
+  "id": "review-web-performance",
+  "version": "1.0.0",
+  "checklistSource": "docs/web-performance-review-checklist.md",
+  "standard": "Core Web Vitals and project performance budgets",
+  "runtime": {
+    "skipAccessibility": true
+  },
+  "coverage": [
+    {
+      "id": "performance-prepare-scope",
+      "section": "Prepare",
+      "checklistItem": "Choose the pages, workflows, devices, networks, locations, and user states to test.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The runner records one public URL and one desktop condition; representative scope requires project and audience context."
+    },
+    {
+      "id": "performance-prepare-baseline",
+      "section": "Prepare",
+      "checklistItem": "Record the release, test setup, performance budgets, and most important user outcomes.",
+      "automation": "partial",
+      "evidenceCheckIds": ["lighthouse-performance-run"],
+      "note": "The package records the URL, browser, profile, timestamps, and desktop form factor; the reviewer supplies release, budgets, and user outcomes."
+    },
+    {
+      "id": "performance-prepare-field-data",
+      "section": "Prepare",
+      "checklistItem": "Use production data from real users when it is available and reliable.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The local runner does not retrieve analytics, real-user monitoring, or Chrome UX Report data."
+    },
+    {
+      "id": "performance-measure-web-vitals",
+      "section": "Measure",
+      "checklistItem": "Review LCP, INP, and CLS for mobile and desktop and note when real-user data is insufficient.",
+      "automation": "partial",
+      "evidenceCheckIds": ["lab-largest-contentful-paint", "lab-cumulative-layout-shift", "lab-total-blocking-time"],
+      "note": "Lighthouse supplies one desktop lab LCP and CLS sample plus TBT as an INP diagnostic; field INP and mobile and desktop percentiles remain manual."
+    },
+    {
+      "id": "performance-measure-repeatable-baseline",
+      "section": "Measure",
+      "checklistItem": "Run repeatable tests against a production build and compare them with the current baseline.",
+      "automation": "partial",
+      "evidenceCheckIds": ["lighthouse-performance-run", "lighthouse-performance-score", "lab-supporting-metrics"],
+      "note": "The runner fixes its desktop procedure and records the result; the reviewer confirms the build and compares equivalent runs with an approved baseline."
+    },
+    {
+      "id": "performance-measure-cache-states",
+      "section": "Measure",
+      "checklistItem": "Test both warm and cold cache behavior when it matters.",
+      "automation": "partial",
+      "evidenceCheckIds": ["lighthouse-performance-run"],
+      "note": "The profile provides one isolated Lighthouse navigation; a separate controlled test is required for meaningful warm and cold comparisons."
+    },
+    {
+      "id": "performance-loading-delivery",
+      "section": "Loading and rendering",
+      "checklistItem": "Check server response time, redirects, caching, compression, and CDN behavior.",
+      "automation": "partial",
+      "evidenceCheckIds": ["server-response-and-redirects", "resource-caching-and-compression"],
+      "note": "Lighthouse samples the reviewed navigation and selected delivery opportunities; CDN configuration and representative regional behavior require additional evidence."
+    },
+    {
+      "id": "performance-loading-images",
+      "section": "Loading and rendering",
+      "checklistItem": "Resize and encode images for how they are displayed.",
+      "automation": "partial",
+      "evidenceCheckIds": ["image-delivery"],
+      "note": "Lighthouse flags image delivery opportunities on the reviewed page; source variants, CMS behavior, breakpoints, and other templates still require review."
+    },
+    {
+      "id": "performance-loading-lcp",
+      "section": "Loading and rendering",
+      "checklistItem": "Load the main page content and LCP resource promptly.",
+      "automation": "partial",
+      "evidenceCheckIds": ["lab-largest-contentful-paint", "lcp-resource-loading"],
+      "note": "The profile records lab LCP and Lighthouse diagnostics for one page; field behavior and the correctness of the chosen LCP content require review."
+    },
+    {
+      "id": "performance-loading-blocking-assets",
+      "section": "Loading and rendering",
+      "checklistItem": "Remove or delay code and assets that block rendering or are not needed.",
+      "automation": "partial",
+      "evidenceCheckIds": ["render-blocking-resources", "unused-code"],
+      "note": "Lighthouse identifies likely render-blocking and unused resources; source ownership, route coverage, and safe removal require analysis."
+    },
+    {
+      "id": "performance-loading-private-cache",
+      "section": "Loading and rendering",
+      "checklistItem": "Confirm personalized or private responses are not cached publicly.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "This requires source, CDN, cache-key, response-header, and authenticated-state evidence that a public single-page run cannot establish."
+    },
+    {
+      "id": "performance-interaction-responsiveness",
+      "section": "Interaction and stability",
+      "checklistItem": "Test important interactions, find long tasks, and give users prompt feedback.",
+      "automation": "partial",
+      "evidenceCheckIds": ["lab-total-blocking-time", "main-thread-work"],
+      "note": "Lighthouse records page-load blocking and long-task diagnostics; important interactions and user feedback require representative interaction testing."
+    },
+    {
+      "id": "performance-interaction-stability",
+      "section": "Interaction and stability",
+      "checklistItem": "Prevent unexpected layout shifts and keep animations efficient.",
+      "automation": "partial",
+      "evidenceCheckIds": ["lab-cumulative-layout-shift", "layout-stability"],
+      "note": "The profile checks initial-load CLS and Lighthouse diagnostics; shifts and animations after interaction or during long-lived sessions remain manual."
+    },
+    {
+      "id": "performance-third-party-inventory",
+      "section": "Third parties and failures",
+      "checklistItem": "Inventory analytics, tag managers, chat, video, maps, ads, and other third-party code.",
+      "automation": "partial",
+      "evidenceCheckIds": ["third-party-impact"],
+      "note": "Lighthouse reports observed third-party impact on one page; the reviewer completes the inventory across routes, states, consent choices, and integrations."
+    },
+    {
+      "id": "performance-third-party-resilience",
+      "section": "Third parties and failures",
+      "checklistItem": "Remove unused third parties and test important dependencies when they are slow or unavailable.",
+      "automation": "partial",
+      "evidenceCheckIds": ["third-party-impact", "unused-code"],
+      "note": "The profile identifies likely cost but does not disable dependencies or simulate their slow and failed states."
+    },
+    {
+      "id": "performance-failure-usability",
+      "section": "Third parties and failures",
+      "checklistItem": "Confirm performance problems do not create unusable pages or endless retries.",
+      "automation": "partial",
+      "evidenceCheckIds": ["page-http-status", "browser-errors"],
+      "note": "The runner records whether the sampled page loaded and whether browser errors occurred; degraded networks, retry behavior, and important workflows require controlled testing."
+    },
+    {
+      "id": "performance-finish-regressions",
+      "section": "Finish the review",
+      "checklistItem": "Investigate meaningful regressions rather than treating every score change as a failure.",
+      "automation": "partial",
+      "evidenceCheckIds": ["lighthouse-performance-score", "lab-largest-contentful-paint", "lab-cumulative-layout-shift", "lab-total-blocking-time", "lab-supporting-metrics"],
+      "note": "The package supplies one controlled result; equivalent baselines, run variance, user impact, and regression judgment remain human responsibilities."
+    },
+    {
+      "id": "performance-finish-retest",
+      "section": "Finish the review",
+      "checklistItem": "Retest fixes, note important tradeoffs, and assign an owner for monitoring production performance.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Retesting requires a changed release, and tradeoffs and production ownership require project decisions."
+    }
+  ]
+}
