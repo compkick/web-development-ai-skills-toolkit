@@ -50,6 +50,7 @@ function printUsage() {
   console.log(`  --output <directory>                    Override the default ${DEFAULT_EVIDENCE_ROOT_DIRECTORY}/${RAW_AUDIT_OUTPUT_GROUP}/<host>/<run-id> directory`);
   console.log("  --browser <auto|chrome|edge|chromium>  Browser selection; default: auto");
   console.log("  --collect-security                      Collect read-only public security observations");
+  console.log("  --collect-seo                           Collect rendered metadata plus bounded robots.txt and sitemap observations");
   console.log("  --allow-no-sandbox                       Allow an unsandboxed root run in an isolated environment");
   console.log("  --include-error-details                  Write console/page error text to browser-errors.json");
   console.log("  --timeout-ms <milliseconds>             Navigation timeout; default: 45000");

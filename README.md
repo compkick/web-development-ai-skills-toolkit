@@ -67,10 +67,11 @@ Phase 4A established the plugin manifest, repository-local marketplace entry, sh
 - [`review-web-accessibility`](plugins/web-dev-checklists/skills/review-web-accessibility/SKILL.md) — produce an evidence-backed accessibility review that separates automated, source-based, interactive, assistive-technology, and untested results.
 - [`review-web-security`](plugins/web-dev-checklists/skills/review-web-security/SKILL.md) — combine bounded public checks, source and configuration evidence, approved authenticated testing, and operational evidence without claiming a penetration test.
 - [`review-web-performance`](plugins/web-dev-checklists/skills/review-web-performance/SKILL.md) — combine repeatable desktop Lighthouse evidence with real-user data, source review, budgets, and representative workflows without treating one score as the result.
+- [`review-technical-seo`](plugins/web-dev-checklists/skills/review-technical-seo/SKILL.md) — combine rendered crawl and indexing evidence with source, migration, Search Console, analytics, and representative-page review without promising rankings or indexing.
 
 ## Install the Codex plugin
 
-The repository includes a local Codex marketplace containing the `web-dev-checklists` plugin. The plugin currently provides the `review-web-accessibility`, `review-web-security`, and `review-web-performance` skills. Install the plugin once to use the skills from other Codex tasks and project folders.
+The repository includes a local Codex marketplace containing the `web-dev-checklists` plugin. The plugin currently provides the `review-web-accessibility`, `review-web-security`, `review-web-performance`, and `review-technical-seo` skills. Install the plugin once to use the skills from other Codex tasks and project folders.
 
 Clone or download this repository, install the current [Codex CLI](https://developers.openai.com/codex/cli/), and register the repository as a local marketplace:
 
@@ -94,6 +95,10 @@ $review-web-security Review https://site.example, save the evidence under .outpu
 
 ```text
 $review-web-performance Review https://site.example, save the evidence under .output, and give me a prioritized performance report.
+```
+
+```text
+$review-technical-seo Review https://site.example, save the evidence under .output, and give me a prioritized technical SEO report.
 ```
 
 Codex can also choose an installed skill from a natural-language request such as “Is this website ready to launch from an accessibility perspective?” Explicit invocation is useful when testing a specific skill. The agent asks for approval before bootstrapping the browser runtime when needed. Runtime dependencies stay in the user cache rather than the project being reviewed.
@@ -134,7 +139,7 @@ Use `runtime:audit` for runtime troubleshooting, profile development, or an ad h
 npm run runtime:audit -- --url https://site.example
 ```
 
-This command writes to `.output/runtime-audit/<host>/<run-id>/` by default. Pass `--output <new-or-empty-directory>` to override the location. It does not apply a checklist profile and does not create normalized `evidence.json` or `coverage.json` files. Its output includes `summary.json`, `page.png`, reduced axe results, a human-readable axe HTML report with bounded element screenshots, and Lighthouse JSON and HTML reports. Collector flags can add public security observations or skip evidence that is not needed.
+This command writes to `.output/runtime-audit/<host>/<run-id>/` by default. Pass `--output <new-or-empty-directory>` to override the location. It does not apply a checklist profile and does not create normalized `evidence.json` or `coverage.json` files. Its output includes `summary.json`, `page.png`, reduced axe results, a human-readable axe HTML report with bounded element screenshots, and Lighthouse JSON and HTML reports. Collector flags can add public security or technical SEO observations or skip evidence that is not needed.
 
 ### Deterministic checklist evidence
 
@@ -164,6 +169,14 @@ npm run review:website -- --profile review-web-performance --url https://site.ex
 
 This profile collects a rendered screenshot, browser-error counts, a desktop Lighthouse report, normalized lab LCP, CLS, TBT, supporting paint metrics, and grouped delivery, rendering, code, main-thread, layout, and third-party observations. It creates `performance-report.html` with metric cards, checks requiring attention, checklist coverage, limitations, and artifact links. It maps the evidence to the [web performance review checklist](docs/web-performance-review-checklist.md). It skips axe. Real-user Core Web Vitals, mobile and warm-cache behavior, important interactions, budgets, source decisions, and production monitoring remain agent or human review work.
 
+#### Technical SEO checklist runner
+
+```bash
+npm run review:website -- --profile review-technical-seo --url https://site.example
+```
+
+This profile collects a rendered screenshot, browser-error counts, a desktop Lighthouse SEO report, status and redirect evidence, rendered titles and metadata, indexing directives, canonicals, headings, text and link inventories, structured-data syntax, language alternates, `robots.txt`, and up to three same-origin sitemap previews. It creates `technical-seo-report.html` with summary cards, checks requiring attention, checklist coverage, limitations, and artifact links. It maps the evidence to the [technical SEO review checklist](docs/technical-seo-review-checklist.md). It skips axe. Representative multi-page crawling, Search Console, analytics, server logs, duplicate URL discovery, migration maps, metadata quality, and search performance remain agent or human review work.
+
 #### Checklist runner output
 
 Each profile creates a timestamped `.output/<profile>/<host>/<run-id>/` directory by default. This repository ignores `/.output/` because screenshots and reports may be large or sensitive. Pass `--output <new-or-empty-directory>` to override the location.
@@ -181,6 +194,7 @@ npm run reviews:test
 npm run reviews:test-accessibility
 npm run reviews:test-security
 npm run reviews:test-performance
+npm run reviews:test-technical-seo
 ```
 
 Use `reviews:test` to run every profile fixture, or use a profile-specific command while working on one review.

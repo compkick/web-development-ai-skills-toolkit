@@ -14,6 +14,7 @@ const knownEvidenceCheckIds = new Set([
   "certificate-validity",
   "content-security-policy",
   "content-type-protection",
+  "canonical-declaration",
   "cors-policy",
   "document-language",
   "document-structure",
@@ -21,10 +22,13 @@ const knownEvidenceCheckIds = new Set([
   "framing-protection",
   "http-to-https-redirect",
   "https-transport",
+  "https-url",
   "insecure-page-resources",
   "lighthouse-accessibility",
   "lighthouse-performance-run",
   "lighthouse-performance-score",
+  "lighthouse-seo-run",
+  "lighthouse-seo-score",
   "lab-cumulative-layout-shift",
   "lab-largest-contentful-paint",
   "lab-supporting-metrics",
@@ -33,13 +37,20 @@ const knownEvidenceCheckIds = new Set([
   "layout-stability",
   "lcp-resource-loading",
   "main-thread-work",
+  "main-heading",
+  "meta-description",
   "page-http-status",
   "public-cookie-flags",
   "referrer-policy",
   "response-disclosure",
+  "redirect-chain",
+  "rendered-content",
+  "robots-txt",
   "security-collection",
   "security-txt",
+  "seo-collection",
   "server-response-and-redirects",
+  "sitemap-discovery",
   "strict-transport-security",
   "render-blocking-resources",
   "resource-caching-and-compression",
@@ -49,9 +60,13 @@ const knownEvidenceCheckIds = new Set([
   "tls-forward-secrecy",
   "tls-key-exchange-group",
   "tls-supported-versions",
-  "unused-code"
+  "unused-code",
+  "crawlable-links",
+  "indexing-allowed",
+  "language-alternates",
+  "structured-data"
 ]);
-const profiles = ["review-web-accessibility", "review-web-security", "review-web-performance"];
+const profiles = ["review-web-accessibility", "review-web-security", "review-web-performance", "review-technical-seo"];
 
 for (const profileId of profiles) {
   const profilePath = path.join(profileDirectory, `${profileId}.json`);
@@ -105,14 +120,14 @@ for (const schemaName of ["review-evidence-v1.schema.json", "review-coverage-v1.
   }
 }
 
-for (const relativeScriptPath of ["runtime/scripts/review.mjs", "runtime/scripts/test-review-runner.mjs", "runtime/scripts/test-security-review-runner.mjs", "runtime/scripts/test-performance-review-runner.mjs"]) {
+for (const relativeScriptPath of ["runtime/scripts/review.mjs", "runtime/scripts/test-review-runner.mjs", "runtime/scripts/test-security-review-runner.mjs", "runtime/scripts/test-performance-review-runner.mjs", "runtime/scripts/test-technical-seo-review-runner.mjs"]) {
   const scriptPath = path.join(repositoryRoot, "plugins", "web-dev-checklists", relativeScriptPath);
   const result = spawnSync(process.execPath, ["--check", scriptPath], { encoding: "utf8" });
 
   if (result.status !== 0) errors.push(`${relativeScriptPath} failed Node.js syntax validation: ${result.stderr.trim()}`);
 }
 
-for (const fixtureName of ["accessibility-pass.html", "accessibility-fail.html", "security-pass.html", "security-fail.html", "performance-pass.html", "performance-fail.html"]) {
+for (const fixtureName of ["accessibility-pass.html", "accessibility-fail.html", "security-pass.html", "security-fail.html", "performance-pass.html", "performance-fail.html", "technical-seo-pass.html", "technical-seo-fail.html"]) {
   try {
     await access(path.join(runtimeDirectory, "fixtures", fixtureName));
   } catch {

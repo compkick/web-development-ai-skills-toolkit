@@ -30,6 +30,7 @@ const scripts = [
   "reporting/axe-report.mjs",
   "reporting/performance-report.mjs",
   "reporting/security-report.mjs",
+  "reporting/technical-seo-report.mjs",
   "scripts/audit.mjs",
   "scripts/bootstrap.mjs",
   "scripts/review.mjs",
@@ -38,6 +39,7 @@ const scripts = [
   "scripts/test-review-runner.mjs",
   "scripts/test-performance-review-runner.mjs",
   "scripts/test-security-review-runner.mjs",
+  "scripts/test-technical-seo-review-runner.mjs",
   "scripts/test-runtime.mjs",
   "scripts/worker.mjs"
 ];

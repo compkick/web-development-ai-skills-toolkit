@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { DEFAULT_EVIDENCE_ROOT_DIRECTORY, getDefaultEvidenceOutputDirectory, runtimeSourceDirectory } from "../config/runtime-config.mjs";
 import { writePerformanceHtmlReport } from "../reporting/performance-report.mjs";
 import { writeSecurityHtmlReport } from "../reporting/security-report.mjs";
+import { writeTechnicalSeoHtmlReport } from "../reporting/technical-seo-report.mjs";
 
 const scriptsDirectory = path.dirname(fileURLToPath(import.meta.url));
 const auditScript = path.join(scriptsDirectory, "audit.mjs");
@@ -24,6 +25,7 @@ if (options.timeoutMs !== 45000) auditArguments.push("--timeout-ms", String(opti
 if (options.allowNoSandbox) auditArguments.push("--allow-no-sandbox");
 if (options.includeErrorDetails) auditArguments.push("--include-error-details");
 if (profile.runtime?.collectSecurity) auditArguments.push("--collect-security");
+if (profile.runtime?.collectSeo) auditArguments.push("--collect-seo");
 if (profile.runtime?.skipAccessibility) auditArguments.push("--skip-accessibility");
 if (profile.runtime?.skipLighthouse) auditArguments.push("--skip-lighthouse");
 
@@ -41,11 +43,13 @@ const summary = await readJson(path.join(options.outputDirectory, "summary.json"
 const axeResult = summary.axe.status === "completed" ? await readJson(path.join(options.outputDirectory, "axe-results.json")) : null;
 const lighthouseResult = summary.lighthouse.status === "completed" ? await readJson(path.join(options.outputDirectory, "lighthouse-report.json")) : null;
 const securityResult = summary.security?.status === "completed" ? await readJson(path.join(options.outputDirectory, "security-results.json")) : null;
+const seoResult = summary.seo?.status === "completed" ? await readJson(path.join(options.outputDirectory, "seo-results.json")) : null;
 let evidence;
 
 if (profile.id === "review-web-accessibility") evidence = await buildAccessibilityEvidence(profile, summary, axeResult, options.outputDirectory);
 else if (profile.id === "review-web-performance") evidence = await buildPerformanceEvidence(profile, summary, lighthouseResult, options.outputDirectory);
 else if (profile.id === "review-web-security") evidence = await buildSecurityEvidence(profile, summary, securityResult, options.outputDirectory);
+else if (profile.id === "review-technical-seo") evidence = await buildTechnicalSeoEvidence(profile, summary, lighthouseResult, seoResult, options.outputDirectory);
 else throw new Error(`The review profile does not have an evidence builder: ${profile.id}`);
 
 const coverage = {
@@ -71,6 +75,15 @@ if (profile.id === "review-web-performance") {
     { path: "performance-report.html", purpose: "Human-readable normalized performance evidence and checklist coverage" }
   );
   await writePerformanceHtmlReport(evidence, coverage, path.join(options.outputDirectory, "performance-report.html"));
+}
+
+if (profile.id === "review-technical-seo") {
+  evidence.artifacts.push(
+    { path: "evidence.json", purpose: "Normalized technical SEO check results" },
+    { path: "coverage.json", purpose: "Canonical checklist automation map" },
+    { path: "technical-seo-report.html", purpose: "Human-readable normalized technical SEO evidence and checklist coverage" }
+  );
+  await writeTechnicalSeoHtmlReport(evidence, coverage, path.join(options.outputDirectory, "technical-seo-report.html"));
 }
 
 await writeJson(path.join(options.outputDirectory, "evidence.json"), evidence);
@@ -303,6 +316,133 @@ function summarizeLighthouseAudit(audit) {
     scoreDisplayMode: audit.scoreDisplayMode,
     title: audit.title
   };
+}
+
+async function buildTechnicalSeoEvidence(profileToUse, summary, lighthouseResult, seoResult, outputDirectory) {
+  const checks = [];
+  const audits = lighthouseResult?.audits ?? {};
+  const lighthouseArtifacts = lighthouseResult ? ["lighthouse-report.json", "lighthouse-report.html"] : ["summary.json"];
+  const seoArtifacts = seoResult ? ["seo-results.json"] : ["summary.json"];
+  const addCheck = (id, title, status, method, evidenceToAdd, artifacts = seoArtifacts) => checks.push({ id, title, status, method, evidence: evidenceToAdd, artifacts });
+  const httpStatus = summary.page.httpStatus;
+  const finalUrl = new URL(summary.page.finalUrl);
+  const documentSeo = seoResult?.document ?? null;
+
+  addCheck("page-http-status", "Site returns an HTTP 200 response", typeof httpStatus !== "number" ? "not-checked" : httpStatus === 200 ? "pass" : "fail", "browser", { finalUrl: summary.page.finalUrl, httpStatus }, ["summary.json"]);
+  addCheck("seo-collection", "Runner completes bounded technical SEO evidence collection", seoResult ? "pass" : "not-checked", "browser", seoResult ? { runtimeStatus: "completed" } : { error: summary.seo?.error ?? null, runtimeStatus: summary.seo?.status ?? "missing" }, ["summary.json"]);
+
+  const seoScore = lighthouseResult?.categories?.seo?.score;
+  addCheck("lighthouse-seo-run", "Lighthouse completes a desktop SEO review", lighthouseResult ? "pass" : "not-checked", "lighthouse", lighthouseResult ? { formFactor: summary.lighthouse.formFactor, lighthouseVersion: lighthouseResult.lighthouseVersion, requestedUrl: lighthouseResult.requestedUrl } : { error: summary.lighthouse.error ?? null, runtimeStatus: summary.lighthouse.status }, lighthouseArtifacts);
+  addCheck("lighthouse-seo-score", "Lighthouse reports a desktop SEO score", typeof seoScore === "number" ? "informational" : "not-checked", "lighthouse", { score: typeof seoScore === "number" ? Math.round(seoScore * 100) : null }, lighthouseArtifacts);
+
+  const crawlabilityAudit = audits["is-crawlable"];
+  const robotDirectives = [seoResult?.responseHeaders?.["x-robots-tag"], ...(documentSeo?.metaRobots ?? []).map((directive) => directive.content)].filter(Boolean);
+  const hasNoIndex = robotDirectives.some((directive) => /(?:^|[,\s])(noindex|none)(?:$|[,\s])/i.test(directive));
+  const indexingStatus = typeof crawlabilityAudit?.score === "number" ? crawlabilityAudit.score === 1 ? "pass" : "fail" : hasNoIndex ? "fail" : "not-checked";
+  addCheck("indexing-allowed", "Site allows the reviewed public page to be indexed", indexingStatus, "lighthouse", { audit: summarizeLighthouseAudit(crawlabilityAudit), directives: robotDirectives, noIndexObserved: hasNoIndex }, [...new Set([...lighthouseArtifacts, ...seoArtifacts])]);
+
+  const titles = documentSeo?.titles ?? [];
+  addCheck("document-title", "Site provides one non-empty document title", !documentSeo ? "not-checked" : titles.length === 1 && titles[0].length > 0 ? "pass" : "fail", "browser", { audit: summarizeLighthouseAudit(audits["document-title"]), titles }, [...new Set([...seoArtifacts, ...lighthouseArtifacts])]);
+
+  const descriptions = documentSeo?.metaDescriptions ?? [];
+  addCheck("meta-description", "Site provides one useful meta-description candidate", !documentSeo ? "not-checked" : descriptions.length === 1 && descriptions[0].length > 0 ? "pass" : "warning", "browser", { audit: summarizeLighthouseAudit(audits["meta-description"]), descriptions }, [...new Set([...seoArtifacts, ...lighthouseArtifacts])]);
+
+  const headings = documentSeo?.headings ?? null;
+  addCheck("main-heading", "Site exposes a main page heading", !headings ? "not-checked" : headings.h1Count > 0 ? "pass" : "warning", "browser", headings, seoArtifacts);
+
+  const renderedContent = documentSeo?.content ?? null;
+  addCheck("rendered-content", "Site exposes rendered text content without user interaction", !renderedContent ? "not-checked" : renderedContent.bodyTextLength === 0 ? "fail" : renderedContent.mainTextLength === 0 ? "warning" : "pass", "browser", renderedContent, ["seo-results.json", "page.png"]);
+
+  const canonicals = [...(documentSeo?.canonicalElements ?? []), ...(seoResult?.httpCanonicalElements ?? [])];
+  const canonicalAudit = audits.canonical;
+  let canonicalStatus = "not-checked";
+  if (documentSeo) {
+    if (canonicals.length !== 1) canonicalStatus = "warning";
+    else if (!canonicals[0].resolvedUrl || !canonicals[0].absolute || canonicals[0].hasFragment) canonicalStatus = "warning";
+    else if (typeof canonicalAudit?.score === "number" && canonicalAudit.score < 1) canonicalStatus = "warning";
+    else canonicalStatus = "pass";
+  }
+  addCheck("canonical-declaration", "Site declares one valid absolute canonical URL", canonicalStatus, "browser", { audit: summarizeLighthouseAudit(canonicalAudit), canonicals, finalUrl: summary.page.finalUrl, selfReferential: canonicals.length === 1 && stripFragment(canonicals[0].resolvedUrl) === stripFragment(summary.page.finalUrl) }, [...new Set([...seoArtifacts, ...lighthouseArtifacts])]);
+
+  const linkAudits = [audits["crawlable-anchors"], audits["link-text"]];
+  addCheck("crawlable-links", "Site uses crawlable links with descriptive text on the reviewed page", documentSeo ? lighthouseAuditStatus(linkAudits) : "not-checked", "lighthouse", { audits: linkAudits.filter(Boolean).map(summarizeLighthouseAudit), inventory: documentSeo?.linkInventory ?? null }, [...new Set([...seoArtifacts, ...lighthouseArtifacts])]);
+
+  const robotsAudit = audits["robots-txt"];
+  let robotsStatus = "not-checked";
+  if (seoResult?.robotsTxt) {
+    if (typeof robotsAudit?.score === "number" && robotsAudit.score < 1) robotsStatus = "warning";
+    else robotsStatus = seoResult.robotsTxt.found ? "pass" : "informational";
+  }
+  addCheck("robots-txt", "Site provides valid robots.txt instructions when the file is present", robotsStatus, "lighthouse", { audit: summarizeLighthouseAudit(robotsAudit), observation: seoResult?.robotsTxt ?? null }, [...new Set([...seoArtifacts, ...lighthouseArtifacts])]);
+
+  const sitemapResults = seoResult?.sitemaps ?? [];
+  const accessibleSitemap = sitemapResults.find((sitemap) => sitemap.status === 200 && new Set(["urlset", "sitemapindex"]).has(sitemap.rootType) && !sitemap.contentType?.toLowerCase().includes("text/html"));
+  addCheck("sitemap-discovery", "Site exposes an accessible XML sitemap", !seoResult ? "not-checked" : accessibleSitemap ? "pass" : "warning", "http", { declaredByRobotsTxt: seoResult?.robotsTxt?.sitemapUrls ?? [], results: sitemapResults }, seoArtifacts);
+
+  const structuredData = documentSeo?.structuredData ?? null;
+  let structuredDataStatus = "not-checked";
+  if (structuredData) {
+    if (structuredData.jsonLdParseErrorCount > 0) structuredDataStatus = "warning";
+    else if (structuredData.jsonLdBlockCount > 0) structuredDataStatus = "pass";
+    else structuredDataStatus = "informational";
+  }
+  addCheck("structured-data", "Site provides syntactically readable structured data when markup is present", structuredDataStatus, "browser", { audit: summarizeLighthouseAudit(audits["structured-data"]), observation: structuredData }, [...new Set([...seoArtifacts, ...lighthouseArtifacts])]);
+
+  const alternateLanguages = documentSeo?.alternateLanguages ?? [];
+  const hreflangAudit = audits.hreflang;
+  const hreflangStatus = !documentSeo ? "not-checked" : alternateLanguages.length === 0 ? "informational" : typeof hreflangAudit?.score === "number" && hreflangAudit.score < 1 ? "warning" : "pass";
+  addCheck("language-alternates", "Site declares valid language alternates when localized versions are present", hreflangStatus, "lighthouse", { alternates: alternateLanguages, audit: summarizeLighthouseAudit(hreflangAudit), htmlLanguage: documentSeo?.htmlLanguage ?? null }, [...new Set([...seoArtifacts, ...lighthouseArtifacts])]);
+
+  addCheck("https-url", "Site resolves the reviewed page to HTTPS", finalUrl.protocol === "https:" ? "pass" : "fail", "browser", { finalProtocol: finalUrl.protocol, finalUrl: finalUrl.href }, ["summary.json"]);
+
+  const redirectChain = seoResult?.redirectChain ?? [];
+  const redirectHops = Math.max(0, redirectChain.length - 1);
+  addCheck("redirect-chain", "Site reaches the final page without a long redirect chain", !seoResult || redirectChain.length === 0 ? "not-checked" : redirectHops <= 1 ? "pass" : "warning", "browser", { hops: redirectHops, redirects: redirectChain }, seoArtifacts);
+
+  const browserErrorCount = summary.page.browserErrors.consoleErrorCount + summary.page.browserErrors.pageErrorCount;
+  addCheck("browser-errors", "Site renders without browser console or page errors", browserErrorCount === 0 ? "pass" : "warning", "browser", { consoleErrorCount: summary.page.browserErrors.consoleErrorCount, detailsIncluded: summary.page.browserErrors.detailsFile !== null, pageErrorCount: summary.page.browserErrors.pageErrorCount }, summary.page.browserErrors.detailsFile ? ["summary.json", summary.page.browserErrors.detailsFile] : ["summary.json"]);
+
+  const artifactDefinitions = [
+    ["summary.json", "Low-level browser and collector summary"],
+    ["page.png", "Full-page rendered screenshot"],
+    ["seo-results.json", "Reduced rendered metadata, robots.txt, sitemap, link, and redirect observations"],
+    ["lighthouse-report.json", "Machine-readable Lighthouse report"],
+    ["lighthouse-report.html", "Detailed human-readable Lighthouse report"],
+    ["browser-errors.json", "Opt-in truncated browser error details"]
+  ];
+  const artifacts = [];
+
+  for (const [artifactPath, purpose] of artifactDefinitions) {
+    if (await exists(path.join(outputDirectory, artifactPath))) artifacts.push({ path: artifactPath, purpose });
+  }
+
+  const limitations = [
+    "This package covers one public URL and does not prove whole-site crawlability, indexability, metadata quality, or search performance.",
+    "The runner inventories links on the reviewed page but does not fetch every link or perform an unbounded site crawl.",
+    "robots.txt and sitemap collection is bounded to the authorized origin, one robots.txt file, and up to three sitemap previews; large files can be truncated.",
+    "Canonical targets, hreflang relationships, structured data meaning, visible-content accuracy, and migration mappings require representative page and source review.",
+    "The runner does not access Search Console, analytics, server logs, index coverage, ranking data, or historical baselines."
+  ];
+
+  if (summary.seo?.status !== "completed") limitations.push(`Technical SEO collection was not completed: ${summary.seo?.error ?? summary.seo?.status ?? "missing"}`);
+  if (summary.lighthouse.status !== "completed") limitations.push(`Lighthouse evidence was not completed: ${summary.lighthouse.error ?? summary.lighthouse.status}`);
+
+  return {
+    schemaVersion: "1.0.0",
+    profile: { id: profileToUse.id, standard: profileToUse.standard, version: profileToUse.version },
+    target: { finalUrl: summary.page.finalUrl, requestedUrl: summary.requestedUrl },
+    run: { browser: summary.browser, completedAt: summary.completedAt, startedAt: summary.startedAt },
+    checks,
+    artifacts,
+    limitations
+  };
+}
+
+function stripFragment(value) {
+  if (!value) return null;
+  const url = new URL(value);
+  url.hash = "";
+  return url.href;
 }
 
 async function buildSecurityEvidence(profileToUse, summary, securityResult, outputDirectory) {

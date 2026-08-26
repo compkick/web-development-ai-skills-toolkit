@@ -1,3 +1,5 @@
+<!-- Generated from docs/technical-seo-review-checklist.md by scripts/sync-skill-references.mjs. Do not edit this copy. -->
+
 # Technical SEO review checklist
 
 ## Purpose

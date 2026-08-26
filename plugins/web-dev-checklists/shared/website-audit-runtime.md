@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Use the plugin-owned audit runtime to collect repeatable browser, Lighthouse, screenshot, console-error, automated accessibility, and public security evidence from an authorized website without adding dependencies to the website project.
+Use the plugin-owned audit runtime to collect repeatable browser, Lighthouse, screenshot, console-error, automated accessibility, public security, and technical SEO evidence from an authorized website without adding dependencies to the website project.
 
 ## Requirements
 
@@ -57,6 +57,7 @@ Use the profile runner when a skill needs normalized, repeatable evidence rather
 node runtime/scripts/review.mjs --profile review-web-accessibility --url https://site.example
 node runtime/scripts/review.mjs --profile review-web-security --url https://site.example
 node runtime/scripts/review.mjs --profile review-web-performance --url https://site.example
+node runtime/scripts/review.mjs --profile review-technical-seo --url https://site.example
 ```
 
 By default, the runner creates `.output/<profile>/<host>/<run-id>/` under the current working directory. Use `--output <directory>` to choose another new or empty directory. The procedure, browser configuration, profile version, check identifiers, and JSON shape are controlled, but live website content, network conditions, and Lighthouse measurements can still vary between runs.
@@ -68,6 +69,8 @@ Each profile maps every item in its canonical checklist to automated, partially 
 The security profile loads the supplied page and its normal subresources. When the rendered page uses HTTPS, it also makes five bounded TLS handshakes to the same hostname and port: one normal negotiation plus one attempt each for TLS 1.3, TLS 1.2, TLS 1.1, and TLS 1.0. These handshakes record the normally negotiated cipher and ephemeral key, check modern protocol support, and check rejection of deprecated protocols without enumerating every cipher suite or sending an HTTP request. The profile also makes one bounded plain-HTTP redirect probe on the supplied hostname and requests `/.well-known/security.txt` on the same HTTPS origin. It does not submit forms, enumerate endpoints, send attack payloads, scan ports, sign in, or exploit vulnerabilities. The profile skips axe and Lighthouse because they do not add evidence to this focused public security baseline.
 
 The performance profile runs Lighthouse with its desktop configuration and converts the report into stable observations for lab LCP, CLS, TBT, supporting paint metrics, and selected delivery, image, rendering, code, main-thread, layout, and third-party audits. It creates a concise `performance-report.html` and keeps the full Lighthouse report for diagnosis. The profile skips axe. One page-load run does not measure field INP, mobile or warm-cache performance, important interactions, geographic variation, authenticated states, project budgets, or real-user percentiles.
+
+The technical SEO profile runs Lighthouse with its desktop configuration and records rendered titles, descriptions, indexing directives, canonicals, headings, text, link inventory, structured-data syntax, and language alternates. It also requests the same origin's `robots.txt` file and previews up to three same-origin sitemaps declared there, or the default `/sitemap.xml` when none is declared. Sitemap previews are limited to 256 KiB and can be incomplete. The profile does not fetch every discovered link, perform an unbounded crawl, access Search Console or analytics, validate migration maps, or guarantee indexing or rankings.
 
 ## Browser sandbox
 
@@ -92,10 +95,12 @@ Treat each run directory as one evidence package. When a user requests `.output`
 - `lighthouse-report.json` and `lighthouse-report.html` contain the Lighthouse results.
 - `browser-errors.json` is created only when `--include-error-details` is explicitly requested.
 - `security-results.json` contains reduced TLS, transport, selected response-header, public-cookie-attribute, disclosure, redirect, and `security.txt` observations when security collection is enabled. Cookie values are not stored.
+- `seo-results.json` contains reduced rendered metadata, indexing, canonical, heading, content, link, structured-data, language, redirect, robots, and bounded sitemap observations when technical SEO collection is enabled.
 - `evidence.json` is created by the deterministic profile runner and contains normalized machine observations with stable check identifiers.
 - `coverage.json` is created by the deterministic profile runner and shows which canonical checklist items remain partially automated or manual.
 - `security-report.html` is created by the security profile and presents normalized pass, fail, warning, informational, and not-checked results with checklist coverage and limitations.
 - `performance-report.html` is created by the performance profile and presents normalized desktop lab metrics, Lighthouse observations, checklist coverage, limitations, and artifact links.
+- `technical-seo-report.html` is created by the technical SEO profile and presents normalized crawl, indexing, metadata, canonical, sitemap, and Lighthouse observations with checklist coverage, limitations, and artifact links.
 
 The runtime prioritizes confirmed violations and then incomplete checks for element screenshots, with a default limit of 50 candidates per page. The report records elements that were skipped by the limit, could not be found after the scan, used unsupported nested targets, or failed during capture.
 

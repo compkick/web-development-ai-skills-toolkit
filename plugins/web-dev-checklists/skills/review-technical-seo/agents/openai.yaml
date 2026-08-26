@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Technical SEO"
+  short_description: "Review crawlability and indexing signals."
+  default_prompt: "Use $review-technical-seo to review this website's technical SEO and give me evidence-backed, prioritized recommendations."
