@@ -110,7 +110,7 @@ export async function writeAxeHtmlReport(axeResult, outputPath) {
   <main>
     <h1>axe accessibility report</h1>
     <p class="lede">Automated evidence for <a href="${safeUrl(axeResult.url)}">${escapeHtml(axeResult.url)}</a>. Automated results do not replace manual accessibility testing.</p>
-    <p class="meta">Scanned ${escapeHtml(formatDate(axeResult.timestamp))} with ${escapeHtml(axeResult.testEngine?.name ?? "axe-core")} ${escapeHtml(axeResult.testEngine?.version ?? "unknown")} at ${escapeHtml(axeResult.testEnvironment?.windowWidth ?? "unknown")} × ${escapeHtml(axeResult.testEnvironment?.windowHeight ?? "unknown")}.</p>
+    <p class="meta">Scanned ${escapeHtml(formatDate(axeResult.timestamp))} with ${escapeHtml(axeResult.testEngine?.name ?? "axe-core")} ${escapeHtml(axeResult.testEngine?.version ?? "unknown")} in ${escapeHtml(axeResult.auditEnvironment?.formFactor ?? "unknown")} mode at ${escapeHtml(axeResult.testEnvironment?.windowWidth ?? axeResult.auditEnvironment?.viewport?.width ?? "unknown")} × ${escapeHtml(axeResult.testEnvironment?.windowHeight ?? axeResult.auditEnvironment?.viewport?.height ?? "unknown")}.</p>
     <section class="summary" aria-label="Result summary">
       ${renderMetric("Violation rules", axeResult.violations.length)}
       ${renderMetric("Affected violation elements", violationNodeCount)}

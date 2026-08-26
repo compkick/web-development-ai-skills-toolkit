@@ -30,12 +30,13 @@ try {
   const summary = JSON.parse(await readFile(path.join(outputDirectory, "summary.json"), "utf8"));
   const axeResult = JSON.parse(await readFile(path.join(outputDirectory, "axe-results.json"), "utf8"));
   const axeReport = await readFile(path.join(outputDirectory, "axe-report.html"), "utf8");
+  const lighthouseReport = JSON.parse(await readFile(path.join(outputDirectory, "lighthouse-report.json"), "utf8"));
 
-  if (summary.browser.sandboxed !== true || summary.page.httpStatus !== 200 || summary.page.browserErrors.consoleErrorCount < 1 || summary.page.browserErrors.pageErrorCount < 1 || summary.page.browserErrors.detailsFile !== null || summary.axe.status !== "completed" || summary.axe.violations < 1 || summary.lighthouse.status !== "completed" || typeof summary.lighthouse.scores.performance !== "number") {
+  if (summary.browser.sandboxed !== true || summary.browser.formFactor !== "desktop" || summary.browser.viewport.width !== 1440 || summary.browser.viewport.height !== 900 || summary.page.httpStatus !== 200 || summary.page.browserErrors.consoleErrorCount < 1 || summary.page.browserErrors.pageErrorCount < 1 || summary.page.browserErrors.detailsFile !== null || summary.axe.status !== "completed" || summary.axe.violations < 1 || summary.lighthouse.status !== "completed" || summary.lighthouse.formFactor !== "desktop" || lighthouseReport.configSettings.formFactor !== "desktop" || typeof summary.lighthouse.scores.performance !== "number") {
     throw new Error("Audit runtime self-test did not produce the expected browser, axe, and Lighthouse evidence.");
   }
 
-  if (axeResult.elementScreenshots.captured < 1 || !axeReport.includes("Confirmed violations") || !axeReport.includes("Needs manual review") || /<script(?:\s|>)/i.test(axeReport)) {
+  if (axeResult.auditEnvironment?.formFactor !== "desktop" || axeResult.testEnvironment?.windowWidth !== 1440 || axeResult.testEnvironment?.windowHeight !== 900 || axeResult.elementScreenshots.captured < 1 || !axeReport.includes("desktop mode at 1440 × 900") || !axeReport.includes("Confirmed violations") || !axeReport.includes("Needs manual review") || /<script(?:\s|>)/i.test(axeReport)) {
     throw new Error("Audit runtime self-test did not produce the expected safe human-readable axe report and element screenshots.");
   }
 

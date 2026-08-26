@@ -5,10 +5,10 @@ import { mkdir, readdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import process from "node:process";
-import lighthouse from "lighthouse";
+import lighthouse, { desktopConfig } from "lighthouse";
 import { chromium } from "playwright";
 import { collectTlsBaseline } from "../collectors/tls-baseline.mjs";
-import { DEFAULT_AXE_ELEMENT_SCREENSHOT_LIMIT } from "../config/runtime-config.mjs";
+import { AUDIT_FORM_FACTOR, AUDIT_VIEWPORT, DEFAULT_AXE_ELEMENT_SCREENSHOT_LIMIT } from "../config/runtime-config.mjs";
 import { captureAxeElementScreenshots, writeAxeHtmlReport } from "../reporting/axe-report.mjs";
 
 const options = parseArguments(process.argv.slice(2));
@@ -29,7 +29,13 @@ let securitySummary = { status: options.collectSecurity ? "not-run" : "skipped" 
 
 try {
   ({ browser, selectedBrowser } = await launchBrowser(options.browser, options.allowNoSandbox));
-  const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const context = await browser.newContext({
+    deviceScaleFactor: 1,
+    hasTouch: false,
+    isMobile: false,
+    screen: { ...AUDIT_VIEWPORT },
+    viewport: { ...AUDIT_VIEWPORT }
+  });
   const page = await context.newPage();
   const consoleErrors = [];
   const pageErrors = [];
@@ -105,6 +111,7 @@ try {
     try {
       const rawAxeResult = await new AxeBuilder({ page }).analyze();
       const axeResult = summarizeAxe(rawAxeResult);
+      axeResult.auditEnvironment = { formFactor: AUDIT_FORM_FACTOR, viewport: { ...AUDIT_VIEWPORT } };
       let elementScreenshots;
 
       try {
@@ -137,7 +144,7 @@ try {
 if (!options.skipLighthouse) {
   try {
     const lighthouseResult = await runLighthouse(options.url, selectedBrowser.executablePath, options.outputDirectory, options.allowNoSandbox);
-    lighthouseSummary = { finalUrl: lighthouseResult.finalUrl, scores: lighthouseResult.scores, status: "completed" };
+    lighthouseSummary = { finalUrl: lighthouseResult.finalUrl, formFactor: lighthouseResult.formFactor, scores: lighthouseResult.scores, status: "completed" };
   } catch (error) {
     lighthouseSummary = { error: truncate(error.message, 500), status: "error" };
   }
@@ -145,7 +152,7 @@ if (!options.skipLighthouse) {
 
 const summary = {
   axe: axeSummary,
-  browser: { name: selectedBrowser.name, sandboxed: !options.allowNoSandbox },
+  browser: { formFactor: AUDIT_FORM_FACTOR, name: selectedBrowser.name, sandboxed: !options.allowNoSandbox, viewport: { ...AUDIT_VIEWPORT } },
   completedAt: new Date().toISOString(),
   lighthouse: lighthouseSummary,
   page: pageResult,
@@ -221,7 +228,7 @@ async function runLighthouse(url, chromePath, outputDirectory, allowNoSandbox) {
       onlyCategories: ["performance", "accessibility", "best-practices", "seo"],
       output: ["json", "html"],
       port: chrome.port
-    });
+    }, desktopConfig);
     const [jsonReport, htmlReport] = Array.isArray(result.report) ? result.report : [result.report];
 
     if (jsonReport) {
@@ -234,6 +241,7 @@ async function runLighthouse(url, chromePath, outputDirectory, allowNoSandbox) {
 
     return {
       finalUrl: result.lhr.finalDisplayedUrl,
+      formFactor: result.lhr.configSettings.formFactor,
       scores: Object.fromEntries(Object.entries(result.lhr.categories).map(([key, category]) => [key, Math.round((category.score ?? 0) * 100)]))
     };
   } finally {

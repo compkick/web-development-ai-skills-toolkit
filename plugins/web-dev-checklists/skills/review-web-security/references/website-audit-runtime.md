@@ -62,6 +62,8 @@ node runtime/scripts/review.mjs --profile review-web-security --url https://site
 
 By default, the runner creates `.output/<profile>/<host>/<run-id>/` under the current working directory. Use `--output <directory>` to choose another new or empty directory. The procedure, browser configuration, profile version, check identifiers, and JSON shape are controlled, but live website content, network conditions, and Lighthouse measurements can still vary between runs.
 
+The accessibility collector runs axe in an explicit 1440 × 900 desktop Playwright context and runs Lighthouse with its desktop configuration, including desktop scoring, viewport emulation, user agent, and throttling. The output records the form factor and viewport. Treat this as the repeatable desktop baseline; narrow-width reflow, mobile layouts, zoom, touch behavior, and responsive interaction still require separate review.
+
 Each profile maps every item in its canonical checklist to automated, partially automated, or manual coverage. A machine `pass` proves only the named automated check; it does not prove that the corresponding human checklist item or the whole website passes.
 
 The security profile loads the supplied page and its normal subresources. When the rendered page uses HTTPS, it also makes five bounded TLS handshakes to the same hostname and port: one normal negotiation plus one attempt each for TLS 1.3, TLS 1.2, TLS 1.1, and TLS 1.0. These handshakes record the normally negotiated cipher and ephemeral key, check modern protocol support, and check rejection of deprecated protocols without enumerating every cipher suite or sending an HTTP request. The profile also makes one bounded plain-HTTP redirect probe on the supplied hostname and requests `/.well-known/security.txt` on the same HTTPS origin. It does not submit forms, enumerate endpoints, send attack payloads, scan ports, sign in, or exploit vulnerabilities. The profile skips axe and Lighthouse because they do not add evidence to this focused public security baseline.
@@ -82,7 +84,7 @@ Screenshots, including axe element screenshots, Lighthouse reports, URLs, and op
 
 Treat each run directory as one evidence package. When a user requests `.output` or another durable destination, preserve the complete directory and verify the expected files before reporting success; do not keep only the normalized JSON files or delete the raw axe, Lighthouse, screenshot, or element evidence during the task. If a collector did not complete, retain the partial package and use `summary.json` and `evidence.json` to report its status and error.
 
-- `summary.json` contains the page result, browser used, Lighthouse scores, and automated accessibility counts.
+- `summary.json` contains the page result, browser used, desktop form factor and viewport, Lighthouse scores, and automated accessibility counts.
 - `page.png` is a full-page screenshot of the rendered page.
 - `axe-results.json` contains reduced axe findings without copied HTML snippets.
 - `axe-report.html` presents confirmed violations and incomplete checks in a human-readable format and links to bounded screenshots under `axe-elements/`.
@@ -107,4 +109,4 @@ Treat Lighthouse accessibility results and axe findings as automated evidence on
 - [OWASP Transport Layer Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Security_Cheat_Sheet.html)
 - [RFC 9325 Recommendations for Secure Use of TLS](https://www.rfc-editor.org/rfc/rfc9325.html)
 
-Last verified against official documentation: 2026-08-22.
+Last verified against official documentation: 2026-08-25.

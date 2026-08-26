@@ -339,10 +339,10 @@ When an existing human checklist becomes a skill reference, keep the canonical c
 
 ### Phase 5 exit criteria
 
-- [ ] The core plugin installs successfully from a clean environment.
+- [x] The core plugin installs successfully from a clean environment.
   - [x] The repository-local marketplace registers successfully with Codex CLI.
-  - [ ] The plugin installs from the **Personal** marketplace in the Plugins browser.
-  - [ ] A new task exposes `review-web-accessibility` and `review-web-security` outside this repository.
+  - [x] The plugin installs from the **Personal** marketplace in the Plugins browser.
+  - [x] A new task exposes `review-web-accessibility` and `review-web-security` outside this repository.
 - [ ] All six skills appear with correct metadata.
 - [ ] Representative forward tests produce useful and bounded results.
 - [ ] Packaged skills include all required references and scripts.

@@ -8,6 +8,8 @@ const configDirectory = path.dirname(fileURLToPath(import.meta.url));
 
 export const DEFAULT_EVIDENCE_ROOT_DIRECTORY = ".output";
 export const DEFAULT_AXE_ELEMENT_SCREENSHOT_LIMIT = 50;
+export const AUDIT_FORM_FACTOR = "desktop";
+export const AUDIT_VIEWPORT = Object.freeze({ height: 900, width: 1440 });
 export const RAW_AUDIT_OUTPUT_GROUP = "runtime-audit";
 export const RUNTIME_CACHE_ENVIRONMENT_VARIABLE = "WEB_DEV_CHECKLISTS_CACHE";
 export const runtimeSourceDirectory = path.resolve(configDirectory, "..");

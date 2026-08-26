@@ -133,7 +133,7 @@ Use `review:website` for normal human or agent checklist work. It runs the appro
 npm run review:website -- --profile review-web-accessibility --url https://site.example
 ```
 
-This profile collects a rendered screenshot, page title and language, heading and landmark counts, browser-error counts, reduced axe results, a human-readable axe report with element screenshots, and Lighthouse reports. It maps the evidence to the [web accessibility review checklist](docs/web-accessibility-review-checklist.md). Keyboard, zoom, reflow, content quality, important workflows, and assistive-technology testing remain manual.
+This profile collects a rendered screenshot, page title and language, heading and landmark counts, browser-error counts, reduced axe results, a human-readable axe report with element screenshots, and Lighthouse reports. Axe runs in a 1440 × 900 desktop Playwright context, and Lighthouse uses its desktop configuration. It maps the evidence to the [web accessibility review checklist](docs/web-accessibility-review-checklist.md). Keyboard, mobile and narrow-width layouts, zoom, reflow, content quality, important workflows, and assistive-technology testing remain manual.
 
 #### Security checklist runner
 
