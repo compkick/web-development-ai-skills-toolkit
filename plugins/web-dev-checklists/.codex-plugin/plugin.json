@@ -1,16 +1,18 @@
 {
   "name": "web-dev-checklists",
-  "version": "0.1.0+codex.20260826003542",
+  "version": "0.1.0+codex.20260826030638",
   "description": "Focused website review and launch-readiness skills with a plugin-owned browser audit runtime.",
   "author": {
-    "name": "Dev Docs and Checklists contributors"
+    "name": "Computerkick",
+    "url": "https://computerkick.com"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "Web Dev Checklists",
     "shortDescription": "Review website quality and launch readiness.",
     "longDescription": "Practical Codex skills for accessibility, security, performance, technical SEO, launch readiness, and whole-project web reviews, backed by a plugin-owned Playwright, axe, and Lighthouse runtime.",
-    "developerName": "Dev Docs and Checklists contributors",
+    "developerName": "Computerkick",
+    "websiteURL": "https://computerkick.com",
     "category": "Productivity",
     "capabilities": [
       "Website review",

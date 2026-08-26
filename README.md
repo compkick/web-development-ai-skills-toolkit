@@ -4,6 +4,8 @@ Full title: Website Readiness Toolkit: Checklists & Agent Skills
 
 Reusable standards, checklists, guides, runbooks, and cheatsheets for web development and CMS work. The library emphasizes high-impact, observable checks; secure defaults; current primary sources; and workflows that remain practical for humans.
 
+Created by [Computerkick](https://computerkick.com).
+
 ## General web guidance
 
 - [Web development and CMS coding standards](docs/web-coding-standards.md)
@@ -92,6 +94,12 @@ $review-web-security Review https://site.example, save the evidence under .outpu
 Codex can also choose an installed skill from a natural-language request such as “Is this website ready to launch from an accessibility perspective?” Explicit invocation is useful when testing a specific skill. The agent asks for approval before bootstrapping the browser runtime when needed. Runtime dependencies stay in the user cache rather than the project being reviewed.
 
 When updating a locally installed development build, validate the plugin, update its Codex cachebuster, reinstall it from the **Personal** marketplace, and start another new task before retesting.
+
+### Versioning
+
+The root `package.json` contains the toolkit's release version. The audit runtime uses the same version, and the plugin manifest uses that version as its base. Local plugin builds add `+codex.<timestamp>` as valid semantic-version build metadata so Codex recognizes a refreshed build without inventing another release number. Review profiles and evidence schemas keep independent contract versions because they change only when their procedure or data format changes.
+
+Run `npm run versions:check` to confirm that the root package, lockfiles, audit runtime, and plugin base version agree. For a release, update all of those base versions together, refresh the plugin cachebuster, validate the repository, and reinstall the plugin.
 
 ## Agent website audit runtime
 

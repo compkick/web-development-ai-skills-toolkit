@@ -1,8 +1,12 @@
 {
   "name": "dev-docs-and-checklists",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Validation tooling for the web development documentation library.",
+  "author": {
+    "name": "Computerkick",
+    "url": "https://computerkick.com"
+  },
   "scripts": {
     "docs:lint": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
     "docs:links": "node scripts/check-doc-links.mjs",
@@ -21,8 +25,9 @@
     "reviews:test": "npm run reviews:test-accessibility && npm run reviews:test-security",
     "reviews:test-accessibility": "node plugins/web-dev-checklists/runtime/scripts/test-review-runner.mjs",
     "reviews:test-security": "node plugins/web-dev-checklists/runtime/scripts/test-security-review-runner.mjs",
+    "versions:check": "node scripts/check-versions.mjs",
     "deps:audit": "npm audit --audit-level=high && npm audit --prefix plugins/web-dev-checklists/runtime --audit-level=high",
-    "repo:check": "npm run docs:check && npm run skills:refs:check && npm run runtime:check && npm run reviews:check && npm run deps:audit"
+    "repo:check": "npm run docs:check && npm run skills:refs:check && npm run runtime:check && npm run reviews:check && npm run versions:check && npm run deps:audit"
   },
   "devDependencies": {
     "markdownlint-cli2": "0.23.2"

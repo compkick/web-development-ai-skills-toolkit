@@ -331,7 +331,7 @@ When an existing human checklist becomes a skill reference, keep the canonical c
 - [x] Add `.codex-plugin/plugin.json`.
 - [x] Add a repository or personal marketplace entry for local installation.
 - [ ] Choose and add a license.
-- [ ] Adopt semantic versioning.
+- [x] Adopt semantic versioning and validate one shared release version across the repository package, audit runtime, and plugin manifest base version.
 - [x] Add plugin installation and usage guidance to the repository README.
 - [x] Add basic plugin metadata.
 - [ ] Add presentation assets if they materially improve discovery.
