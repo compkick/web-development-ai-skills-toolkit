@@ -24,6 +24,7 @@ for (const [dependency, version] of Object.entries(packageJson.dependencies ?? {
 }
 
 const scripts = [
+  "collectors/http-redirect.mjs",
   "collectors/tls-baseline.mjs",
   "config/runtime-config.mjs",
   "config/runtime-status.mjs",

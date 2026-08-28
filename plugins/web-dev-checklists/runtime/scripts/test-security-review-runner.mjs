@@ -5,6 +5,8 @@ import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
+import { assessHttpRedirect, probeHttpRedirect } from "../collectors/http-redirect.mjs";
+import { AUDIT_USER_AGENT } from "../config/runtime-config.mjs";
 import { evaluateNegotiatedTls } from "../collectors/tls-baseline.mjs";
 
 const scriptsDirectory = path.dirname(fileURLToPath(import.meta.url));
@@ -15,6 +17,7 @@ const failFixture = await readFile(path.join(runtimeDirectory, "fixtures", "secu
 const testDirectory = await mkdtemp(path.join(os.tmpdir(), "web-dev-checklists-security-review-test-"));
 const passOutputDirectory = path.join(testDirectory, "pass-output");
 const failOutputDirectory = path.join(testDirectory, "fail-output");
+let redirectProbeUserAgent = null;
 const server = http.createServer((request, response) => {
   if (request.url === "/favicon.ico") {
     response.writeHead(204);
@@ -41,6 +44,12 @@ const server = http.createServer((request, response) => {
     return response.end(failFixture);
   }
 
+  if (request.url === "/redirect-probe") {
+    redirectProbeUserAgent = request.headers["user-agent"] ?? null;
+    response.writeHead(403, { "Content-Type": "text/plain; charset=utf-8" });
+    return response.end("Synthetic request blocked");
+  }
+
   response.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
   response.end("Not found");
 });
@@ -55,6 +64,27 @@ try {
 
   const address = server.address();
   const baseUrl = `http://127.0.0.1:${address.port}`;
+  const blockedRedirectProbe = await probeHttpRedirect(`https://127.0.0.1:${address.port}/redirect-probe`, 5000, "FixtureBrowser/1.0");
+  const blockedRedirectAssessment = assessHttpRedirect(blockedRedirectProbe);
+
+  if (redirectProbeUserAgent !== "FixtureBrowser/1.0" || blockedRedirectProbe.finalStatus !== 403 || blockedRedirectAssessment.status !== "warning") {
+    throw new Error("HTTP redirect probing did not preserve the browser user agent or classify a blocked probe as inconclusive.");
+  }
+
+  await probeHttpRedirect(`https://127.0.0.1:${address.port}/redirect-probe`, 5000);
+
+  if (redirectProbeUserAgent !== AUDIT_USER_AGENT) {
+    throw new Error("HTTP redirect probing did not use the configured audit user agent as its fallback.");
+  }
+
+  if (assessHttpRedirect({ attempted: true, chain: [{ host: "site.example", locationHost: "site.example", locationProtocol: "https:", protocol: "http:", status: 301 }], finalHost: "site.example", finalProtocol: "https:", finalStatus: 200 }).status !== "pass") {
+    throw new Error("HTTP redirect assessment did not accept a successful HTTP-to-HTTPS redirect.");
+  }
+
+  if (assessHttpRedirect({ attempted: true, chain: [{ host: "site.example", protocol: "http:", status: 200 }], finalHost: "site.example", finalProtocol: "http:", finalStatus: 200 }).status !== "fail") {
+    throw new Error("HTTP redirect assessment did not reject a confirmed plain-HTTP response.");
+  }
+
   await run(process.execPath, [reviewScript, "--profile", "review-web-security", "--url", `${baseUrl}/pass`, "--output", passOutputDirectory]);
   await run(process.execPath, [reviewScript, "--profile", "review-web-security", "--url", `${baseUrl}/fail`, "--output", failOutputDirectory]);
 

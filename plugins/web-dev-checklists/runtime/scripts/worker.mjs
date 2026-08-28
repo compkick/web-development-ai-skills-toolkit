@@ -7,8 +7,9 @@ import path from "node:path";
 import process from "node:process";
 import lighthouse, { desktopConfig } from "lighthouse";
 import { chromium } from "playwright";
+import { probeHttpRedirect } from "../collectors/http-redirect.mjs";
 import { collectTlsBaseline } from "../collectors/tls-baseline.mjs";
-import { AUDIT_FORM_FACTOR, AUDIT_VIEWPORT, DEFAULT_AXE_ELEMENT_SCREENSHOT_LIMIT } from "../config/runtime-config.mjs";
+import { AUDIT_FORM_FACTOR, AUDIT_USER_AGENT, AUDIT_VIEWPORT, DEFAULT_AXE_ELEMENT_SCREENSHOT_LIMIT } from "../config/runtime-config.mjs";
 import { captureAxeElementScreenshots, writeAxeHtmlReport } from "../reporting/axe-report.mjs";
 
 const options = parseArguments(process.argv.slice(2));
@@ -308,6 +309,7 @@ async function stopChrome(chrome) {
 
 async function collectSecurityEvidence({ context, page, requestProtocolCounts, requestedUrl, response, timeoutMs }) {
   const finalUrl = new URL(page.url());
+  const browserUserAgent = await page.evaluate(() => navigator.userAgent);
   const responseHeaders = response ? await response.allHeaders() : {};
   const responseHeaderEntries = response ? await response.headersArray() : [];
   const securityDetails = response ? await response.securityDetails() : null;
@@ -367,7 +369,7 @@ async function collectSecurityEvidence({ context, page, requestProtocolCounts, r
     session: cookie.expires === -1
   }));
   const [httpRedirect, securityTxt, tlsBaseline] = await Promise.all([
-    probeHttpRedirect(requestedUrl, timeoutMs),
+    probeHttpRedirect(requestedUrl, timeoutMs, browserUserAgent),
     probeSecurityTxt(finalUrl, timeoutMs),
     collectTlsBaseline(finalUrl, timeoutMs)
   ]);
@@ -605,7 +607,7 @@ async function fetchTextPreview(initialUrl, timeoutMs, maximumBytes, resourceNam
   let currentUrl = new URL(initialUrl);
 
   for (let redirectCount = 0; redirectCount <= 5; redirectCount += 1) {
-    const response = await fetch(currentUrl, { headers: { accept, "user-agent": "Website-Readiness-Toolkit/0.1" }, redirect: "manual", signal: AbortSignal.timeout(timeoutMs) });
+    const response = await fetch(currentUrl, { headers: { accept, "user-agent": AUDIT_USER_AGENT }, redirect: "manual", signal: AbortSignal.timeout(timeoutMs) });
     const location = response.headers.get("location");
 
     if (location && response.status >= 300 && response.status < 400) {
@@ -651,50 +653,6 @@ function decodeXmlText(value) {
   return value.replaceAll("&amp;", "&").replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&quot;", '"').replaceAll("&apos;", "'");
 }
 
-async function probeHttpRedirect(requestedUrl, timeoutMs) {
-  const targetUrl = new URL(requestedUrl);
-
-  if (targetUrl.protocol !== "https:") return { attempted: false, reason: "The supplied URL is not HTTPS." };
-
-  const initialHttpUrl = new URL(targetUrl);
-  initialHttpUrl.protocol = "http:";
-  const seen = new Set();
-  const chain = [];
-  let currentUrl = initialHttpUrl;
-
-  try {
-    for (let redirectCount = 0; redirectCount <= 10; redirectCount += 1) {
-      const currentKey = currentUrl.href;
-
-      if (seen.has(currentKey)) return { attempted: true, chain, error: "Redirect loop detected." };
-      seen.add(currentKey);
-
-      const response = await fetch(currentUrl, { headers: { "user-agent": "Website-Readiness-Toolkit/0.1" }, redirect: "manual", signal: AbortSignal.timeout(timeoutMs) });
-      await response.body?.cancel();
-      const location = response.headers.get("location");
-      const entry = { host: currentUrl.host, protocol: currentUrl.protocol, status: response.status };
-
-      if (location) {
-        const nextUrl = new URL(location, currentUrl);
-        entry.locationHost = nextUrl.host;
-        entry.locationProtocol = nextUrl.protocol;
-        chain.push(entry);
-
-        if (nextUrl.hostname !== targetUrl.hostname) return { attempted: true, chain, error: "Redirect left the authorized hostname." };
-        currentUrl = nextUrl;
-        continue;
-      }
-
-      chain.push(entry);
-      return { attempted: true, chain, finalHost: currentUrl.host, finalProtocol: currentUrl.protocol, finalStatus: response.status };
-    }
-
-    return { attempted: true, chain, error: "More than 10 redirects were returned." };
-  } catch (error) {
-    return { attempted: true, chain, error: truncate(error.message, 300) };
-  }
-}
-
 async function probeSecurityTxt(finalUrl, timeoutMs) {
   if (finalUrl.protocol !== "https:") {
     return { found: false, reason: "security.txt is defined for an HTTPS origin.", transportSecure: false };
@@ -724,7 +682,7 @@ async function fetchLimitedText(initialUrl, timeoutMs, maximumBytes) {
   let currentUrl = new URL(initialUrl);
 
   for (let redirectCount = 0; redirectCount <= 5; redirectCount += 1) {
-    const response = await fetch(currentUrl, { headers: { accept: "text/plain", "user-agent": "Website-Readiness-Toolkit/0.1" }, redirect: "manual", signal: AbortSignal.timeout(timeoutMs) });
+    const response = await fetch(currentUrl, { headers: { accept: "text/plain", "user-agent": AUDIT_USER_AGENT }, redirect: "manual", signal: AbortSignal.timeout(timeoutMs) });
     const location = response.headers.get("location");
 
     if (location && response.status >= 300 && response.status < 400) {

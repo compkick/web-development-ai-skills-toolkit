@@ -10,11 +10,12 @@ export const DEFAULT_EVIDENCE_ROOT_DIRECTORY = ".output";
 export const DEFAULT_AXE_ELEMENT_SCREENSHOT_LIMIT = 50;
 export const AUDIT_FORM_FACTOR = "desktop";
 export const AUDIT_VIEWPORT = Object.freeze({ height: 900, width: 1440 });
+export const AUDIT_USER_AGENT = "Website-Readiness-Toolkit/0.1";
 export const RAW_AUDIT_OUTPUT_GROUP = "runtime-audit";
 export const RUNTIME_CACHE_ENVIRONMENT_VARIABLE = "WEB_DEV_CHECKLISTS_CACHE";
 export const runtimeSourceDirectory = path.resolve(configDirectory, "..");
 
-const RUNTIME_SOURCE_FILES = ["package.json", "package-lock.json", "collectors/tls-baseline.mjs", "config/runtime-config.mjs", "reporting/axe-report.mjs", "scripts/worker.mjs"];
+const RUNTIME_SOURCE_FILES = ["package.json", "package-lock.json", "collectors/http-redirect.mjs", "collectors/tls-baseline.mjs", "config/runtime-config.mjs", "reporting/axe-report.mjs", "scripts/worker.mjs"];
 
 export async function getRuntimeLocation() {
   const hash = createHash("sha256");

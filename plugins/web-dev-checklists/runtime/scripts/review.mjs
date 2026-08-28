@@ -3,6 +3,7 @@ import path from "node:path";
 import process from "node:process";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { assessHttpRedirect } from "../collectors/http-redirect.mjs";
 import { DEFAULT_EVIDENCE_ROOT_DIRECTORY, getDefaultEvidenceOutputDirectory, runtimeSourceDirectory } from "../config/runtime-config.mjs";
 import { writePerformanceHtmlReport } from "../reporting/performance-report.mjs";
 import { writeSecurityHtmlReport } from "../reporting/security-report.mjs";
@@ -491,15 +492,8 @@ async function buildSecurityEvidence(profileToUse, summary, securityResult, outp
   addCheck("tls-deprecated-versions", "Site rejects TLS 1.0 and TLS 1.1", !tlsBaseline?.attempted ? "not-checked" : acceptsDeprecatedTls ? "fail" : rejectsDeprecatedTls ? "pass" : "not-checked", "tls", { tls10: tlsBaseline?.versions?.tls10 ?? null, tls11: tlsBaseline?.versions?.tls11 ?? null });
 
   const redirect = securityResult?.httpRedirect;
-  let redirectStatus = "not-checked";
-
-  if (redirect?.attempted) {
-    if (redirect.error?.toLowerCase().includes("loop") || redirect.error?.includes("More than 10")) redirectStatus = "fail";
-    else if (redirect.error) redirectStatus = "warning";
-    else redirectStatus = redirect.chain?.[0]?.status >= 300 && redirect.chain?.[0]?.status < 400 && redirect.finalProtocol === "https:" ? "pass" : "fail";
-  }
-
-  addCheck("http-to-https-redirect", "Site redirects plain HTTP to HTTPS", redirectStatus, "http", redirect ?? { attempted: false });
+  const redirectAssessment = assessHttpRedirect(redirect);
+  addCheck("http-to-https-redirect", "Site redirects plain HTTP to HTTPS", redirectAssessment.status, "http", { ...(redirect ?? { attempted: false }), assessment: redirectAssessment.reason });
 
   const insecureResourceCounts = securityResult?.document?.insecureResourceCounts ?? {};
   const insecureReferenceCount = Object.values(insecureResourceCounts).reduce((total, count) => total + count, 0) + (securityResult?.document?.insecureFormActionCount ?? 0);
