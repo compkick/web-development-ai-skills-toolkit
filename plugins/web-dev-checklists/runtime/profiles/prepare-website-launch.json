@@ -1,0 +1,285 @@
+{
+  "id": "prepare-website-launch",
+  "version": "1.0.1",
+  "checklistSource": "docs/website-launch-checklist.md",
+  "standard": "Website launch readiness checklist",
+  "runtime": {
+    "collectLaunch": true,
+    "skipAccessibility": true,
+    "skipLighthouse": true
+  },
+  "coverage": [
+    {
+      "id": "launch-plan-release",
+      "section": "Plan the launch",
+      "checklistItem": "Define what is launching and identify the exact release or commit.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The release, commit, content, and configuration scope must come from the project team."
+    },
+    {
+      "id": "launch-plan-owners",
+      "section": "Plan the launch",
+      "checklistItem": "Choose the launch window and assign the people responsible for deployment, testing, communications, and rollback.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Timing, ownership, and availability require project confirmation."
+    },
+    {
+      "id": "launch-plan-stopping-rules",
+      "section": "Plan the launch",
+      "checklistItem": "Define what would stop the launch or trigger a rollback.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Go/no-go and rollback rules depend on the release risk and business impact."
+    },
+    {
+      "id": "launch-plan-known-issues",
+      "section": "Plan the launch",
+      "checklistItem": "Record known issues, approve accepted risks, and tell stakeholders what is changing.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Known issues, risk acceptance, and communications require accountable human decisions."
+    },
+    {
+      "id": "launch-readiness-specialist-reviews",
+      "section": "Confirm readiness",
+      "checklistItem": "Complete the reviews that apply to this launch: accessibility, security, performance, SEO, privacy, and release readiness.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The launch skill reuses supplied specialist evidence or confirmation and does not rerun those reviews automatically."
+    },
+    {
+      "id": "launch-readiness-blockers",
+      "section": "Confirm readiness",
+      "checklistItem": "Confirm there are no unresolved launch-blocking findings.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The decision owner must review current findings, accepted risks, and missing evidence."
+    },
+    {
+      "id": "launch-readiness-production-like",
+      "section": "Confirm readiness",
+      "checklistItem": "Test the release candidate in a production-like environment.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The public runner cannot establish whether the reviewed environment and release match production."
+    },
+    {
+      "id": "launch-readiness-critical-pages",
+      "section": "Confirm readiness",
+      "checklistItem": "Review the homepage, navigation, important pages, forms, search, downloads, and error pages.",
+      "automation": "partial",
+      "evidenceCheckIds": ["page-http-status", "homepage-structure", "homepage-navigation-links", "homepage-footer-links", "homepage-content-links", "browser-errors"],
+      "note": "The runner reviews one homepage and bounded same-host link destinations. Important pages, forms, search, downloads, and error behavior remain project-specific tests."
+    },
+    {
+      "id": "launch-readiness-production-content",
+      "section": "Confirm readiness",
+      "checklistItem": "Remove test content, placeholder text, draft material, and environment-specific values.",
+      "automation": "partial",
+      "evidenceCheckIds": ["homepage-content-summary", "homepage-content-links"],
+      "note": "The screenshot and homepage summary help a reviewer spot obvious issues, but approved production content and configuration require human review."
+    },
+    {
+      "id": "launch-readiness-email",
+      "section": "Confirm readiness",
+      "checklistItem": "Set up and verify that the site can send emails.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Email tests can notify people and require approved recipients, sender configuration, and failure evidence."
+    },
+    {
+      "id": "launch-readiness-services",
+      "section": "Confirm readiness",
+      "checklistItem": "Confirm analytics, consent tools, important integrations, and production content are ready.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Correct production events, consent behavior, credentials, endpoints, and content approval require project evidence."
+    },
+    {
+      "id": "launch-cutover-backups",
+      "section": "Prepare the cutover",
+      "checklistItem": "Back up everything needed for recovery and confirm the backups can be restored.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Backup completeness and restoration require operational evidence."
+    },
+    {
+      "id": "launch-cutover-runbook",
+      "section": "Prepare the cutover",
+      "checklistItem": "Write down the deployment, migration, smoke-test, and rollback steps.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Runbook steps must match the release, platform, owners, and available access."
+    },
+    {
+      "id": "launch-cutover-rehearsal",
+      "section": "Prepare the cutover",
+      "checklistItem": "Rehearse high-risk migrations or deployment steps before launch.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Rehearsal evidence depends on the actual deployment and migration procedure."
+    },
+    {
+      "id": "launch-cutover-domain",
+      "section": "Prepare the cutover",
+      "checklistItem": "Prepare any DNS, certificate, redirect, or domain changes.",
+      "automation": "partial",
+      "evidenceCheckIds": ["https-url", "http-to-https-redirect"],
+      "note": "The runner observes the current public URL and bounded HTTP redirect. Planned DNS, certificates, redirects, and domain changes require the cutover plan."
+    },
+    {
+      "id": "launch-cutover-dns-ttl",
+      "section": "Prepare the cutover",
+      "checklistItem": "Lower and later restore DNS TTLs when the cutover plan requires it.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "TTL changes are conditional operational actions and are not made by the runner."
+    },
+    {
+      "id": "launch-cutover-operations",
+      "section": "Prepare the cutover",
+      "checklistItem": "Confirm production access, monitoring, support, and any necessary change freeze are ready.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Access, alerts, support availability, and change controls require operational confirmation."
+    },
+    {
+      "id": "launch-decision-release-unchanged",
+      "section": "Go or no-go",
+      "checklistItem": "Confirm the approved release, configuration, content, and rollback point have not changed.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The decision owner must compare the approved and deployable release state."
+    },
+    {
+      "id": "launch-decision-current-state",
+      "section": "Go or no-go",
+      "checklistItem": "Review open issues, current incidents, and unavailable dependencies.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Current issue, incident, and dependency status comes from project and operational systems."
+    },
+    {
+      "id": "launch-decision-record",
+      "section": "Go or no-go",
+      "checklistItem": "Record the final go, delay, or no-go decision.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Codex makes an evidence-backed recommendation; the accountable decision owner records the final decision."
+    },
+    {
+      "id": "launch-execute-release",
+      "section": "Launch",
+      "checklistItem": "Deploy the approved release and any related database, content, DNS, or redirect changes.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The read-only preflight does not deploy or change external systems."
+    },
+    {
+      "id": "launch-execute-public-site",
+      "section": "Launch",
+      "checklistItem": "Remove maintenance mode, clear caches, and rebuild search indexes when the site is ready.",
+      "automation": "partial",
+      "evidenceCheckIds": ["page-http-status", "homepage-content-summary"],
+      "note": "The runner observes the resulting homepage but does not change maintenance mode, caches, or search indexes."
+    },
+    {
+      "id": "launch-execute-smoke-tests",
+      "section": "Launch",
+      "checklistItem": "Test critical pages, navigation, forms, email, search, authentication, and integrations.",
+      "automation": "partial",
+      "evidenceCheckIds": ["page-http-status", "homepage-navigation-links", "homepage-footer-links", "homepage-content-links", "browser-errors"],
+      "note": "The runner performs a homepage and link smoke review. State-changing and authenticated workflows require approved project tests."
+    },
+    {
+      "id": "launch-execute-public-signals",
+      "section": "Launch",
+      "checklistItem": "Confirm HTTPS, redirects, analytics, consent, canonicals, robots directives, and sitemaps.",
+      "automation": "partial",
+      "evidenceCheckIds": ["https-url", "http-to-https-redirect", "indexing-allowed"],
+      "note": "The launch runner checks HTTPS, the bounded HTTP redirect, and homepage noindex signals. Prior technical SEO evidence and human checks cover the remaining signals."
+    },
+    {
+      "id": "launch-execute-monitoring",
+      "section": "Launch",
+      "checklistItem": "Watch monitoring and support reports, and record problems or launch decisions.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Monitoring, support, and decision records require operational access and ownership."
+    },
+    {
+      "id": "launch-after-repeat-tests",
+      "section": "After launch",
+      "checklistItem": "Repeat critical tests after DNS, caches, search, and scheduled work have settled.",
+      "automation": "partial",
+      "evidenceCheckIds": ["page-http-status", "homepage-navigation-links", "homepage-footer-links", "homepage-content-links", "browser-errors"],
+      "note": "The same bounded preflight can be rerun later, but project-specific critical workflows remain manual or project-owned tests."
+    },
+    {
+      "id": "launch-after-operations",
+      "section": "After launch",
+      "checklistItem": "Check logs, monitoring, backups, forms, email, analytics, and scheduled jobs.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "These checks require approved operational systems and, for forms or email, potentially state-changing tests."
+    },
+    {
+      "id": "launch-after-crawl",
+      "section": "After launch",
+      "checklistItem": "Crawl the site for broken links, bad redirects, and indexing problems.",
+      "automation": "partial",
+      "evidenceCheckIds": ["homepage-link-check-coverage", "homepage-navigation-links", "homepage-footer-links", "homepage-content-links", "http-to-https-redirect", "indexing-allowed"],
+      "note": "The runner checks a bounded same-host sample from one homepage. A representative crawl and prior technical SEO review cover the wider site."
+    },
+    {
+      "id": "launch-after-cleanup",
+      "section": "After launch",
+      "checklistItem": "Remove temporary settings and assign every remaining issue an owner.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Temporary settings and issue ownership depend on the cutover plan and project records."
+    },
+    {
+      "id": "launch-after-lessons",
+      "section": "After launch",
+      "checklistItem": "**Recommended:** Update the runbook and tests with useful lessons from the launch.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The team decides which launch observations should become durable procedure or test improvements."
+    },
+    {
+      "id": "launch-recovery-trigger",
+      "section": "Rollback or recovery",
+      "checklistItem": "Stop the launch and use the approved rollback plan when a rollback trigger is met.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Only the authorized launch owner can stop the launch and invoke rollback."
+    },
+    {
+      "id": "launch-recovery-execute",
+      "section": "Rollback or recovery",
+      "checklistItem": "Roll back code, database, redirects, and DNS changes as needed.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The read-only preflight does not alter code, data, redirects, or DNS."
+    },
+    {
+      "id": "launch-recovery-verify",
+      "section": "Rollback or recovery",
+      "checklistItem": "Confirm the recovered site works and reconcile data changed during the failed launch.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Recovery validation requires the restored environment, project-specific tests, and data reconciliation."
+    },
+    {
+      "id": "launch-recovery-communicate",
+      "section": "Rollback or recovery",
+      "checklistItem": "Tell stakeholders what happened, the current status, and the next step.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Stakeholder communication requires project ownership and approved messaging."
+    }
+  ]
+}

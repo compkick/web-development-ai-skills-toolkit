@@ -68,10 +68,11 @@ Phase 4A established the plugin manifest, repository-local marketplace entry, sh
 - [`review-web-security`](plugins/web-dev-checklists/skills/review-web-security/SKILL.md) — combine bounded public checks, source and configuration evidence, approved authenticated testing, and operational evidence without claiming a penetration test.
 - [`review-web-performance`](plugins/web-dev-checklists/skills/review-web-performance/SKILL.md) — combine repeatable desktop Lighthouse evidence with real-user data, source review, budgets, and representative workflows without treating one score as the result.
 - [`review-technical-seo`](plugins/web-dev-checklists/skills/review-technical-seo/SKILL.md) — combine rendered crawl and indexing evidence with source, migration, Search Console, analytics, and representative-page review without promising rankings or indexing.
+- [`prepare-website-launch`](plugins/web-dev-checklists/skills/prepare-website-launch/SKILL.md) — combine a bounded homepage and link preflight with prior specialist reviews and human confirmations to make a concise go/no-go recommendation and tailored launch checklist.
 
 ## Install the Codex plugin
 
-The repository includes a local Codex marketplace containing the `web-dev-checklists` plugin. The plugin currently provides the `review-web-accessibility`, `review-web-security`, `review-web-performance`, and `review-technical-seo` skills. Install the plugin once to use the skills from other Codex tasks and project folders.
+The repository includes a local Codex marketplace containing the `web-dev-checklists` plugin. The plugin currently provides the `review-web-accessibility`, `review-web-security`, `review-web-performance`, `review-technical-seo`, and `prepare-website-launch` skills. Install the plugin once to use the skills from other Codex tasks and project folders.
 
 Clone or download this repository, install the current [Codex CLI](https://developers.openai.com/codex/cli/), and register the repository as a local marketplace:
 
@@ -99,6 +100,10 @@ $review-web-performance Review https://site.example, save the evidence under .ou
 
 ```text
 $review-technical-seo Review https://site.example, save the evidence under .output, and give me a prioritized technical SEO report.
+```
+
+```text
+$prepare-website-launch Review https://site.example, decide whether this release is ready to launch, and give me the remaining developer and post-launch checklist.
 ```
 
 Codex can also choose an installed skill from a natural-language request such as “Is this website ready to launch from an accessibility perspective?” Explicit invocation is useful when testing a specific skill. The agent asks for approval before bootstrapping the browser runtime when needed. Runtime dependencies stay in the user cache rather than the project being reviewed.
@@ -139,7 +144,7 @@ Use `runtime:audit` for runtime troubleshooting, profile development, or an ad h
 npm run runtime:audit -- --url https://site.example
 ```
 
-This command writes to `.output/runtime-audit/<host>/<run-id>/` by default. Pass `--output <new-or-empty-directory>` to override the location. It does not apply a checklist profile and does not create normalized `evidence.json` or `coverage.json` files. Its output includes `summary.json`, `page.png`, reduced axe results, a human-readable axe HTML report with bounded element screenshots, and Lighthouse JSON and HTML reports. Collector flags can add public security or technical SEO observations or skip evidence that is not needed.
+This command writes to `.output/runtime-audit/<host>/<run-id>/` by default. Pass `--output <new-or-empty-directory>` to override the location. It does not apply a checklist profile and does not create normalized `evidence.json` or `coverage.json` files. Its output includes `summary.json`, `page.png`, reduced axe results, a human-readable axe HTML report with bounded element screenshots, and Lighthouse JSON and HTML reports. Collector flags can add public security, technical SEO, or launch-preflight observations or skip evidence that is not needed.
 
 ### Deterministic checklist evidence
 
@@ -177,6 +182,16 @@ npm run review:website -- --profile review-technical-seo --url https://site.exam
 
 This profile collects a rendered screenshot, browser-error counts, a desktop Lighthouse SEO report, status and redirect evidence, rendered titles and metadata, indexing directives, canonicals, headings, text and link inventories, structured-data syntax, language alternates, `robots.txt`, and up to three same-origin sitemap previews. It creates `technical-seo-report.html` with summary cards, checks requiring attention, checklist coverage, limitations, and artifact links. It maps the evidence to the [technical SEO review checklist](docs/technical-seo-review-checklist.md). It skips axe. Representative multi-page crawling, Search Console, analytics, server logs, duplicate URL discovery, migration maps, metadata quality, and search performance remain agent or human review work.
 
+#### Website launch checklist runner
+
+```bash
+npm run review:website -- --profile prepare-website-launch --url https://site.example
+```
+
+This profile performs a lightweight launch preflight on one homepage. It records availability, HTTPS, the bounded HTTP redirect, header/navigation/main/footer structure, homepage noindex signals, browser-error counts, empty or invalid visible link destinations, and up to 50 unique same-host link responses with navigation and footer priority. It creates `launch-readiness-report.html` with an automated preflight summary, checks requiring attention, canonical [website launch checklist](docs/website-launch-checklist.md) coverage, limitations, and artifact links. It deliberately skips axe, Lighthouse, the security collector, and the technical SEO collector. The final agent recommendation reuses prior specialist results and adds the applicable manual, WordPress, cutover, rollback, and post-launch checks.
+
+Missing launch evidence or links skipped by the sample limit are not passes. The launch report shows **Incomplete** when those gaps remain and no confirmed blocker takes precedence.
+
 #### Checklist runner output
 
 Each profile creates a timestamped `.output/<profile>/<host>/<run-id>/` directory by default. This repository ignores `/.output/` because screenshots and reports may be large or sensitive. Pass `--output <new-or-empty-directory>` to override the location.
@@ -195,6 +210,7 @@ npm run reviews:test-accessibility
 npm run reviews:test-security
 npm run reviews:test-performance
 npm run reviews:test-technical-seo
+npm run reviews:test-launch
 ```
 
 Use `reviews:test` to run every profile fixture, or use a profile-specific command while working on one review.

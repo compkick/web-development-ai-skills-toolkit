@@ -4,7 +4,7 @@
 
 ## Purpose
 
-Use the plugin-owned audit runtime to collect repeatable browser, Lighthouse, screenshot, console-error, automated accessibility, public security, and technical SEO evidence from an authorized website without adding dependencies to the website project.
+Use the plugin-owned audit runtime to collect repeatable browser, Lighthouse, screenshot, console-error, automated accessibility, public security, technical SEO, and launch-preflight evidence from an authorized website without adding dependencies to the website project.
 
 ## Requirements
 
@@ -60,6 +60,7 @@ node runtime/scripts/review.mjs --profile review-web-accessibility --url https:/
 node runtime/scripts/review.mjs --profile review-web-security --url https://site.example
 node runtime/scripts/review.mjs --profile review-web-performance --url https://site.example
 node runtime/scripts/review.mjs --profile review-technical-seo --url https://site.example
+node runtime/scripts/review.mjs --profile prepare-website-launch --url https://site.example
 ```
 
 By default, the runner creates `.output/<profile>/<host>/<run-id>/` under the current working directory. Use `--output <directory>` to choose another new or empty directory. The procedure, browser configuration, profile version, check identifiers, and JSON shape are controlled, but live website content, network conditions, and Lighthouse measurements can still vary between runs.
@@ -73,6 +74,8 @@ The security profile loads the supplied page and its normal subresources. When t
 The performance profile runs Lighthouse with its desktop configuration and converts the report into stable observations for lab LCP, CLS, TBT, supporting paint metrics, and selected delivery, image, rendering, code, main-thread, layout, and third-party audits. It creates a concise `performance-report.html` and keeps the full Lighthouse report for diagnosis. The profile skips axe. One page-load run does not measure field INP, mobile or warm-cache performance, important interactions, geographic variation, authenticated states, project budgets, or real-user percentiles.
 
 The technical SEO profile runs Lighthouse with its desktop configuration and records rendered titles, descriptions, indexing directives, canonicals, headings, text, link inventory, structured-data syntax, and language alternates. It also requests the same origin's `robots.txt` file and previews up to three same-origin sitemaps declared there, or the default `/sitemap.xml` when none is declared. Sitemap previews are limited to 256 KiB and can be incomplete. The profile does not fetch every discovered link, perform an unbounded crawl, access Search Console or analytics, validate migration maps, or guarantee indexing or rankings.
+
+The launch profile is a lightweight homepage preflight that deliberately does not rerun the specialist collectors. It records the homepage response, HTTPS state, bounded HTTP redirect, semantic header/navigation/main/footer structure, noindex directives, browser-error counts, unset or invalid visible link destinations, and up to 50 unique same-host link responses. Link checks prioritize navigation, header, footer, and then page content. The profile does not request external destinations, submit forms, authenticate, run axe, run Lighthouse, collect the security or technical SEO profiles, or crawl the site. Its automated result is evidence for the agent's final go/no-go recommendation, not the final decision by itself.
 
 ## Browser sandbox
 
@@ -98,11 +101,13 @@ Treat each run directory as one evidence package. When a user requests `.output`
 - `browser-errors.json` is created only when `--include-error-details` is explicitly requested.
 - `security-results.json` contains reduced TLS, transport, selected response-header, public-cookie-attribute, disclosure, redirect, and `security.txt` observations when security collection is enabled. Cookie values are not stored.
 - `seo-results.json` contains reduced rendered metadata, indexing, canonical, heading, content, link, structured-data, language, redirect, robots, and bounded sitemap observations when technical SEO collection is enabled.
+- `launch-results.json` contains reduced homepage structure, visible-link, bounded same-host link-response, noindex, and HTTP redirect observations when launch collection is enabled.
 - `evidence.json` is created by the deterministic profile runner and contains normalized machine observations with stable check identifiers.
 - `coverage.json` is created by the deterministic profile runner and shows which canonical checklist items remain partially automated or manual.
 - `security-report.html` is created by the security profile and presents normalized pass, fail, warning, informational, and not-checked results with checklist coverage and limitations.
 - `performance-report.html` is created by the performance profile and presents normalized desktop lab metrics, Lighthouse observations, checklist coverage, limitations, and artifact links.
 - `technical-seo-report.html` is created by the technical SEO profile and presents normalized crawl, indexing, metadata, canonical, sitemap, and Lighthouse observations with checklist coverage, limitations, and artifact links.
+- `launch-readiness-report.html` is created by the launch profile and presents the high-level automated preflight, homepage and link observations, canonical launch-checklist coverage, limitations, and artifact links.
 
 The runtime prioritizes confirmed violations and then incomplete checks for element screenshots, with a default limit of 50 candidates per page. The report records elements that were skipped by the limit, could not be found after the scan, used unsupported nested targets, or failed during capture.
 

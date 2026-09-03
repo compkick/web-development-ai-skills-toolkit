@@ -49,6 +49,7 @@ function printUsage() {
   console.log("Options:");
   console.log(`  --output <directory>                    Override the default ${DEFAULT_EVIDENCE_ROOT_DIRECTORY}/${RAW_AUDIT_OUTPUT_GROUP}/<host>/<run-id> directory`);
   console.log("  --browser <auto|chrome|edge|chromium>  Browser selection; default: auto");
+  console.log("  --collect-launch                        Collect bounded homepage, navigation, footer, and same-host link evidence");
   console.log("  --collect-security                      Collect read-only public security observations");
   console.log("  --collect-seo                           Collect rendered metadata plus bounded robots.txt and sitemap observations");
   console.log("  --allow-no-sandbox                       Allow an unsandboxed root run in an isolated environment");

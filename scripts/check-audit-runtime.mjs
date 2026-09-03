@@ -24,11 +24,13 @@ for (const [dependency, version] of Object.entries(packageJson.dependencies ?? {
 }
 
 const scripts = [
+  "collectors/homepage-links.mjs",
   "collectors/http-redirect.mjs",
   "collectors/tls-baseline.mjs",
   "config/runtime-config.mjs",
   "config/runtime-status.mjs",
   "reporting/axe-report.mjs",
+  "reporting/launch-report.mjs",
   "reporting/performance-report.mjs",
   "reporting/security-report.mjs",
   "reporting/technical-seo-report.mjs",
@@ -39,6 +41,7 @@ const scripts = [
   "scripts/test-runtime-status.mjs",
   "scripts/test-review-runner.mjs",
   "scripts/test-performance-review-runner.mjs",
+  "scripts/test-launch-review-runner.mjs",
   "scripts/test-security-review-runner.mjs",
   "scripts/test-technical-seo-review-runner.mjs",
   "scripts/test-runtime.mjs",

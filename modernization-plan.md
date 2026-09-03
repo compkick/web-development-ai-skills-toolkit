@@ -14,8 +14,8 @@ the authoritative plan when this file contains a newer decision.
 
 - Plan status: In progress
 - Current phase: Phase 4B
-- Next work item: Design and scaffold `prepare-website-launch`
-- Last reviewed: 2026-08-25
+- Next work item: Design and scaffold `audit-web-project`
+- Last reviewed: 2026-08-28
 
 ## Guiding decisions
 
@@ -275,7 +275,7 @@ Build the specialist skills before the cross-discipline audit skill:
 2. [x] `review-web-security`
 3. [x] `review-web-performance`
 4. [x] `review-technical-seo`
-5. [ ] `prepare-website-launch`
+5. [x] `prepare-website-launch`
 6. [ ] `audit-web-project`
 
 ### Expected outputs

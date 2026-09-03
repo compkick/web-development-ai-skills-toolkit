@@ -23,6 +23,12 @@ const knownEvidenceCheckIds = new Set([
   "http-to-https-redirect",
   "https-transport",
   "https-url",
+  "homepage-content-links",
+  "homepage-content-summary",
+  "homepage-footer-links",
+  "homepage-link-check-coverage",
+  "homepage-navigation-links",
+  "homepage-structure",
   "insecure-page-resources",
   "lighthouse-accessibility",
   "lighthouse-performance-run",
@@ -64,9 +70,10 @@ const knownEvidenceCheckIds = new Set([
   "crawlable-links",
   "indexing-allowed",
   "language-alternates",
+  "launch-collection",
   "structured-data"
 ]);
-const profiles = ["review-web-accessibility", "review-web-security", "review-web-performance", "review-technical-seo"];
+const profiles = ["review-web-accessibility", "review-web-security", "review-web-performance", "review-technical-seo", "prepare-website-launch"];
 
 for (const profileId of profiles) {
   const profilePath = path.join(profileDirectory, `${profileId}.json`);
@@ -120,14 +127,14 @@ for (const schemaName of ["review-evidence-v1.schema.json", "review-coverage-v1.
   }
 }
 
-for (const relativeScriptPath of ["runtime/scripts/review.mjs", "runtime/scripts/test-review-runner.mjs", "runtime/scripts/test-security-review-runner.mjs", "runtime/scripts/test-performance-review-runner.mjs", "runtime/scripts/test-technical-seo-review-runner.mjs"]) {
+for (const relativeScriptPath of ["runtime/scripts/review.mjs", "runtime/scripts/test-review-runner.mjs", "runtime/scripts/test-security-review-runner.mjs", "runtime/scripts/test-performance-review-runner.mjs", "runtime/scripts/test-technical-seo-review-runner.mjs", "runtime/scripts/test-launch-review-runner.mjs"]) {
   const scriptPath = path.join(repositoryRoot, "plugins", "web-dev-checklists", relativeScriptPath);
   const result = spawnSync(process.execPath, ["--check", scriptPath], { encoding: "utf8" });
 
   if (result.status !== 0) errors.push(`${relativeScriptPath} failed Node.js syntax validation: ${result.stderr.trim()}`);
 }
 
-for (const fixtureName of ["accessibility-pass.html", "accessibility-fail.html", "security-pass.html", "security-fail.html", "performance-pass.html", "performance-fail.html", "technical-seo-pass.html", "technical-seo-fail.html"]) {
+for (const fixtureName of ["accessibility-pass.html", "accessibility-fail.html", "security-pass.html", "security-fail.html", "performance-pass.html", "performance-fail.html", "technical-seo-pass.html", "technical-seo-fail.html", "launch-pass.html", "launch-fail.html"]) {
   try {
     await access(path.join(runtimeDirectory, "fixtures", fixtureName));
   } catch {
