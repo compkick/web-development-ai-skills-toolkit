@@ -275,7 +275,7 @@ Build the specialist skills before the cross-discipline audit skill:
 2. [x] `review-web-security`
 3. [x] `review-web-performance`
 4. [x] `review-technical-seo`
-5. [x] `prepare-website-launch`
+5. [x] `review-website-launch`
 6. [ ] `audit-web-project`
 
 ### Expected outputs
@@ -286,7 +286,7 @@ Build the specialist skills before the cross-discipline audit skill:
 | `review-web-security` | Non-invasive risk review mapped to current OWASP guidance |
 | `review-web-performance` | Lab and source findings, Core Web Vitals risks, budgets, and prioritized remediation |
 | `review-technical-seo` | Crawl, indexing, metadata, structured-data, and migration findings |
-| `prepare-website-launch` | Go/no-go report, owners, runbook, rollback plan, and post-launch checks |
+| `review-website-launch` | Go/no-go report, owners, runbook, rollback plan, and post-launch checks |
 | `audit-web-project` | Routed cross-discipline assessment with consolidated priorities |
 
 ### Skill implementation requirements

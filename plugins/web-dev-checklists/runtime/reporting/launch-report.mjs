@@ -16,7 +16,7 @@ export async function writeLaunchHtmlReport(evidence, coverage, outputPath) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'">
-  <title>Website launch preflight evidence</title>
+  <title>Website Launch Readiness Report</title>
   <style>
     :root { color-scheme: light dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; line-height: 1.5; }
     body { margin: 0; background: #f4f6f8; color: #17202a; }
@@ -68,7 +68,7 @@ export async function writeLaunchHtmlReport(evidence, coverage, outputPath) {
 </head>
 <body>
   <main>
-    <h1>Website launch preflight evidence</h1>
+    <h1>Website Launch Readiness Report</h1>
     <p class="lede">High-level homepage and link evidence for <a href="${safeExternalUrl(evidence.target.finalUrl)}">${escapeHtml(evidence.target.finalUrl)}</a>. This preflight does not replace specialist reviews or the developer's launch checklist.</p>
     <p class="meta">Profile ${escapeHtml(evidence.profile.id)} ${escapeHtml(evidence.profile.version)} · completed ${escapeHtml(formatDate(evidence.run.completedAt))} · ${escapeHtml(evidence.run.browser.name)} · browser sandbox ${evidence.run.browser.sandboxed ? "enabled" : "disabled"}</p>
     <section class="decision decision-${preflight.toLowerCase()}"><strong>Automated preflight: ${escapeHtml(preflight)}</strong><span>${escapeHtml(preflightMessage(preflight))}</span></section>

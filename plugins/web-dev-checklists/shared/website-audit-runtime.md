@@ -58,10 +58,14 @@ node runtime/scripts/review.mjs --profile review-web-accessibility --url https:/
 node runtime/scripts/review.mjs --profile review-web-security --url https://site.example
 node runtime/scripts/review.mjs --profile review-web-performance --url https://site.example
 node runtime/scripts/review.mjs --profile review-technical-seo --url https://site.example
-node runtime/scripts/review.mjs --profile prepare-website-launch --url https://site.example
+node runtime/scripts/review.mjs --profile review-website-launch --url https://site.example
 ```
 
 By default, the runner creates `.output/<profile>/<host>/<run-id>/` under the current working directory. Use `--output <directory>` to choose another new or empty directory. The procedure, browser configuration, profile version, check identifiers, and JSON shape are controlled, but live website content, network conditions, and Lighthouse measurements can still vary between runs.
+
+`prepare-website-launch` remains a CLI alias for `review-website-launch`; both use the new profile ID in evidence and default output paths. Invoke the renamed `$review-website-launch` skill in Codex.
+
+Before capturing `page.png`, the shared runtime waits for the initial load, scrolls to trigger lazy-loaded content, waits for rendered HTML images and document fonts, and returns to the top. Preparation is limited to 15 seconds and 40 scroll steps by `SCREENSHOT_READINESS` in `runtime/config/runtime-config.mjs`. Check `summary.json` at `page.screenshotReadiness` for pending, failed, or missing-source image counts and load, time, or scroll limits. An incomplete capture is also noted in normalized review limitations; it does not determine launch readiness. Hidden images, CSS background decoding, video, and content requiring interaction are outside this readiness check. Lighthouse uses a separate page load and is not delayed by this preparation.
 
 The accessibility collector runs axe in an explicit 1440 × 900 desktop Playwright context and runs Lighthouse with its desktop configuration, including desktop scoring, viewport emulation, user agent, and throttling. The output records the form factor and viewport. Treat this as the repeatable desktop baseline; narrow-width reflow, mobile layouts, zoom, touch behavior, and responsive interaction still require separate review.
 

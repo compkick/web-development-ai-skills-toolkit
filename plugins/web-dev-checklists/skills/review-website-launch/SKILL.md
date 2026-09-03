@@ -1,9 +1,9 @@
 ---
-name: prepare-website-launch
-description: Prepare a specific website release for launch using a bounded homepage preflight, existing specialist-review evidence, release context, and human confirmations. Use for launch-readiness reviews, go/no-go recommendations, cutover planning, and post-launch checklists; do not use for deployment execution, a broad project audit, or a specialist-only accessibility, security, performance, or SEO review.
+name: review-website-launch
+description: Review a specific website release for launch readiness using a bounded homepage preflight, existing specialist-review evidence, release context, and human confirmations. Use for launch-readiness reviews, go/no-go recommendations, cutover planning, and post-launch checklists; do not use for deployment execution, a broad project audit, or a specialist-only accessibility, security, performance, or SEO review.
 ---
 
-# Prepare Website Launch
+# Website Launch Readiness Review
 
 Make a high-level, evidence-backed launch recommendation without duplicating the specialist reviews or turning the launch into an exhaustive audit.
 
@@ -42,7 +42,7 @@ Ask only for missing information that could change the recommendation or make th
 
 ## Run the bounded preflight
 
-For an authorized public homepage, use the plugin-owned deterministic runner with the `prepare-website-launch` profile. Resolve the plugin root from this skill directory; do not assume the reviewed project contains the runtime.
+For an authorized public homepage, use the plugin-owned deterministic runner with the `review-website-launch` profile. Resolve the plugin root from this skill directory; do not assume the reviewed project contains the runtime.
 
 Before deciding that the runtime is unavailable, run `node runtime/scripts/status.mjs --json` from the plugin root. If it reports `ready: true`, run the profile directly. If it is not ready, obtain approval before bootstrapping dependencies or downloading Chromium.
 

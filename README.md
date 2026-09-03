@@ -68,11 +68,11 @@ Phase 4A established the plugin manifest, repository-local marketplace entry, sh
 - [`review-web-security`](plugins/web-dev-checklists/skills/review-web-security/SKILL.md) — combine bounded public checks, source and configuration evidence, approved authenticated testing, and operational evidence without claiming a penetration test.
 - [`review-web-performance`](plugins/web-dev-checklists/skills/review-web-performance/SKILL.md) — combine repeatable desktop Lighthouse evidence with real-user data, source review, budgets, and representative workflows without treating one score as the result.
 - [`review-technical-seo`](plugins/web-dev-checklists/skills/review-technical-seo/SKILL.md) — combine rendered crawl and indexing evidence with source, migration, Search Console, analytics, and representative-page review without promising rankings or indexing.
-- [`prepare-website-launch`](plugins/web-dev-checklists/skills/prepare-website-launch/SKILL.md) — combine a bounded homepage and link preflight with prior specialist reviews and human confirmations to make a concise go/no-go recommendation and tailored launch checklist.
+- [`review-website-launch`](plugins/web-dev-checklists/skills/review-website-launch/SKILL.md) — combine a bounded homepage and link preflight with prior specialist reviews and human confirmations to make a concise go/no-go recommendation and tailored launch checklist.
 
 ## Install the Codex plugin
 
-The repository includes a local Codex marketplace containing the `web-dev-checklists` plugin. The plugin currently provides the `review-web-accessibility`, `review-web-security`, `review-web-performance`, `review-technical-seo`, and `prepare-website-launch` skills. Install the plugin once to use the skills from other Codex tasks and project folders.
+The repository includes a local Codex marketplace containing the `web-dev-checklists` plugin. The plugin currently provides the `review-web-accessibility`, `review-web-security`, `review-web-performance`, `review-technical-seo`, and `review-website-launch` skills. Install the plugin once to use the skills from other Codex tasks and project folders.
 
 Clone or download this repository, install the current [Codex CLI](https://developers.openai.com/codex/cli/), and register the repository as a local marketplace:
 
@@ -103,7 +103,7 @@ $review-technical-seo Review https://site.example, save the evidence under .outp
 ```
 
 ```text
-$prepare-website-launch Review https://site.example, decide whether this release is ready to launch, and give me the remaining developer and post-launch checklist.
+$review-website-launch Review https://site.example, decide whether this release is ready to launch, and give me the remaining developer and post-launch checklist.
 ```
 
 Codex can also choose an installed skill from a natural-language request such as “Is this website ready to launch from an accessibility perspective?” Explicit invocation is useful when testing a specific skill. The agent asks for approval before bootstrapping the browser runtime when needed. Runtime dependencies stay in the user cache rather than the project being reviewed.
@@ -185,16 +185,20 @@ This profile collects a rendered screenshot, browser-error counts, a desktop Lig
 #### Website launch checklist runner
 
 ```bash
-npm run review:website -- --profile prepare-website-launch --url https://site.example
+npm run review:website -- --profile review-website-launch --url https://site.example
 ```
 
 This profile performs a lightweight launch preflight on one homepage. It records availability, HTTPS, the bounded HTTP redirect, header/navigation/main/footer structure, homepage noindex signals, browser-error counts, empty or invalid visible link destinations, and up to 50 unique same-host link responses with navigation and footer priority. It creates `launch-readiness-report.html` with an automated preflight summary, checks requiring attention, canonical [website launch checklist](docs/website-launch-checklist.md) coverage, limitations, and artifact links. It deliberately skips axe, Lighthouse, the security collector, and the technical SEO collector. The final agent recommendation reuses prior specialist results and adds the applicable manual, WordPress, cutover, rollback, and post-launch checks.
 
 Missing launch evidence or links skipped by the sample limit are not passes. The launch report shows **Incomplete** when those gaps remain and no confirmed blocker takes precedence.
 
+The old CLI profile name `prepare-website-launch` remains an alias. Both names write to `.output/review-website-launch/<host>/<run-id>/` by default. In Codex, use the renamed `$review-website-launch` skill after reinstalling the updated plugin.
+
 #### Checklist runner output
 
 Each profile creates a timestamped `.output/<profile>/<host>/<run-id>/` directory by default. This repository ignores `/.output/` because screenshots and reports may be large or sensitive. Pass `--output <new-or-empty-directory>` to override the location.
+
+Before saving `page.png`, the shared runtime waits for the initial load, scrolls to trigger lazy-loaded content, waits for rendered images and fonts, and returns to the top. Preparation is capped at 15 seconds and 40 scroll steps; settings live in [runtime configuration](plugins/web-dev-checklists/runtime/config/runtime-config.mjs). Pending, failed, or missing-source image counts and any load, time, or scroll limit are recorded in `summary.json` under `page.screenshotReadiness`. Incomplete preparation is also noted in the review's limitations. This is best-effort screenshot preparation, not a check of every image or resource; Lighthouse still performs its own separate page-load measurement.
 
 The profiles produce normalized `evidence.json` and checklist `coverage.json` files alongside their relevant raw artifacts. They identify manual and partially automated checklist coverage instead of treating automated evidence as a complete skill result.
 

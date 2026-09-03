@@ -73,7 +73,7 @@ const knownEvidenceCheckIds = new Set([
   "launch-collection",
   "structured-data"
 ]);
-const profiles = ["review-web-accessibility", "review-web-security", "review-web-performance", "review-technical-seo", "prepare-website-launch"];
+const profiles = ["review-web-accessibility", "review-web-security", "review-web-performance", "review-technical-seo", "review-website-launch"];
 
 for (const profileId of profiles) {
   const profilePath = path.join(profileDirectory, `${profileId}.json`);

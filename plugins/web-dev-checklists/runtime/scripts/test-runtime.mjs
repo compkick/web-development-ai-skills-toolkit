@@ -32,6 +32,10 @@ try {
   const axeReport = await readFile(path.join(outputDirectory, "axe-report.html"), "utf8");
   const lighthouseReport = JSON.parse(await readFile(path.join(outputDirectory, "lighthouse-report.json"), "utf8"));
 
+  if (summary.page.screenshotReadiness?.status !== "ready" || summary.page.screenshotReadiness.images.loaded !== 1) {
+    throw new Error("The shared worker must prepare page.png and record image readiness.");
+  }
+
   if (summary.browser.sandboxed !== true || summary.browser.formFactor !== "desktop" || summary.browser.viewport.width !== 1440 || summary.browser.viewport.height !== 900 || summary.page.httpStatus !== 200 || summary.page.browserErrors.consoleErrorCount < 1 || summary.page.browserErrors.pageErrorCount < 1 || summary.page.browserErrors.detailsFile !== null || summary.axe.status !== "completed" || summary.axe.violations < 1 || summary.lighthouse.status !== "completed" || summary.lighthouse.formFactor !== "desktop" || lighthouseReport.configSettings.formFactor !== "desktop" || typeof summary.lighthouse.scores.performance !== "number") {
     throw new Error("Audit runtime self-test did not produce the expected browser, axe, and Lighthouse evidence.");
   }

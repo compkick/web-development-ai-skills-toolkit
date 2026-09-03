@@ -1,4 +1,0 @@
-interface:
-  display_name: "Prepare Website Launch"
-  short_description: "Make an evidence-backed launch decision."
-  default_prompt: "Use $prepare-website-launch to decide whether this website is ready to launch."

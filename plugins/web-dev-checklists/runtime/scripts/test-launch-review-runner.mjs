@@ -1,4 +1,4 @@
-import { access, mkdtemp, readFile, rm, stat } from "node:fs/promises";
+import { access, mkdtemp, readFile, readdir, rm, stat } from "node:fs/promises";
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import http from "node:http";
@@ -48,9 +48,16 @@ try {
 
   const address = server.address();
   const baseUrl = `http://127.0.0.1:${address.port}`;
-  await run(process.execPath, [reviewScript, "--profile", "prepare-website-launch", "--url", `${baseUrl}/pass`, "--output", passOutputDirectory]);
-  await run(process.execPath, [reviewScript, "--profile", "prepare-website-launch", "--url", `${baseUrl}/fail`, "--output", failOutputDirectory]);
-  await run(process.execPath, [reviewScript, "--profile", "prepare-website-launch", "--url", `${baseUrl}/limit`, "--output", limitOutputDirectory]);
+  await run(process.execPath, [reviewScript, "--profile", "review-website-launch", "--url", `${baseUrl}/pass`, "--output", passOutputDirectory]);
+  await run(process.execPath, [reviewScript, "--profile", "review-website-launch", "--url", `${baseUrl}/fail`, "--output", failOutputDirectory]);
+  await run(process.execPath, [reviewScript, "--profile", "review-website-launch", "--url", `${baseUrl}/limit`, "--output", limitOutputDirectory]);
+  await run(process.execPath, [reviewScript, "--profile", "prepare-website-launch", "--url", `${baseUrl}/pass`], testDirectory);
+  const aliasRoot = path.join(testDirectory, ".output", "review-website-launch", `127.0.0.1-${address.port}`);
+  const aliasRuns = await readdir(aliasRoot);
+  assert.equal(aliasRuns.length, 1, "The legacy alias must use the canonical default output group.");
+  const aliasEvidence = await readJson(path.join(aliasRoot, aliasRuns[0], "evidence.json"));
+  assert.equal(aliasEvidence.profile.id, "review-website-launch");
+  assert.equal(await exists(path.join(testDirectory, ".output", "prepare-website-launch")), false);
 
   const passEvidence = await readJson(path.join(passOutputDirectory, "evidence.json"));
   const failEvidence = await readJson(path.join(failOutputDirectory, "evidence.json"));
@@ -61,6 +68,11 @@ try {
   const passReport = await readFile(path.join(passOutputDirectory, "launch-readiness-report.html"), "utf8");
   const failReport = await readFile(path.join(failOutputDirectory, "launch-readiness-report.html"), "utf8");
   const coverage = await readJson(path.join(failOutputDirectory, "coverage.json"));
+  const failSummary = await readJson(path.join(failOutputDirectory, "summary.json"));
+  assert.equal(failSummary.page.screenshotReadiness.status, "incomplete");
+  assert.equal(failSummary.page.screenshotReadiness.images.failed, 1);
+  assert.ok(failEvidence.limitations.some((note) => note.includes("Screenshot preparation was incomplete")));
+  assert.ok(failReport.includes("Screenshot preparation was incomplete"), "Capture limitations must reach the human-readable report.");
 
   validateEvidenceShape(passEvidence);
   validateEvidenceShape(failEvidence);
@@ -98,11 +110,11 @@ try {
     throw new Error("Launch attention fixture did not produce the expected broken-link, unset-link, and noindex evidence.");
   }
 
-  if (!passReport.includes("Website launch preflight evidence") || !failReport.includes("Automated preflight: Blocked") || !failReport.includes("Canonical launch checklist coverage") || /<script(?:\s|>)/i.test(`${passReport}${failReport}`)) {
+  if (!passReport.includes("Website Launch Readiness Report") || !failReport.includes("Automated preflight: Blocked") || !failReport.includes("Canonical launch checklist coverage") || /<script(?:\s|>)/i.test(`${passReport}${failReport}`)) {
     throw new Error("Launch review runner did not produce the expected safe human-readable report.");
   }
 
-  if (coverage.schemaVersion !== "1.0.0" || coverage.profile.id !== "prepare-website-launch" || coverage.profile.version !== "1.0.1" || coverage.items.length !== 34) {
+  if (coverage.schemaVersion !== "1.0.0" || coverage.profile.id !== "review-website-launch" || coverage.profile.version !== "1.1.0" || coverage.items.length !== 34) {
     throw new Error("Coverage output does not contain the complete website launch profile.");
   }
 
@@ -174,7 +186,7 @@ function assertCheckStatus(evidence, checkId, expectedStatus) {
 }
 
 function validateEvidenceShape(evidence) {
-  if (evidence.schemaVersion !== "1.0.0" || evidence.profile.id !== "prepare-website-launch" || !Array.isArray(evidence.checks) || !Array.isArray(evidence.artifacts) || !Array.isArray(evidence.limitations)) {
+  if (evidence.schemaVersion !== "1.0.0" || evidence.profile.id !== "review-website-launch" || !Array.isArray(evidence.checks) || !Array.isArray(evidence.artifacts) || !Array.isArray(evidence.limitations)) {
     throw new Error("Launch evidence output does not match the required top-level shape.");
   }
 

@@ -51,11 +51,16 @@ const launchResult = summary.launch?.status === "completed" ? await readJson(pat
 let evidence;
 
 if (profile.id === "review-web-accessibility") evidence = await buildAccessibilityEvidence(profile, summary, axeResult, options.outputDirectory);
-else if (profile.id === "prepare-website-launch") evidence = await buildLaunchEvidence(profile, summary, launchResult, options.outputDirectory);
+else if (profile.id === "review-website-launch") evidence = await buildLaunchEvidence(profile, summary, launchResult, options.outputDirectory);
 else if (profile.id === "review-web-performance") evidence = await buildPerformanceEvidence(profile, summary, lighthouseResult, options.outputDirectory);
 else if (profile.id === "review-web-security") evidence = await buildSecurityEvidence(profile, summary, securityResult, options.outputDirectory);
 else if (profile.id === "review-technical-seo") evidence = await buildTechnicalSeoEvidence(profile, summary, lighthouseResult, seoResult, options.outputDirectory);
 else throw new Error(`The review profile does not have an evidence builder: ${profile.id}`);
+
+if (summary.page.screenshotReadiness?.status === "incomplete") {
+  const readiness = summary.page.screenshotReadiness;
+  evidence.limitations.push(`Screenshot preparation was incomplete: ${readiness.images.pending} pending, ${readiness.images.failed} failed, and ${readiness.images.missingSource} missing-source images; load state ${readiness.loadState}; time limit reached: ${readiness.timedOut}; scroll limit reached: ${readiness.scroll.limitReached}. See summary.json page.screenshotReadiness. This is a capture limitation, not a whole-site result.`);
+}
 
 const coverage = {
   schemaVersion: "1.0.0",
@@ -73,7 +78,7 @@ if (profile.id === "review-web-security") {
   await writeSecurityHtmlReport(evidence, coverage, path.join(options.outputDirectory, "security-report.html"));
 }
 
-if (profile.id === "prepare-website-launch") {
+if (profile.id === "review-website-launch") {
   evidence.artifacts.push(
     { path: "evidence.json", purpose: "Normalized launch preflight results" },
     { path: "coverage.json", purpose: "Canonical launch checklist automation map" },
@@ -737,6 +742,9 @@ function parseArguments(argumentsToParse) {
   if (!new Set(["auto", "chrome", "edge", "chromium"]).has(optionsToReturn.browser)) throw new Error("--browser must be auto, chrome, edge, or chromium.");
   if (!Number.isInteger(optionsToReturn.timeoutMs) || optionsToReturn.timeoutMs < 1000 || optionsToReturn.timeoutMs > 120000) throw new Error("--timeout-ms must be an integer from 1000 through 120000.");
 
+  // Keep old CLI commands working, but use one canonical profile and output group.
+  if (optionsToReturn.profile === "prepare-website-launch") optionsToReturn.profile = "review-website-launch";
+
   if (!optionsToReturn.outputDirectory) {
     optionsToReturn.outputDirectory = getDefaultEvidenceOutputDirectory(optionsToReturn.profile, new URL(optionsToReturn.url));
   }
@@ -775,6 +783,7 @@ async function exists(filePath) {
 
 function printUsage() {
   console.log("Usage: node runtime/scripts/review.mjs --profile <profile-id> --url <https://site.example> [options]");
+  console.log("Launch profile: review-website-launch (legacy alias: prepare-website-launch)");
   console.log("");
   console.log("Options:");
   console.log(`  --output <directory>                    Override the default ${DEFAULT_EVIDENCE_ROOT_DIRECTORY}/<profile>/<host>/<run-id> directory`);

@@ -12,6 +12,7 @@ import { probeHttpRedirect } from "../collectors/http-redirect.mjs";
 import { collectTlsBaseline } from "../collectors/tls-baseline.mjs";
 import { AUDIT_FORM_FACTOR, AUDIT_USER_AGENT, AUDIT_VIEWPORT, DEFAULT_AXE_ELEMENT_SCREENSHOT_LIMIT } from "../config/runtime-config.mjs";
 import { captureAxeElementScreenshots, writeAxeHtmlReport } from "../reporting/axe-report.mjs";
+import { preparePageForScreenshot } from "../reporting/page-screenshot.mjs";
 
 const options = parseArguments(process.argv.slice(2));
 const startedAt = new Date().toISOString();
@@ -66,8 +67,8 @@ try {
   });
 
   const response = await page.goto(options.url, { timeout: options.timeoutMs, waitUntil: "domcontentloaded" });
-  await page.waitForTimeout(1000);
-  await page.screenshot({ fullPage: true, path: path.join(options.outputDirectory, "page.png") });
+  const screenshotReadiness = await preparePageForScreenshot(page);
+  await page.screenshot({ animations: "disabled", fullPage: true, path: path.join(options.outputDirectory, "page.png"), timeout: 10000 });
   const documentDetails = await page.evaluate(() => ({
     language: document.documentElement.lang.trim() || null,
     structure: {
@@ -87,6 +88,7 @@ try {
     finalUrl: page.url(),
     httpStatus: response?.status() ?? null,
     language: documentDetails.language,
+    screenshotReadiness,
     structure: documentDetails.structure,
     title: await page.title()
   };

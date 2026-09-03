@@ -25,7 +25,7 @@
       "plugins/web-dev-checklists/shared/web-review-contract.md",
       "plugins/web-dev-checklists/shared/website-audit-runtime.md"
     ],
-    "prepare-website-launch": [
+    "review-website-launch": [
       "docs/website-launch-checklist.md",
       "docs/website-development-checklist.md",
       "docs/wordpress-launch-checklist.md",
