@@ -111,10 +111,10 @@
     {
       "id": "a11y-reflow",
       "section": "Visual presentation",
-      "checklistItem": "Confirm content reflows without losing information at narrow widths.",
+      "checklistItem": "Confirm content reflows without losing information or functionality at the WCAG zoom-equivalent width of 320 CSS pixels, which represents a 1280 CSS-pixel desktop viewport at 400 percent zoom; test current mobile viewports separately when they are in scope.",
       "automation": "manual",
       "evidenceCheckIds": [],
-      "note": "A reviewer must inspect representative responsive states and interactions."
+      "note": "The 320 CSS-pixel reflow check represents desktop zoom, not a mobile-device simulation. A reviewer must inspect current mobile responsive states and interactions separately when they are in scope."
     },
     {
       "id": "a11y-motion-target-size",

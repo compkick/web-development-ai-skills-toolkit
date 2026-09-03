@@ -30,7 +30,7 @@ Automated tools help find problems, but they do not replace keyboard, screen-rea
 
 - [ ] Check text, control, and focus-indicator contrast.
 - [ ] Test browser zoom to 200 percent and text spacing overrides.
-- [ ] Confirm content reflows without losing information at narrow widths.
+- [ ] Confirm content reflows without losing information or functionality at the WCAG zoom-equivalent width of 320 CSS pixels, which represents a 1280 CSS-pixel desktop viewport at 400 percent zoom; test current mobile viewports separately when they are in scope.
 - [ ] Respect reduced-motion preferences and make controls reasonably easy to target.
 
 ## Forms and messages
@@ -49,6 +49,7 @@ Automated tools help find problems, but they do not replace keyboard, screen-rea
 ## References
 
 - [Web Content Accessibility Guidelines (WCAG) 2.2](https://www.w3.org/TR/WCAG22/)
+- [W3C Understanding Success Criterion 1.4.10: Reflow](https://www.w3.org/WAI/WCAG22/Understanding/reflow.html)
 - [W3C evaluating web accessibility](https://www.w3.org/WAI/test-evaluate/)
 - [W3C accessibility evaluation report template](https://www.w3.org/WAI/test-evaluate/report-template/)
 - [ARIA Authoring Practices Guide](https://www.w3.org/WAI/ARIA/apg/)
