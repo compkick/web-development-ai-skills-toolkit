@@ -1,4 +1,4 @@
-import { access, mkdir, readFile, writeFile } from "node:fs/promises";
+import { access, mkdir, readFile, readdir, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(scriptDirectory, "..");
 const configPath = path.join(scriptDirectory, "skill-reference-map.json");
+const generatedReferenceHeader = /^<!-- Generated from .+ by scripts\/sync-skill-references\.mjs\. Do not edit this copy\. -->\r?\n/;
 const checkOnly = process.argv.includes("--check");
 const unknownArguments = process.argv.slice(2).filter((argument) => argument !== "--check");
 
@@ -18,6 +19,7 @@ const config = JSON.parse(await readFile(configPath, "utf8"));
 const pluginRoot = resolveInsideRepository(config.pluginRoot, "pluginRoot");
 const staleReferences = [];
 let synchronizedCount = 0;
+let removedCount = 0;
 let pendingCount = 0;
 
 await access(pluginRoot);
@@ -45,6 +47,7 @@ for (const [skillName, sources] of Object.entries(config.skills)) {
   }
 
   const referencesDirectory = path.join(skillDirectory, "references");
+  const expectedReferenceNames = new Set(resolvedSources.map((sourcePath) => path.basename(sourcePath)));
 
   for (const sourcePath of resolvedSources) {
     const sourceContent = await readFile(sourcePath, "utf8");
@@ -67,10 +70,27 @@ for (const [skillName, sources] of Object.entries(config.skills)) {
     await writeFile(targetPath, generatedContent, "utf8");
     synchronizedCount += 1;
   }
+
+  for (const directoryEntry of await readDirectory(referencesDirectory)) {
+    if (!directoryEntry.isFile() || expectedReferenceNames.has(directoryEntry.name)) continue;
+
+    const targetPath = path.join(referencesDirectory, directoryEntry.name);
+    const currentContent = await readFile(targetPath, "utf8");
+
+    if (!generatedReferenceHeader.test(currentContent)) continue;
+
+    if (checkOnly) {
+      staleReferences.push(path.relative(repositoryRoot, targetPath));
+      continue;
+    }
+
+    await unlink(targetPath);
+    removedCount += 1;
+  }
 }
 
 if (staleReferences.length > 0) {
-  console.error("Skill references are missing or stale:");
+  console.error("Skill references are missing, stale, or obsolete:");
 
   for (const reference of staleReferences) {
     console.error(`- ${reference}`);
@@ -83,7 +103,7 @@ if (staleReferences.length > 0) {
 if (checkOnly) {
   console.log(`Skill references are current. ${pendingCount} planned skill${pendingCount === 1 ? " is" : "s are"} not scaffolded yet.`);
 } else {
-  console.log(`Synchronized ${synchronizedCount} reference file${synchronizedCount === 1 ? "" : "s"}. ${pendingCount} planned skill${pendingCount === 1 ? " is" : "s are"} not scaffolded yet.`);
+  console.log(`Synchronized ${synchronizedCount} reference file${synchronizedCount === 1 ? "" : "s"} and removed ${removedCount} obsolete generated reference${removedCount === 1 ? "" : "s"}. ${pendingCount} planned skill${pendingCount === 1 ? " is" : "s are"} not scaffolded yet.`);
 }
 
 function resolveInsideRepository(relativePath, label) {
@@ -107,5 +127,14 @@ async function exists(targetPath) {
     return true;
   } catch {
     return false;
+  }
+}
+
+async function readDirectory(targetPath) {
+  try {
+    return await readdir(targetPath, { withFileTypes: true });
+  } catch (error) {
+    if (error.code === "ENOENT") return [];
+    throw error;
   }
 }
