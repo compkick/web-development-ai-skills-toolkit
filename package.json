@@ -1,5 +1,5 @@
 {
-  "name": "web-development-toolkit-ai-skill-pack",
+  "name": "ai-agent-skills-toolkit-web-development",
   "private": true,
   "version": "0.1.0",
   "description": "Human web development checklists, deterministic website reviews, and Codex agent skills.",
@@ -9,7 +9,7 @@
     "url": "https://computerkick.com"
   },
   "scripts": {
-    "docs:lint": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
+    "docs:lint": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#.venv\"",
     "docs:links": "node scripts/check-doc-links.mjs",
     "docs:links:internal": "node scripts/check-doc-links.mjs --internal-only",
     "docs:links:external": "node scripts/check-doc-links.mjs --external-only",

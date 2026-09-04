@@ -17,9 +17,9 @@ const files = Object.fromEntries(await Promise.all(Object.entries(locations).map
   return [key, JSON.parse(content)];
 })));
 const releaseVersion = files.repositoryPackage.version;
-const publicName = "Web Development Toolkit & AI Skill Pack";
-const repositoryPackageName = "web-development-toolkit-ai-skill-pack";
-const runtimePackageName = "web-development-toolkit-audit-runtime";
+const publicName = "AI Agent Skills & Toolkit for Web Development";
+const repositoryPackageName = "ai-agent-skills-toolkit-web-development";
+const runtimePackageName = "ai-agent-skills-toolkit-web-audit-runtime";
 const pluginVersion = files.pluginManifest.version;
 const pluginBaseVersion = typeof pluginVersion === "string" ? pluginVersion.split("+", 1)[0] : undefined;
 const versions = [

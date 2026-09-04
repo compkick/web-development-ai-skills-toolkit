@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:web-dev-checklists:schema:review-evidence:1",
-  "title": "Web Development Toolkit review evidence",
+  "title": "AI Agent Skills & Toolkit for Web Development review evidence",
   "type": "object",
   "required": ["schemaVersion", "profile", "target", "run", "checks", "artifacts", "limitations"],
   "properties": {

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:web-dev-checklists:schema:review-coverage:1",
-  "title": "Web Development Toolkit automation coverage",
+  "title": "AI Agent Skills & Toolkit for Web Development automation coverage",
   "type": "object",
   "required": ["schemaVersion", "profile", "checklistSource", "items"],
   "properties": {

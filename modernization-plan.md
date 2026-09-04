@@ -1,4 +1,4 @@
-# Modernization plan for Web Development Toolkit & AI Skill Pack
+# Modernization plan for AI Agent Skills & Toolkit for Web Development
 
 ## Purpose
 
@@ -10,7 +10,7 @@ This file is the canonical implementation roadmap. Update it as work is complete
 
 - Plan status: In progress
 - Current phase: Phase 4B
-- Next work item: Complete fixture and fresh-task validation for `audit-web-project`
+- Next work item: Reinstall the updated plugin and validate all six skills in a fresh Codex task
 - Last reviewed: 2026-09-04
 
 ## Guiding decisions
@@ -272,7 +272,7 @@ Build the specialist skills before the cross-discipline audit skill:
 3. [x] `review-web-performance`
 4. [x] `review-technical-seo`
 5. [x] `review-website-launch`
-6. [ ] `audit-web-project`
+6. [x] `audit-web-project`
 
 ### Expected outputs
 
@@ -289,29 +289,28 @@ Build the specialist skills before the cross-discipline audit skill:
 
 For every skill:
 
-- [ ] Define realistic triggering prompts and non-triggering boundaries.
-- [ ] Initialize the folder with the official skill scaffolding tool.
-- [ ] Write concise, imperative `SKILL.md` instructions.
-- [ ] Keep detailed guidance canonical in `docs/` and generate skill-local references for packaging.
-- [ ] Add or reuse a deterministic evidence profile and map automated, partial, and manual coverage.
-- [ ] Add scripts only for deterministic, repeatable checks.
-- [ ] Test every included script.
-- [ ] Generate and verify `agents/openai.yaml`.
-- [ ] Define inputs, assumptions, safe defaults, output format, and stopping
-      conditions.
-- [ ] Avoid unsupported compliance or certification claims.
-- [ ] Run the skill validator.
+- [x] Define realistic triggering prompts and non-triggering boundaries.
+- [x] Initialize the folder with the official skill scaffolding tool.
+- [x] Write concise, imperative `SKILL.md` instructions.
+- [x] Keep detailed guidance canonical in `docs/` and generate skill-local references for packaging.
+- [x] Add or reuse a deterministic evidence profile and map automated, partial, and manual coverage.
+- [x] Add scripts only for deterministic, repeatable checks.
+- [x] Test every included script.
+- [x] Generate and verify `agents/openai.yaml`.
+- [x] Define inputs, assumptions, safe defaults, output format, and stopping conditions.
+- [x] Avoid unsupported compliance or certification claims.
+- [x] Run the skill validator.
 
 When an existing human checklist becomes a skill reference, keep the canonical checklist in `docs/`. During packaging, generate the required skill-local copy under `references/` and verify that it matches the canonical source. Do not hand-maintain two authoritative copies of the same guidance.
 
 ### Phase 4 exit criteria
 
 - [ ] Explicit and implicit invocation work as intended.
-- [ ] Neighboring skill descriptions have clear boundaries.
-- [ ] Findings use consistent evidence, severity, and limitation language.
-- [ ] Each specialist skill works independently.
-- [ ] The audit skill routes work without duplicating specialist instructions.
-- [ ] All skill validators pass.
+- [x] Neighboring skill descriptions have clear boundaries.
+- [x] Findings use consistent evidence, severity, and limitation language.
+- [x] Each specialist skill works independently.
+- [x] The audit skill routes work without duplicating specialist instructions.
+- [x] All skill validators pass.
 
 ## Phase 5: Validate and publish the core library
 
@@ -394,7 +393,7 @@ Add a specialized skill only when:
 
 ## Project publishing and go-live
 
-- [x] Adopt the public name **Web Development Toolkit & AI Skill Pack** and align the npm packages and plugin display name.
+- [x] Adopt the public name **AI Agent Skills & Toolkit for Web Development** and align the npm packages and plugin display name.
 - Set up public page on Computerkick
 - Share to LinkedIn and Facebook
 - Brainstorm marketing and sharing ideas
@@ -425,5 +424,5 @@ Add a specialized skill only when:
 | 2026-07-25 | Use one shared result model for review evidence, severity, ownership, and exceptions. | Checklist items should remain plain-language actions rather than repeating formal requirement labels. |
 | 2026-07-25 | Refactor the general website checklist into a launch gate and preserve its broader concepts in focused Phase 3 checklists. | Humans need a runnable launch checklist, while future skills need clear specialist boundaries and one canonical home for detailed guidance. |
 | 2026-07-28 | Restore a compact website development checklist. | The original repository included a practical build checklist whose purpose was lost when development and launch guidance were split into specialist reviews. |
-| 2026-09-04 | Use **Web Development Toolkit & AI Skill Pack** as the public name while retaining `web-dev-checklists` as the existing internal plugin ID. | The public and npm names should describe both the human toolkit and AI skills; retaining the internal ID avoids breaking installed development copies and cache paths during the 0.1 release. |
+| 2026-09-04 | Use **AI Agent Skills & Toolkit for Web Development** as the public name while retaining `web-dev-checklists` as the existing internal plugin ID. | Leading with AI agent skills makes the distinctive capability clear while still describing the human toolkit; retaining the internal ID avoids breaking installed development copies and cache paths during the 0.1 release. |
 | 2026-09-04 | License the project under MIT and publish an explicit platform test matrix. | Broad reuse is the goal, while tested and untested environments should remain distinguishable before the first public release. |

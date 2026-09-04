@@ -12,7 +12,7 @@ const runtimeDirectory = path.resolve(scriptsDirectory, "..");
 const reviewScript = path.join(scriptsDirectory, "review.mjs");
 const passFixtureTemplate = await readFile(path.join(runtimeDirectory, "fixtures", "audit-pass.html"), "utf8");
 const failFixture = await readFile(path.join(runtimeDirectory, "fixtures", "audit-fail.html"), "utf8");
-const testDirectory = await mkdtemp(path.join(os.tmpdir(), "web-development-toolkit-audit-test-"));
+const testDirectory = await mkdtemp(path.join(os.tmpdir(), "ai-agent-skills-toolkit-web-audit-test-"));
 const passOutputDirectory = path.join(testDirectory, "pass-output");
 const failOutputDirectory = path.join(testDirectory, "fail-output");
 let baseUrl;
