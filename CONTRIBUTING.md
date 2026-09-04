@@ -82,6 +82,16 @@ npm run deps:audit
 
 After changing the website audit runtime or deterministic review profiles, bootstrap it in an isolated cache and run `npm run runtime:test` plus `npm run reviews:test` against the local fixtures.
 
+The official skill and plugin validators require Python and the locked development dependency in `requirements-dev.txt`. Install it in a local virtual environment rather than relying on a global package:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-dev.txt
+```
+
+On Windows PowerShell, activate the environment with `.\.venv\Scripts\Activate.ps1`, then run `python -m pip install -r requirements-dev.txt`. Run the skill and plugin validators documented by their respective Codex creator skills from that environment.
+
 Before requesting review, also run:
 
 ```bash
@@ -97,4 +107,4 @@ git status --short
 - [ ] Checklists remain high-impact and realistically assessable.
 - [ ] Filenames, the README index, and internal links agree.
 - [ ] `npm run repo:check` passes.
-- [ ] No credentials, private data, backups, licenses, or organization-specific secrets are included.
+- [ ] No credentials, private data, backups, proprietary product license files, or organization-specific secrets are included.

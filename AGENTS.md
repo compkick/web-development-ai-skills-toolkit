@@ -35,7 +35,7 @@ These instructions apply to the entire repository. This repository contains huma
 - State what a completed checkbox proves when that meaning is not obvious.
 - Label vendor defaults, examples, project-specific choices, organization-specific processes, and version-specific requirements.
 - Prefer relative Markdown links for repository files and descriptive link text for external sources.
-- Never include real credentials, secrets, license files, personal data, private endpoints, or production exports.
+- Never include real credentials, secrets, proprietary product license files, personal data, private endpoints, or production exports.
 
 ## Sources and maintenance
 

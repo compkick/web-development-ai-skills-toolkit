@@ -1,11 +1,12 @@
 {
-  "name": "web-dev-checklists-audit-runtime",
+  "name": "web-development-toolkit-audit-runtime",
   "private": true,
   "version": "0.1.0",
   "author": {
     "name": "Computerkick",
     "url": "https://computerkick.com"
   },
+  "license": "MIT",
   "type": "module",
   "engines": {
     "node": ">=22"

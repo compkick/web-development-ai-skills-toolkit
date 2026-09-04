@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:web-dev-checklists:schema:review-evidence:1",
-  "title": "Web Dev Checklists review evidence",
+  "title": "Web Development Toolkit review evidence",
   "type": "object",
   "required": ["schemaVersion", "profile", "target", "run", "checks", "artifacts", "limitations"],
   "properties": {
@@ -52,7 +52,7 @@
           "id": { "type": "string" },
           "title": { "type": "string" },
           "status": { "enum": ["pass", "fail", "warning", "informational", "not-checked"] },
-          "method": { "enum": ["browser", "http", "tls", "axe", "lighthouse"] },
+          "method": { "enum": ["browser", "http", "tls", "axe", "lighthouse", "combined"] },
           "evidence": { "type": "object" },
           "artifacts": { "type": "array", "items": { "type": "string" } }
         },

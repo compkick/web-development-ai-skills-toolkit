@@ -1,0 +1,4 @@
+interface:
+  display_name: "Web Project Audit"
+  short_description: "Audit a web project across core quality areas."
+  default_prompt: "Use $audit-web-project to review this web project and prioritize the most important findings."

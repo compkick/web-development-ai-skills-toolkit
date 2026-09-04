@@ -21,7 +21,7 @@ Use the evidence that is available and relevant:
 
 1. Inspect the target repository, configuration, dependencies, tests, and documentation when source access is available.
 2. Use an available browser or browser-automation tool to inspect rendered pages, responsive behavior, user journeys, browser console output, and network behavior.
-3. Use an available deterministic profile from the [plugin-owned website audit runtime](website-audit-runtime.md) for normalized evidence when a URL is authorized and the profile fits the review. Use the low-level audit command when no suitable profile exists.
+3. Use an available deterministic profile from the plugin-owned website audit runtime for normalized evidence when a URL is authorized and the profile fits the review. Use the low-level audit command when no suitable profile exists.
 4. Run existing project tools such as Playwright tests, accessibility checks, linters, test suites, crawlers, or performance tools when they are already configured and safe to run.
 5. Review supplied reports and authorized systems such as analytics, search tools, CMS administration, monitoring, or deployment dashboards when access is available.
 6. Ask for the smallest missing input that would materially improve the review.

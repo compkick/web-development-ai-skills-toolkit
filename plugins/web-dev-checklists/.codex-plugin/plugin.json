@@ -1,15 +1,15 @@
 {
   "name": "web-dev-checklists",
   "version": "0.1.0+codex.20260903054108",
-  "description": "Focused website review and launch-readiness skills with a plugin-owned browser audit runtime.",
+  "description": "Human web development checklists and evidence-backed AI review skills with a plugin-owned browser audit runtime.",
   "author": {
     "name": "Computerkick",
     "url": "https://computerkick.com"
   },
   "skills": "./skills/",
   "interface": {
-    "displayName": "Web Dev Checklists",
-    "shortDescription": "Review website quality and launch readiness.",
+    "displayName": "Web Development Toolkit & AI Skill Pack",
+    "shortDescription": "Web checklists and evidence-backed AI reviews.",
     "longDescription": "Practical Codex skills for accessibility, security, performance, technical SEO, launch readiness, and whole-project web reviews, backed by a plugin-owned Playwright, axe, and Lighthouse runtime.",
     "developerName": "Computerkick",
     "websiteURL": "https://computerkick.com",

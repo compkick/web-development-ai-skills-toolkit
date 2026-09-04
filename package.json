@@ -1,8 +1,9 @@
 {
-  "name": "dev-docs-and-checklists",
+  "name": "web-development-toolkit-ai-skill-pack",
   "private": true,
   "version": "0.1.0",
-  "description": "Validation tooling for the web development documentation library.",
+  "description": "Human web development checklists, deterministic website reviews, and Codex agent skills.",
+  "license": "MIT",
   "author": {
     "name": "Computerkick",
     "url": "https://computerkick.com"
@@ -22,12 +23,13 @@
     "runtime:test": "node plugins/web-dev-checklists/runtime/scripts/test-runtime.mjs && node plugins/web-dev-checklists/runtime/scripts/test-page-screenshot.mjs",
     "review:website": "node plugins/web-dev-checklists/runtime/scripts/review.mjs",
     "reviews:check": "node scripts/check-review-runner.mjs",
-    "reviews:test": "npm run reviews:test-accessibility && npm run reviews:test-security && npm run reviews:test-performance && npm run reviews:test-technical-seo && npm run reviews:test-launch",
+    "reviews:test": "npm run reviews:test-accessibility && npm run reviews:test-security && npm run reviews:test-performance && npm run reviews:test-technical-seo && npm run reviews:test-launch && npm run reviews:test-audit",
     "reviews:test-accessibility": "node plugins/web-dev-checklists/runtime/scripts/test-review-runner.mjs",
     "reviews:test-security": "node plugins/web-dev-checklists/runtime/scripts/test-security-review-runner.mjs",
     "reviews:test-performance": "node plugins/web-dev-checklists/runtime/scripts/test-performance-review-runner.mjs",
     "reviews:test-technical-seo": "node plugins/web-dev-checklists/runtime/scripts/test-technical-seo-review-runner.mjs",
     "reviews:test-launch": "node plugins/web-dev-checklists/runtime/scripts/test-launch-review-runner.mjs",
+    "reviews:test-audit": "node plugins/web-dev-checklists/runtime/scripts/test-web-project-audit-runner.mjs",
     "versions:check": "node scripts/check-versions.mjs",
     "deps:audit": "npm audit --audit-level=high && npm audit --prefix plugins/web-dev-checklists/runtime --audit-level=high",
     "repo:check": "npm run docs:check && npm run skills:refs:check && npm run runtime:check && npm run reviews:check && npm run versions:check && npm run deps:audit"

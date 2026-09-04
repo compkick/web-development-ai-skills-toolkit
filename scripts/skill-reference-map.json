@@ -5,25 +5,25 @@
       "docs/web-accessibility-review-checklist.md",
       "docs/web-review-findings-reference.md",
       "plugins/web-dev-checklists/shared/web-review-contract.md",
-      "plugins/web-dev-checklists/shared/website-audit-runtime.md"
+      "docs/website-audit-runtime-guide.md"
     ],
     "review-web-security": [
       "docs/web-security-review-checklist.md",
       "docs/web-review-findings-reference.md",
       "plugins/web-dev-checklists/shared/web-review-contract.md",
-      "plugins/web-dev-checklists/shared/website-audit-runtime.md"
+      "docs/website-audit-runtime-guide.md"
     ],
     "review-web-performance": [
       "docs/web-performance-review-checklist.md",
       "docs/web-review-findings-reference.md",
       "plugins/web-dev-checklists/shared/web-review-contract.md",
-      "plugins/web-dev-checklists/shared/website-audit-runtime.md"
+      "docs/website-audit-runtime-guide.md"
     ],
     "review-technical-seo": [
       "docs/technical-seo-review-checklist.md",
       "docs/web-review-findings-reference.md",
       "plugins/web-dev-checklists/shared/web-review-contract.md",
-      "plugins/web-dev-checklists/shared/website-audit-runtime.md"
+      "docs/website-audit-runtime-guide.md"
     ],
     "review-website-launch": [
       "docs/website-launch-checklist.md",
@@ -36,13 +36,23 @@
       "docs/web-security-review-checklist.md",
       "docs/web-review-findings-reference.md",
       "plugins/web-dev-checklists/shared/web-review-contract.md",
-      "plugins/web-dev-checklists/shared/website-audit-runtime.md"
+      "docs/website-audit-runtime-guide.md"
     ],
     "audit-web-project": [
       "docs/web-project-audit-checklist.md",
+      "docs/web-accessibility-review-checklist.md",
+      "docs/web-security-review-checklist.md",
+      "docs/web-performance-review-checklist.md",
+      "docs/technical-seo-review-checklist.md",
+      "docs/agent-ready-repository-checklist.md",
+      "docs/software-supply-chain-review-checklist.md",
+      "docs/ci-cd-release-readiness-checklist.md",
+      "docs/production-observability-operations-checklist.md",
+      "docs/web-privacy-data-handling-review-checklist.md",
+      "docs/cms-content-governance-checklist.md",
       "docs/web-review-findings-reference.md",
       "plugins/web-dev-checklists/shared/web-review-contract.md",
-      "plugins/web-dev-checklists/shared/website-audit-runtime.md"
+      "docs/website-audit-runtime-guide.md"
     ]
   }
 }

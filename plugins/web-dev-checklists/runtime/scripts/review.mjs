@@ -9,6 +9,7 @@ import { writeLaunchHtmlReport } from "../reporting/launch-report.mjs";
 import { writePerformanceHtmlReport } from "../reporting/performance-report.mjs";
 import { writeSecurityHtmlReport } from "../reporting/security-report.mjs";
 import { writeTechnicalSeoHtmlReport } from "../reporting/technical-seo-report.mjs";
+import { writeWebProjectAuditHtmlReport } from "../reporting/web-project-audit-report.mjs";
 
 const scriptsDirectory = path.dirname(fileURLToPath(import.meta.url));
 const auditScript = path.join(scriptsDirectory, "audit.mjs");
@@ -49,8 +50,13 @@ const securityResult = summary.security?.status === "completed" ? await readJson
 const seoResult = summary.seo?.status === "completed" ? await readJson(path.join(options.outputDirectory, "seo-results.json")) : null;
 const launchResult = summary.launch?.status === "completed" ? await readJson(path.join(options.outputDirectory, "launch-results.json")) : null;
 let evidence;
+let auditComponents = null;
 
 if (profile.id === "review-web-accessibility") evidence = await buildAccessibilityEvidence(profile, summary, axeResult, options.outputDirectory);
+else if (profile.id === "audit-web-project") {
+  auditComponents = await buildWebProjectAuditComponents(summary, axeResult, lighthouseResult, securityResult, seoResult, launchResult, options.outputDirectory);
+  evidence = await buildWebProjectAuditEvidence(profile, summary, auditComponents, options.outputDirectory);
+}
 else if (profile.id === "review-website-launch") evidence = await buildLaunchEvidence(profile, summary, launchResult, options.outputDirectory);
 else if (profile.id === "review-web-performance") evidence = await buildPerformanceEvidence(profile, summary, lighthouseResult, options.outputDirectory);
 else if (profile.id === "review-web-security") evidence = await buildSecurityEvidence(profile, summary, securityResult, options.outputDirectory);
@@ -62,12 +68,16 @@ if (summary.page.screenshotReadiness?.status === "incomplete") {
   evidence.limitations.push(`Screenshot preparation was incomplete: ${readiness.images.pending} pending, ${readiness.images.failed} failed, and ${readiness.images.missingSource} missing-source images; load state ${readiness.loadState}; time limit reached: ${readiness.timedOut}; scroll limit reached: ${readiness.scroll.limitReached}. See summary.json page.screenshotReadiness. This is a capture limitation, not a whole-site result.`);
 }
 
-const coverage = {
-  schemaVersion: "1.0.0",
-  profile: { id: profile.id, version: profile.version },
-  checklistSource: profile.checklistSource,
-  items: profile.coverage
-};
+const coverage = buildCoverage(profile);
+
+if (profile.id === "audit-web-project") {
+  evidence.artifacts.push(
+    { path: "evidence.json", purpose: "Normalized high-level public audit results" },
+    { path: "coverage.json", purpose: "Canonical web project audit checklist automation map" },
+    { path: "web-project-audit-report.html", purpose: "Human-readable cross-discipline public audit evidence" }
+  );
+  await writeWebProjectAuditHtmlReport(evidence, coverage, path.join(options.outputDirectory, "web-project-audit-report.html"));
+}
 
 if (profile.id === "review-web-security") {
   evidence.artifacts.push(
@@ -108,6 +118,127 @@ if (profile.id === "review-technical-seo") {
 await writeJson(path.join(options.outputDirectory, "evidence.json"), evidence);
 await writeJson(path.join(options.outputDirectory, "coverage.json"), coverage);
 console.log(`Deterministic ${profile.id} evidence package ready at ${options.outputDirectory}`);
+
+async function buildWebProjectAuditComponents(summary, axeResult, lighthouseResult, securityResult, seoResult, launchResult, outputDirectory) {
+  const [accessibilityProfile, securityProfile, performanceProfile, seoProfile, launchProfile] = await Promise.all([
+    loadProfile("review-web-accessibility"),
+    loadProfile("review-web-security"),
+    loadProfile("review-web-performance"),
+    loadProfile("review-technical-seo"),
+    loadProfile("review-website-launch")
+  ]);
+  const accessibility = await buildAccessibilityEvidence(accessibilityProfile, summary, axeResult, outputDirectory);
+  const security = await buildSecurityEvidence(securityProfile, summary, securityResult, outputDirectory);
+  const performance = await buildPerformanceEvidence(performanceProfile, summary, lighthouseResult, outputDirectory);
+  const seo = await buildTechnicalSeoEvidence(seoProfile, summary, lighthouseResult, seoResult, outputDirectory);
+  const launch = await buildLaunchEvidence(launchProfile, summary, launchResult, outputDirectory);
+
+  await Promise.all([
+    writeSecurityHtmlReport(security, buildCoverage(securityProfile), path.join(outputDirectory, "security-report.html")),
+    writePerformanceHtmlReport(performance, buildCoverage(performanceProfile), path.join(outputDirectory, "performance-report.html")),
+    writeTechnicalSeoHtmlReport(seo, buildCoverage(seoProfile), path.join(outputDirectory, "technical-seo-report.html")),
+    writeLaunchHtmlReport(launch, buildCoverage(launchProfile), path.join(outputDirectory, "launch-readiness-report.html"))
+  ]);
+
+  return { accessibility, launch, performance, security, seo };
+}
+
+async function buildWebProjectAuditEvidence(profileToUse, summary, components, outputDirectory) {
+  const areaDefinitions = [
+    { area: "Accessibility", collectorCheckId: "automated-axe-scan", evidence: components.accessibility, id: "audit-accessibility-summary", artifacts: ["axe-report.html", "lighthouse-report.html"] },
+    { area: "Security", collectorCheckId: "security-collection", evidence: components.security, id: "audit-security-summary", artifacts: ["security-report.html"] },
+    { area: "Performance", collectorCheckId: "lighthouse-performance-run", evidence: components.performance, id: "audit-performance-summary", artifacts: ["performance-report.html", "lighthouse-report.html"] },
+    { area: "Technical SEO", collectorCheckId: "seo-collection", evidence: components.seo, id: "audit-technical-seo-summary", artifacts: ["technical-seo-report.html", "lighthouse-report.html"] },
+    { area: "Homepage and links", collectorCheckId: "launch-collection", evidence: components.launch, id: "audit-homepage-summary", artifacts: ["launch-readiness-report.html"] }
+  ];
+  const areaChecks = [];
+
+  for (const definition of areaDefinitions) {
+    definition.artifacts = (await Promise.all(definition.artifacts.map(async (artifactPath) => ({ artifactPath, exists: await exists(path.join(outputDirectory, artifactPath)) })))).filter((artifact) => artifact.exists).map((artifact) => artifact.artifactPath);
+    areaChecks.push(summarizeAuditArea(definition));
+  }
+  const overallCounts = countStatuses(areaChecks);
+  const overallStatus = overallCounts.fail > 0 ? "fail" : overallCounts["not-checked"] > 0 ? "not-checked" : overallCounts.warning > 0 ? "warning" : "pass";
+  const checks = [{
+    id: "audit-public-site-summary",
+    title: "Public website baseline is collected across the core review areas",
+    status: overallStatus,
+    method: "combined",
+    evidence: { areas: areaChecks.map((check) => ({ area: check.evidence.area, status: check.status })), counts: overallCounts },
+    artifacts: ["web-project-audit-report.html"]
+  }, ...areaChecks];
+  const artifactDefinitions = [
+    ["summary.json", "Low-level browser and collector summary"],
+    ["page.png", "Full-page rendered screenshot"],
+    ["axe-results.json", "Reduced axe rule evidence"],
+    ["axe-report.html", "Human-readable axe report with bounded element screenshots"],
+    ["lighthouse-report.json", "Machine-readable Lighthouse report"],
+    ["lighthouse-report.html", "Detailed human-readable Lighthouse report"],
+    ["security-results.json", "Reduced public security observations"],
+    ["security-report.html", "Human-readable security evidence"],
+    ["seo-results.json", "Reduced technical SEO observations"],
+    ["technical-seo-report.html", "Human-readable technical SEO evidence"],
+    ["launch-results.json", "Reduced homepage and link observations"],
+    ["launch-readiness-report.html", "Human-readable homepage preflight evidence"],
+    ["performance-report.html", "Human-readable performance evidence"],
+    ["browser-errors.json", "Opt-in truncated browser error details"]
+  ];
+  const artifacts = [];
+
+  for (const [artifactPath, purpose] of artifactDefinitions) {
+    if (await exists(path.join(outputDirectory, artifactPath))) artifacts.push({ path: artifactPath, purpose });
+  }
+
+  return {
+    schemaVersion: "1.0.0",
+    profile: { id: profileToUse.id, standard: profileToUse.standard, version: profileToUse.version },
+    target: { finalUrl: summary.page.finalUrl, requestedUrl: summary.requestedUrl },
+    run: { browser: summary.browser, completedAt: summary.completedAt, startedAt: summary.startedAt },
+    checks,
+    artifacts,
+    limitations: [
+      "This deterministic package reviews one public desktop page and does not prove whole-project or whole-site health.",
+      "Repository setup, architecture, dependencies, tests, deployment, private environments, operations, backups, ownership, privacy, CMS governance, and authenticated journeys require agent or human evidence.",
+      "Automated accessibility evidence does not replace keyboard, responsive, zoom, content-quality, workflow, or assistive-technology review.",
+      "Lighthouse provides one desktop lab run, not real-user, mobile, warm-cache, geographic, or field performance evidence.",
+      "Public security observations are not a penetration test and do not verify source, authenticated controls, authorization, data handling, or operations.",
+      "Technical SEO and homepage evidence cover one supplied page plus bounded supporting requests, not a representative whole-site crawl."
+    ]
+  };
+}
+
+function summarizeAuditArea(definition) {
+  const counts = countStatuses(definition.evidence.checks);
+  const collectorCheck = definition.evidence.checks.find((check) => check.id === definition.collectorCheckId);
+  const collectorIncomplete = !collectorCheck || collectorCheck.status === "not-checked";
+  const status = collectorIncomplete ? "not-checked" : counts.fail > 0 ? "fail" : counts.warning > 0 ? "warning" : "pass";
+  const observations = definition.evidence.checks
+    .filter((check) => new Set(["fail", "warning", "not-checked"]).has(check.status))
+    .slice(0, 12)
+    .map((check) => ({ id: check.id, status: check.status, title: check.title }));
+
+  return {
+    id: definition.id,
+    title: `${definition.area} public evidence`,
+    status,
+    method: "combined",
+    evidence: { area: definition.area, counts, observations, omittedObservationCount: Math.max(0, counts.fail + counts.warning + counts["not-checked"] - observations.length) },
+    artifacts: definition.artifacts
+  };
+}
+
+function countStatuses(checks) {
+  return Object.fromEntries(["fail", "warning", "not-checked", "informational", "pass"].map((status) => [status, checks.filter((check) => check.status === status).length]));
+}
+
+function buildCoverage(profileToUse) {
+  return {
+    schemaVersion: "1.0.0",
+    profile: { id: profileToUse.id, version: profileToUse.version },
+    checklistSource: profileToUse.checklistSource,
+    items: profileToUse.coverage
+  };
+}
 
 async function buildAccessibilityEvidence(profileToUse, summary, axeResult, outputDirectory) {
   const checks = [];

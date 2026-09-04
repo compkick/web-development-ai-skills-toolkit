@@ -1,6 +1,6 @@
-<!-- Generated from plugins/web-dev-checklists/shared/website-audit-runtime.md by scripts/sync-skill-references.mjs. Do not edit this copy. -->
+<!-- Generated from docs/website-audit-runtime-guide.md by scripts/sync-skill-references.mjs. Do not edit this copy. -->
 
-# Website audit runtime
+# Website audit runtime guide
 
 ## Purpose
 
@@ -28,6 +28,8 @@ If status reports that the current runtime is not ready, get permission and run 
 ```bash
 node runtime/scripts/bootstrap.mjs
 ```
+
+From this repository's root, the equivalent human-facing commands are `npm run runtime:status` and `npm run runtime:bootstrap`.
 
 The bootstrap installs the pinned dependencies and matching Playwright Chromium build into the user's cache. The browser download is sizeable, but later runtime versions can reuse compatible browser files from the shared cache. It does not change the website project. If an organization does not permit the browser download, reuse an installed Chrome or Edge browser instead:
 
@@ -61,13 +63,14 @@ node runtime/scripts/review.mjs --profile review-web-security --url https://site
 node runtime/scripts/review.mjs --profile review-web-performance --url https://site.example
 node runtime/scripts/review.mjs --profile review-technical-seo --url https://site.example
 node runtime/scripts/review.mjs --profile review-website-launch --url https://site.example
+node runtime/scripts/review.mjs --profile audit-web-project --url https://site.example
 ```
 
 By default, the runner creates `.output/<profile>/<host>/<run-id>/` under the current working directory. Use `--output <directory>` to choose another new or empty directory. The procedure, browser configuration, profile version, check identifiers, and JSON shape are controlled, but live website content, network conditions, and Lighthouse measurements can still vary between runs.
 
 `prepare-website-launch` remains a CLI alias for `review-website-launch`; both use the new profile ID in evidence and default output paths. Invoke the renamed `$review-website-launch` skill in Codex.
 
-Before capturing `page.png`, the shared runtime waits for the initial load, scrolls to trigger lazy-loaded content, waits for rendered HTML images and document fonts, and returns to the top. Preparation is limited to 15 seconds and 40 scroll steps by `SCREENSHOT_READINESS` in `runtime/config/runtime-config.mjs`. Check `summary.json` at `page.screenshotReadiness` for pending, failed, or missing-source image counts and load, time, or scroll limits. An incomplete capture is also noted in normalized review limitations; it does not determine launch readiness. Hidden images, CSS background decoding, video, and content requiring interaction are outside this readiness check. Lighthouse uses a separate page load and is not delayed by this preparation.
+Before capturing `page.png`, the shared runtime waits for the initial load, scrolls to trigger lazy-loaded content, waits for rendered HTML images and document fonts, and returns to the top. Preparation is limited to 8 seconds and 40 scroll steps by `SCREENSHOT_READINESS` in `runtime/config/runtime-config.mjs`. Check `summary.json` at `page.screenshotReadiness` for pending, failed, or missing-source image counts and load, time, or scroll limits. An incomplete capture is also noted in normalized review limitations; it does not determine launch readiness. Hidden images, CSS background decoding, video, and content requiring interaction are outside this readiness check. Lighthouse uses a separate page load and is not delayed by this preparation.
 
 The accessibility collector runs axe in an explicit 1440 × 900 desktop Playwright context and runs Lighthouse with its desktop configuration, including desktop scoring, viewport emulation, user agent, and throttling. The output records the form factor and viewport. Treat this as the repeatable desktop baseline; narrow-width reflow, mobile layouts, zoom, touch behavior, and responsive interaction still require separate review.
 
@@ -80,6 +83,8 @@ The performance profile runs Lighthouse with its desktop configuration and conve
 The technical SEO profile runs Lighthouse with its desktop configuration and records rendered titles, descriptions, indexing directives, canonicals, headings, text, link inventory, structured-data syntax, and language alternates. It also requests the same origin's `robots.txt` file and previews up to three same-origin sitemaps declared there, or the default `/sitemap.xml` when none is declared. Sitemap previews are limited to 256 KiB and can be incomplete. The profile does not fetch every discovered link, perform an unbounded crawl, access Search Console or analytics, validate migration maps, or guarantee indexing or rankings.
 
 The launch profile is a lightweight homepage preflight that deliberately does not rerun the specialist collectors. It records the homepage response, HTTPS state, bounded HTTP redirect, semantic header/navigation/main/footer structure, noindex directives, browser-error counts, unset or invalid visible link destinations, and up to 50 unique same-host link responses. Link checks prioritize navigation, header, footer, and then page content. The profile does not request external destinations, submit forms, authenticate, run axe, run Lighthouse, collect the security or technical SEO profiles, or crawl the site. Its automated result is evidence for the agent's final go/no-go recommendation, not the final decision by itself.
+
+The web project audit profile collects the existing accessibility, security, performance, technical SEO, and homepage evidence in one browser and Lighthouse run. It creates one high-level `web-project-audit-report.html` plus the detailed area reports for drill-down. It does not inspect a repository, execute project commands, review private environments, authenticate, test mobile layouts, or verify operations; the `audit-web-project` skill adds those sources when they are available and in scope.
 
 ## Browser sandbox
 
@@ -112,6 +117,7 @@ Treat each run directory as one evidence package. When a user requests `.output`
 - `performance-report.html` is created by the performance profile and presents normalized desktop lab metrics, Lighthouse observations, checklist coverage, limitations, and artifact links.
 - `technical-seo-report.html` is created by the technical SEO profile and presents normalized crawl, indexing, metadata, canonical, sitemap, and Lighthouse observations with checklist coverage, limitations, and artifact links.
 - `launch-readiness-report.html` is created by the launch profile and presents the high-level automated preflight, homepage and link observations, canonical launch-checklist coverage, limitations, and artifact links.
+- `web-project-audit-report.html` is created by the web project audit profile and groups the five public evidence areas into a concise cross-discipline baseline with links to detailed reports.
 
 The runtime prioritizes confirmed violations and then incomplete checks for element screenshots, with a default limit of 50 candidates per page. The report records elements that were skipped by the limit, could not be found after the scan, used unsupported nested targets, or failed during capture.
 

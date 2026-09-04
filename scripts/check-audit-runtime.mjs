@@ -35,6 +35,7 @@ const scripts = [
   "reporting/performance-report.mjs",
   "reporting/security-report.mjs",
   "reporting/technical-seo-report.mjs",
+  "reporting/web-project-audit-report.mjs",
   "scripts/audit.mjs",
   "scripts/bootstrap.mjs",
   "scripts/review.mjs",
@@ -45,6 +46,7 @@ const scripts = [
   "scripts/test-launch-review-runner.mjs",
   "scripts/test-security-review-runner.mjs",
   "scripts/test-technical-seo-review-runner.mjs",
+  "scripts/test-web-project-audit-runner.mjs",
   "scripts/test-runtime.mjs",
   "scripts/test-page-screenshot.mjs",
   "scripts/worker.mjs"

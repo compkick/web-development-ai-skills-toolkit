@@ -21,7 +21,7 @@ Before planning the review, read:
 - [Web review skill contract](references/web-review-contract.md) for safety, evidence storage, result, and reporting rules.
 - [Web review findings reference](references/web-review-findings-reference.md) for scope records, statuses, severity, exceptions, and retesting.
 
-Read [website audit runtime](references/website-audit-runtime.md) only when an authorized URL and automated browser evidence are relevant.
+Read [website audit runtime guide](references/website-audit-runtime-guide.md) only when an authorized URL and automated browser evidence are relevant.
 
 ## Establish scope
 

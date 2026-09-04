@@ -1,21 +1,17 @@
-# Modernization plan for Dev Docs and Checklists repo
+# Modernization plan for Web Development Toolkit & AI Skill Pack
 
 ## Purpose
 
-Modernize this repository's web-development guidance, add missing core
-checklists, and turn the stable workflows into a publishable Codex skills
-library.
+Modernize this repository's web-development guidance, add missing core checklists, and turn the stable workflows into a publishable Codex skills library.
 
-This file is the canonical implementation roadmap. Update it as work is
-completed or decisions change. Do not treat discussion notes or chat history as
-the authoritative plan when this file contains a newer decision.
+This file is the canonical implementation roadmap. Update it as work is completed or decisions change. Do not treat discussion notes or chat history as the authoritative plan when this file contains a newer decision.
 
 ## Status
 
 - Plan status: In progress
 - Current phase: Phase 4B
-- Next work item: Design and scaffold `audit-web-project`
-- Last reviewed: 2026-08-28
+- Next work item: Complete fixture and fresh-task validation for `audit-web-project`
+- Last reviewed: 2026-09-04
 
 ## Guiding decisions
 
@@ -330,12 +326,12 @@ When an existing human checklist becomes a skill reference, keep the canonical c
 - [ ] Forward-test skills using fresh context and raw artifacts.
 - [x] Add `.codex-plugin/plugin.json`.
 - [x] Add a repository or personal marketplace entry for local installation.
-- [ ] Choose and add a license.
+- [x] Choose and add a license.
 - [x] Adopt semantic versioning and validate one shared release version across the repository package, audit runtime, and plugin manifest base version.
 - [x] Add plugin installation and usage guidance to the repository README.
 - [x] Add basic plugin metadata.
 - [ ] Add presentation assets if they materially improve discovery.
-- [ ] Validate Markdown, links, manifests, and skills in CI.
+- [x] Validate Markdown, links, manifests, and skills in CI.
 
 ### Phase 5 exit criteria
 
@@ -398,7 +394,7 @@ Add a specialized skill only when:
 
 ## Project publishing and go-live
 
-- Rename the project and repo to a new name that reflects the new purpose, i.e. web dev checklists plus agent skills
+- [x] Adopt the public name **Web Development Toolkit & AI Skill Pack** and align the npm packages and plugin display name.
 - Set up public page on Computerkick
 - Share to LinkedIn and Facebook
 - Brainstorm marketing and sharing ideas
@@ -429,3 +425,5 @@ Add a specialized skill only when:
 | 2026-07-25 | Use one shared result model for review evidence, severity, ownership, and exceptions. | Checklist items should remain plain-language actions rather than repeating formal requirement labels. |
 | 2026-07-25 | Refactor the general website checklist into a launch gate and preserve its broader concepts in focused Phase 3 checklists. | Humans need a runnable launch checklist, while future skills need clear specialist boundaries and one canonical home for detailed guidance. |
 | 2026-07-28 | Restore a compact website development checklist. | The original repository included a practical build checklist whose purpose was lost when development and launch guidance were split into specialist reviews. |
+| 2026-09-04 | Use **Web Development Toolkit & AI Skill Pack** as the public name while retaining `web-dev-checklists` as the existing internal plugin ID. | The public and npm names should describe both the human toolkit and AI skills; retaining the internal ID avoids breaking installed development copies and cache paths during the 0.1 release. |
+| 2026-09-04 | License the project under MIT and publish an explicit platform test matrix. | Broad reuse is the goal, while tested and untested environments should remain distinguishable before the first public release. |

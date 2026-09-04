@@ -1,6 +1,4 @@
-# Website Readiness Toolkit
-
-Full title: Website Readiness Toolkit: Checklists & Agent Skills
+# Web Development Toolkit & AI Skill Pack
 
 Reusable standards, checklists, guides, runbooks, and cheatsheets for web development and CMS work. The library emphasizes high-impact, observable checks; secure defaults; current primary sources; and workflows that remain practical for humans.
 
@@ -26,6 +24,7 @@ Created by [Computerkick](https://computerkick.com).
 - [Development using Git](docs/git-development-guide.md)
 - [Git command cheatsheet](docs/git-command-cheatsheet.md)
 - [Playwright testing guide](docs/playwright-testing-guide.md)
+- [Website audit runtime guide](docs/website-audit-runtime-guide.md)
 - [Dependency and software supply chain review checklist](docs/software-supply-chain-review-checklist.md)
 - [CI/CD and release readiness checklist](docs/ci-cd-release-readiness-checklist.md)
 - [Production observability and operations checklist](docs/production-observability-operations-checklist.md)
@@ -59,20 +58,23 @@ Sitefinity is retained as specialist maintenance guidance. New general and WordP
 - [Contributing](CONTRIBUTING.md)
 - [Agent authoring instructions](AGENTS.md)
 - [Modernization plan](modernization-plan.md)
+- [Supported platforms](docs/supported-platforms-reference.md)
+- [MIT license](LICENSE)
 
 Human-facing documentation lives in the flat `docs/` directory and uses lowercase kebab-case filenames. The Codex plugin lives under `plugins/web-dev-checklists/`, with packaged skills kept separately from their canonical human-readable guidance.
 
-Phase 4A established the plugin manifest, repository-local marketplace entry, shared review contract, generated-reference checks, and plugin-owned website audit runtime. Phase 4B is adding the individual review skills:
+The plugin provides six focused review skills:
 
 - [`review-web-accessibility`](plugins/web-dev-checklists/skills/review-web-accessibility/SKILL.md) — produce an evidence-backed accessibility review that separates automated, source-based, interactive, assistive-technology, and untested results.
 - [`review-web-security`](plugins/web-dev-checklists/skills/review-web-security/SKILL.md) — combine bounded public checks, source and configuration evidence, approved authenticated testing, and operational evidence without claiming a penetration test.
 - [`review-web-performance`](plugins/web-dev-checklists/skills/review-web-performance/SKILL.md) — combine repeatable desktop Lighthouse evidence with real-user data, source review, budgets, and representative workflows without treating one score as the result.
 - [`review-technical-seo`](plugins/web-dev-checklists/skills/review-technical-seo/SKILL.md) — combine rendered crawl and indexing evidence with source, migration, Search Console, analytics, and representative-page review without promising rankings or indexing.
 - [`review-website-launch`](plugins/web-dev-checklists/skills/review-website-launch/SKILL.md) — combine a bounded homepage and link preflight with prior specialist reviews and human confirmations to make a concise go/no-go recommendation and tailored launch checklist.
+- [`audit-web-project`](plugins/web-dev-checklists/skills/audit-web-project/SKILL.md) — combine repository, public website, operational, and supplied evidence into a routed cross-discipline assessment with consolidated priorities.
 
 ## Install the Codex plugin
 
-The repository includes a local Codex marketplace containing the `web-dev-checklists` plugin. The plugin currently provides the `review-web-accessibility`, `review-web-security`, `review-web-performance`, `review-technical-seo`, and `review-website-launch` skills. Install the plugin once to use the skills from other Codex tasks and project folders.
+The repository includes a local Codex marketplace containing the internally named `web-dev-checklists` plugin. Install **Web Development Toolkit & AI Skill Pack** once to use its six skills from other Codex tasks and project folders.
 
 Clone or download this repository, install the current [Codex CLI](https://developers.openai.com/codex/cli/), and register the repository as a local marketplace:
 
@@ -80,9 +82,9 @@ Clone or download this repository, install the current [Codex CLI](https://devel
 codex plugin marketplace add "<absolute-path-to-this-repository>"
 ```
 
-In the Codex desktop app, refresh Codex, open **Plugins**, select **Personal**, open **Web Dev Checklists**, and select the plus button to install it. Start a new task after installation so Codex loads the bundled skills.
+In the Codex desktop app, refresh Codex, open **Plugins**, select **Personal**, open **Web Development Toolkit & AI Skill Pack**, and select the plus button to install it. Start a new task after installation so Codex loads the bundled skills.
 
-In Codex CLI, start Codex and enter `/plugins`, select the **Personal** marketplace, install **Web Dev Checklists**, and then start a new session.
+In Codex CLI, start Codex and enter `/plugins`, select the **Personal** marketplace, install **Web Development Toolkit & AI Skill Pack**, and then start a new session.
 
 From any project folder, invoke a skill explicitly:
 
@@ -106,6 +108,10 @@ $review-technical-seo Review https://site.example, save the evidence under .outp
 $review-website-launch Review https://site.example, decide whether this release is ready to launch, and give me the remaining developer and post-launch checklist.
 ```
 
+```text
+$audit-web-project Audit this repository and https://site.example, then prioritize the most important technical risks and next steps.
+```
+
 Codex can also choose an installed skill from a natural-language request such as “Is this website ready to launch from an accessibility perspective?” Explicit invocation is useful when testing a specific skill. The agent asks for approval before bootstrapping the browser runtime when needed. Runtime dependencies stay in the user cache rather than the project being reviewed.
 
 When updating a locally installed development build, validate the plugin, update its Codex cachebuster, reinstall it from the **Personal** marketplace, and start another new task before retesting.
@@ -118,7 +124,7 @@ Run `npm run versions:check` to confirm that the root package, lockfiles, audit 
 
 ## Agent website audit runtime
 
-The plugin includes a generic Playwright, axe, and Lighthouse runner that audits an authorized URL without adding dependencies to the website project. After approval, it installs pinned Node.js dependencies and Playwright Chromium into the user's cache, prefers that matching browser, and falls back to Chrome or Edge.
+The plugin includes a generic Playwright, axe, and Lighthouse runtime that reviews an authorized URL without adding dependencies to the website project. It prefers its matching Playwright Chromium and falls back to Chrome or Edge.
 
 Check whether the runtime matching the current plugin is already installed:
 
@@ -126,83 +132,30 @@ Check whether the runtime matching the current plugin is already installed:
 npm run runtime:status
 ```
 
-This check is read-only and reports the resolved user-cache path. A ready runtime should be used directly without another bootstrap or approval request.
-
-If status reports that the current runtime is not ready, bootstrap it from the repository root after approval:
+If the read-only status check reports that the current runtime is not ready, bootstrap it from the repository root after approval:
 
 ```bash
 npm run runtime:bootstrap
 ```
 
-The runtime has two entry points. Most checklist reviews should use `review:website`; `runtime:audit` is the lower-level collector used underneath it. Runtime cache locations, the `WEB_DEV_CHECKLISTS_CACHE` override, and the default `.output` evidence location are centralized in [runtime configuration](plugins/web-dev-checklists/runtime/config/runtime-config.mjs).
-
-### Low-level raw audit
-
-Use `runtime:audit` for runtime troubleshooting, profile development, or an ad hoc collection of raw browser, axe, Lighthouse, screenshot, and console-error evidence:
+Use the low-level collector for troubleshooting, profile development, or ad hoc raw browser evidence:
 
 ```bash
 npm run runtime:audit -- --url https://site.example
 ```
 
-This command writes to `.output/runtime-audit/<host>/<run-id>/` by default. Pass `--output <new-or-empty-directory>` to override the location. It does not apply a checklist profile and does not create normalized `evidence.json` or `coverage.json` files. Its output includes `summary.json`, `page.png`, reduced axe results, a human-readable axe HTML report with bounded element screenshots, and Lighthouse JSON and HTML reports. Collector flags can add public security, technical SEO, or launch-preflight observations or skip evidence that is not needed.
-
-### Deterministic checklist evidence
-
-Use `review:website` for normal human or agent checklist work. It runs the appropriate low-level collectors, normalizes their results, and maps the evidence to the selected canonical checklist:
-
-#### Accessibility checklist runner
+Use a deterministic checklist profile for normal human or agent review work:
 
 ```bash
 npm run review:website -- --profile review-web-accessibility --url https://site.example
-```
-
-This profile collects a rendered screenshot, page title and language, heading and landmark counts, browser-error counts, reduced axe results, a human-readable axe report with element screenshots, and Lighthouse reports. Axe runs in a 1440 × 900 desktop Playwright context, and Lighthouse uses its desktop configuration. It maps the evidence to the [web accessibility review checklist](docs/web-accessibility-review-checklist.md). Keyboard, mobile and narrow-width layouts, zoom, reflow, content quality, important workflows, and assistive-technology testing remain manual.
-
-#### Security checklist runner
-
-```bash
 npm run review:website -- --profile review-web-security --url https://site.example
-```
-
-This profile collects a rendered screenshot, browser-error counts, HTTPS and certificate evidence, a bounded TLS baseline, negotiated application protocol, a same-host HTTP redirect check, insecure-resource observations, selected security headers, public-cookie attributes, CORS headers, software-disclosure headers, and `security.txt` evidence. The TLS baseline checks the normally negotiated cipher and key exchange, TLS 1.3 or TLS 1.2 support, and TLS 1.0 and TLS 1.1 rejection without enumerating every cipher suite. It creates `security-report.html` with failures and warnings, passes, informational and not-checked results, checklist coverage, limitations, and supporting artifact links. It maps the evidence to the [web security review checklist](docs/web-security-review-checklist.md). It skips axe and Lighthouse and does not enumerate endpoints, send attack payloads, sign in, submit forms, or replace source, authenticated, or operational review.
-
-#### Performance checklist runner
-
-```bash
 npm run review:website -- --profile review-web-performance --url https://site.example
-```
-
-This profile collects a rendered screenshot, browser-error counts, a desktop Lighthouse report, normalized lab LCP, CLS, TBT, supporting paint metrics, and grouped delivery, rendering, code, main-thread, layout, and third-party observations. It creates `performance-report.html` with metric cards, checks requiring attention, checklist coverage, limitations, and artifact links. It maps the evidence to the [web performance review checklist](docs/web-performance-review-checklist.md). It skips axe. Real-user Core Web Vitals, mobile and warm-cache behavior, important interactions, budgets, source decisions, and production monitoring remain agent or human review work.
-
-#### Technical SEO checklist runner
-
-```bash
 npm run review:website -- --profile review-technical-seo --url https://site.example
-```
-
-This profile collects a rendered screenshot, browser-error counts, a desktop Lighthouse SEO report, status and redirect evidence, rendered titles and metadata, indexing directives, canonicals, headings, text and link inventories, structured-data syntax, language alternates, `robots.txt`, and up to three same-origin sitemap previews. It creates `technical-seo-report.html` with summary cards, checks requiring attention, checklist coverage, limitations, and artifact links. It maps the evidence to the [technical SEO review checklist](docs/technical-seo-review-checklist.md). It skips axe. Representative multi-page crawling, Search Console, analytics, server logs, duplicate URL discovery, migration maps, metadata quality, and search performance remain agent or human review work.
-
-#### Website launch checklist runner
-
-```bash
 npm run review:website -- --profile review-website-launch --url https://site.example
+npm run review:website -- --profile audit-web-project --url https://site.example
 ```
 
-This profile performs a lightweight launch preflight on one homepage. It records availability, HTTPS, the bounded HTTP redirect, header/navigation/main/footer structure, homepage noindex signals, browser-error counts, empty or invalid visible link destinations, and up to 50 unique same-host link responses with navigation and footer priority. It creates `launch-readiness-report.html` with an automated preflight summary, checks requiring attention, canonical [website launch checklist](docs/website-launch-checklist.md) coverage, limitations, and artifact links. It deliberately skips axe, Lighthouse, the security collector, and the technical SEO collector. The final agent recommendation reuses prior specialist results and adds the applicable manual, WordPress, cutover, rollback, and post-launch checks.
-
-Missing launch evidence or links skipped by the sample limit are not passes. The launch report shows **Incomplete** when those gaps remain and no confirmed blocker takes precedence.
-
-The old CLI profile name `prepare-website-launch` remains an alias. Both names write to `.output/review-website-launch/<host>/<run-id>/` by default. In Codex, use the renamed `$review-website-launch` skill after reinstalling the updated plugin.
-
-#### Checklist runner output
-
-Each profile creates a timestamped `.output/<profile>/<host>/<run-id>/` directory by default. This repository ignores `/.output/` because screenshots and reports may be large or sensitive. Pass `--output <new-or-empty-directory>` to override the location.
-
-Before saving `page.png`, the shared runtime waits for the initial load, scrolls to trigger lazy-loaded content, waits for rendered images and fonts, and returns to the top. Preparation is capped at 15 seconds and 40 scroll steps; settings live in [runtime configuration](plugins/web-dev-checklists/runtime/config/runtime-config.mjs). Pending, failed, or missing-source image counts and any load, time, or scroll limit are recorded in `summary.json` under `page.screenshotReadiness`. Incomplete preparation is also noted in the review's limitations. This is best-effort screenshot preparation, not a check of every image or resource; Lighthouse still performs its own separate page-load measurement.
-
-The profiles produce normalized `evidence.json` and checklist `coverage.json` files alongside their relevant raw artifacts. They identify manual and partially automated checklist coverage instead of treating automated evidence as a complete skill result.
-
-See [website audit runtime guidance](plugins/web-dev-checklists/shared/website-audit-runtime.md) for permissions, optional Chromium installation, collector flags, outputs, and limitations.
+Each command writes a timestamped package under `.output/<profile>/<host>/<run-id>/` by default. See the canonical [website audit runtime guide](docs/website-audit-runtime-guide.md) for profile scope, permissions, output artifacts, configuration, limitations, and plugin-local commands.
 
 ### Test the checklist runners
 
@@ -215,6 +168,7 @@ npm run reviews:test-security
 npm run reviews:test-performance
 npm run reviews:test-technical-seo
 npm run reviews:test-launch
+npm run reviews:test-audit
 ```
 
 Use `reviews:test` to run every profile fixture, or use a profile-specific command while working on one review.

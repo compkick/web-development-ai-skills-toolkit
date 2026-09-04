@@ -17,6 +17,9 @@ const files = Object.fromEntries(await Promise.all(Object.entries(locations).map
   return [key, JSON.parse(content)];
 })));
 const releaseVersion = files.repositoryPackage.version;
+const publicName = "Web Development Toolkit & AI Skill Pack";
+const repositoryPackageName = "web-development-toolkit-ai-skill-pack";
+const runtimePackageName = "web-development-toolkit-audit-runtime";
 const pluginVersion = files.pluginManifest.version;
 const pluginBaseVersion = typeof pluginVersion === "string" ? pluginVersion.split("+", 1)[0] : undefined;
 const versions = [
@@ -42,10 +45,22 @@ if (typeof pluginVersion === "string" && pluginVersion.includes("+") && !/^.+\+c
   errors.push(`${locations.pluginManifest} may only add a +codex.<cachebuster> build suffix; found ${pluginVersion}.`);
 }
 
+for (const [location, name, expectedName] of [
+  [locations.repositoryPackage, files.repositoryPackage.name, repositoryPackageName],
+  [`${locations.repositoryLock} top level`, files.repositoryLock.name, repositoryPackageName],
+  [`${locations.repositoryLock} root package`, files.repositoryLock.packages?.[""]?.name, repositoryPackageName],
+  [locations.runtimePackage, files.runtimePackage.name, runtimePackageName],
+  [`${locations.runtimeLock} top level`, files.runtimeLock.name, runtimePackageName],
+  [`${locations.runtimeLock} root package`, files.runtimeLock.packages?.[""]?.name, runtimePackageName],
+  [`${locations.pluginManifest} display name`, files.pluginManifest.interface?.displayName, publicName]
+]) {
+  if (name !== expectedName) errors.push(`${location} must use ${expectedName}; found ${name ?? "missing"}.`);
+}
+
 if (errors.length > 0) {
   console.error("Release version validation failed:");
   for (const error of errors) console.error(`- ${error}`);
   process.exit(1);
 }
 
-console.log(`Release version: ${releaseVersion} across the repository, audit runtime, and plugin manifest base version.`);
+console.log(`Release version ${releaseVersion} and toolkit names are consistent across the repository, audit runtime, and plugin manifest.`);

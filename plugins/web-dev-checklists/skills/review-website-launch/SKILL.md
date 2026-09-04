@@ -21,7 +21,7 @@ Always read:
 - [Web review skill contract](references/web-review-contract.md) for evidence storage, safety, and reporting rules.
 - [Web review findings reference](references/web-review-findings-reference.md) for result, finding, risk-acceptance, and ownership language.
 
-Read [website development checklist](references/website-development-checklist.md) only when development readiness is uncertain or the user asks what build work remains. Read [WordPress launch checklist](references/wordpress-launch-checklist.md) only when the site is WordPress. Read [website audit runtime](references/website-audit-runtime.md) only when an authorized public URL and automated preflight evidence are relevant.
+Read [website development checklist](references/website-development-checklist.md) only when development readiness is uncertain or the user asks what build work remains. Read [WordPress launch checklist](references/wordpress-launch-checklist.md) only when the site is WordPress. Read [website audit runtime guide](references/website-audit-runtime-guide.md) only when an authorized public URL and automated preflight evidence are relevant.
 
 Do not load or repeat every specialist checklist. Use the accessibility, security, performance, and technical SEO skills only when the user explicitly requests a missing or stale specialist review.
 

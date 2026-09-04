@@ -1,3 +1,5 @@
+<!-- Generated from docs/web-project-audit-checklist.md by scripts/sync-skill-references.mjs. Do not edit this copy. -->
+
 # Web project audit checklist
 
 ## Purpose
