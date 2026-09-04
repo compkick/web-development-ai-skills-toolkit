@@ -28,7 +28,16 @@ Use the evidence that is available and relevant:
 5. Review supplied reports and authorized systems such as analytics, search tools, CMS administration, monitoring, or deployment dashboards when access is available.
 6. Ask for the smallest missing input that would materially improve the review.
 
-Do not bootstrap the plugin-owned runtime, download a browser, install dependencies, capture browser-error details, or add testing tools unless the user authorizes the download, sensitive artifact, or project change. The plugin runtime is installed in the user's cache and must not modify the target project. Keep Chromium sandboxing enabled; permit an unsandboxed root run only with explicit approval inside an isolated disposable environment. An interactive browser review, the generic audit runtime, and a project-specific Playwright test suite provide different evidence; use the appropriate combination and describe what each actually verified.
+Do not bootstrap the plugin-owned runtime, download a browser, install dependencies, capture browser-error details, or add testing tools unless the user authorizes the download, sensitive artifact, or project change. The plugin runtime and its dependencies belong in the user's cache and must not modify the target project's source or dependencies; review evidence may be written only under the designated location below. Keep Chromium sandboxing enabled; permit an unsandboxed root run only with explicit approval inside an isolated disposable environment. An interactive browser review, the generic audit runtime, and a project-specific Playwright test suite provide different evidence; use the appropriate combination and describe what each actually verified.
+
+## Evidence storage
+
+- An output location explicitly requested by the user always takes precedence.
+- For a repository-backed review, pass an explicit output path under the target repository's `.output/` directory. Do not rely on the process working directory, and never place review output under the plugin root.
+- For a URL-only review with no target repository, use a task-specific temporary directory unless the user requests durable storage.
+- For a review that runs multiple profiles or pages, use one task-specific parent directory with clearly named profile or page subdirectories.
+- Preserve each complete runner directory as one evidence package, including partial evidence when a collector fails. Do not prune raw reports or retain only normalized summaries.
+- Report the exact artifact path and treat screenshots, URLs, rendered content, response details, cookie names, release information, and optional browser errors as potentially sensitive.
 
 ## Safety boundaries
 

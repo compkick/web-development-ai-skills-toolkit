@@ -18,7 +18,7 @@ Do not invoke it for keyword research, editorial strategy, backlink or authority
 Before planning the review, read:
 
 - [Technical SEO review checklist](references/technical-seo-review-checklist.md) for the outcomes to assess.
-- [Web review skill contract](references/web-review-contract.md) for safety, evidence, result, and reporting rules.
+- [Web review skill contract](references/web-review-contract.md) for safety, evidence storage, result, and reporting rules.
 - [Web review findings reference](references/web-review-findings-reference.md) for scope records, statuses, severity, exceptions, and retesting.
 
 Read [website audit runtime](references/website-audit-runtime.md) only when an authorized URL and automated browser evidence are relevant.
@@ -41,8 +41,6 @@ Use the least intrusive combination that answers the request:
 - Run an existing crawler, link checker, migration test, or project SEO test when it is configured, authorized, and safe. Do not install a crawler or other project dependency without approval, and keep the crawl within the recorded hosts, paths, rate, and page limit.
 - Review authorized Search Console, analytics, server logs, CDN logs, and migration mappings when available. Keep crawler observations, search-engine reports, and business outcomes distinguishable.
 - Use an available interactive browser or project-specific tests for JavaScript-rendered content, navigation, error states, locale switching, and cases the single-page runner cannot establish.
-
-Put runtime artifacts in a task-specific temporary directory outside the target repository unless the user requests another location. When the user requests `.output` or another durable location, preserve the complete evidence package and report its exact path.
 
 ## Interpret the evidence
 
@@ -80,7 +78,7 @@ Return the readable report in the Codex response by default. Follow the shared r
 
 For each material finding, include the result, priority, affected scope, evidence, likely search or user impact, and the smallest practical recommendation. Do not turn every Lighthouse suggestion, crawl difference, or absent optional enhancement into a finding.
 
-Write a durable Markdown report only when the user asks. Use their requested location, or propose `reports/technical-seo-review-YYYY-MM-DD.md` and confirm before adding it to the target repository. Do not place raw audit artifacts in the repository without explicit permission.
+Write a durable Markdown report only when the user asks. Use their requested location, or propose `reports/technical-seo-review-YYYY-MM-DD.md` and confirm before adding it to the target repository.
 
 ## Safety and stopping conditions
 

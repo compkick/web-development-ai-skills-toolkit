@@ -18,7 +18,7 @@ Do not invoke it for a performance-only review, a general multidisciplinary proj
 Before planning the review, read:
 
 - [Web security review checklist](references/web-security-review-checklist.md) for the outcomes to assess.
-- [Web review skill contract](references/web-review-contract.md) for safety, evidence, result, and reporting rules.
+- [Web review skill contract](references/web-review-contract.md) for safety, evidence storage, result, and reporting rules.
 - [Web review findings reference](references/web-review-findings-reference.md) for scope records, statuses, severity, exceptions, and retesting.
 
 Read [website audit runtime](references/website-audit-runtime.md) only when an authorized URL and automated public evidence are relevant.
@@ -46,8 +46,6 @@ Use the least intrusive combination that answers the request:
 - Use an available interactive browser for approved public or authenticated workflows that require interaction. Use only supplied or explicitly approved test accounts and safe test data.
 - Review supplied platform, logging, alerting, backup, incident-response, or previous audit evidence when direct access is unavailable.
 
-Put runtime artifacts in a task-specific temporary directory outside the target repository unless the user requests another location. Report the artifact path and treat screenshots, URLs, headers, cookie names, and optional browser errors as potentially sensitive.
-
 The security profile loads the supplied page, requests its subresources, makes five bounded TLS handshakes to the rendered HTTPS hostname and port, makes a same-host plain-HTTP redirect probe when the supplied URL is HTTPS, and requests `/.well-known/security.txt` on the same HTTPS origin. The TLS handshakes perform one normal negotiation and one attempt each for TLS 1.3, TLS 1.2, TLS 1.1, and TLS 1.0; they do not enumerate cipher suites or send an HTTP request. The profile does not submit forms, enumerate endpoints, send injection payloads, scan ports, attempt authentication, or exploit vulnerabilities.
 
 ## Run the review
@@ -72,7 +70,7 @@ Return the readable report in the Codex response by default. Follow the shared r
 
 For each material finding, include the result, severity, affected scope, evidence or safe reproduction steps, risk, and the smallest practical recommendation. Do not include credentials, tokens, secret values, private data, or unnecessary exploit detail.
 
-Write a durable Markdown report only when the user asks. Use their requested location, or propose `reports/security-review-YYYY-MM-DD.md` and confirm before adding it to the target repository. Do not place raw audit artifacts in the repository without explicit permission.
+Write a durable Markdown report only when the user asks. Use their requested location, or propose `reports/security-review-YYYY-MM-DD.md` and confirm before adding it to the target repository.
 
 ## Safety and stopping conditions
 

@@ -18,7 +18,7 @@ Do not invoke it for a performance-only review, a general multidisciplinary proj
 Before planning the review, read:
 
 - [Web accessibility review checklist](references/web-accessibility-review-checklist.md) for the outcomes to assess.
-- [Web review skill contract](references/web-review-contract.md) for safety, evidence, result, and reporting rules.
+- [Web review skill contract](references/web-review-contract.md) for safety, evidence storage, result, and reporting rules.
 - [Web review findings reference](references/web-review-findings-reference.md) for scope records, statuses, severity, exceptions, and retesting.
 
 Read [website audit runtime](references/website-audit-runtime.md) only when an authorized URL and automated browser evidence are relevant.
@@ -38,9 +38,6 @@ Use the least intrusive combination that answers the request:
 - Use the plugin-owned deterministic review runner with the `review-web-accessibility` profile for authorized pages when screenshot, HTTP, browser-error, axe, or Lighthouse evidence adds value. Resolve the plugin root from this skill directory; do not assume the target project's working directory contains the runtime.
 - Treat the profile's 1440 × 900 axe scan and Lighthouse desktop configuration as the repeatable desktop baseline. Use separate interactive evidence for narrow-width reflow, mobile layouts, zoom, touch behavior, and responsive interactions; do not imply that the desktop scan tested those states. On first mention of a 320 CSS-pixel WCAG 1.4.10 check, call it a **WCAG zoom-equivalent reflow check** and state that 320 CSS pixels represents a 1280 CSS-pixel desktop viewport at 400 percent zoom, not a mobile-device simulation. Report contemporary mobile viewport testing separately when it is in scope.
 - Before deciding that the plugin runtime is unavailable, run `node runtime/scripts/status.mjs --json` from the resolved plugin root. This read-only command checks the versioned user-cache location. If it reports `ready: true`, run the review profile directly; do not look for `node_modules` under the plugin or run bootstrap.
-- For a repository-backed review, put runtime artifacts under the target repository's `.output/` directory by passing an explicit output path; group multi-page evidence clearly and preserve each complete per-run directory as one evidence package. Do not rely on the plugin root or process working directory to choose the destination.
-- For a URL-only review with no target repository, use a task-specific temporary directory unless the user requests a durable location. Honor any user-requested output location, report the exact artifact path, and treat its contents as potentially sensitive.
-- Do not retain only `evidence.json` and `coverage.json`, prune raw reports, or place output under the plugin root by accident.
 - Before reporting that automated evidence was saved, verify the package contains `summary.json`, `evidence.json`, `coverage.json`, and `page.png`; when axe completed, also preserve `axe-results.json`, `axe-report.html`, and any referenced `axe-elements/` screenshots; when Lighthouse completed, also preserve `lighthouse-report.json` and `lighthouse-report.html`. If either collector did not complete, preserve the partial package and report the missing artifacts and recorded error instead of implying they were saved.
 - Use an available interactive browser for keyboard navigation, focus behavior, responsive states, menus, dialogs, forms, and complete journeys that a single-page scan cannot establish.
 - Use actual screen-reader or other assistive-technology results only when that technology was genuinely available and used. An accessibility tree, ARIA snapshot, axe result, or code inspection is not a screen-reader test.
@@ -74,7 +71,7 @@ When the deterministic runner was used, identify the exact evidence-package dire
 
 When reporting a 320 CSS-pixel reflow result, explain the WCAG zoom equivalence before the finding and distinguish it from mobile-device or responsive-breakpoint testing.
 
-Write a durable Markdown report only when the user asks. Use their requested location, or propose `reports/accessibility-review-YYYY-MM-DD.md` and confirm before adding it to the target repository. Keep raw audit artifacts within the designated `.output/` tree unless the user requests another location.
+Write a durable Markdown report only when the user asks. Use their requested location, or propose `reports/accessibility-review-YYYY-MM-DD.md` and confirm before adding it to the target repository.
 
 ## Safety and stopping conditions
 

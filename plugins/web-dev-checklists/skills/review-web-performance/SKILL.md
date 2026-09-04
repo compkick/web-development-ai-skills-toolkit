@@ -18,7 +18,7 @@ Do not invoke it for an accessibility-only or security-only review, a general mu
 Before planning the review, read:
 
 - [Web performance review checklist](references/web-performance-review-checklist.md) for the outcomes to assess.
-- [Web review skill contract](references/web-review-contract.md) for safety, evidence, result, and reporting rules.
+- [Web review skill contract](references/web-review-contract.md) for safety, evidence storage, result, and reporting rules.
 - [Web review findings reference](references/web-review-findings-reference.md) for scope records, statuses, severity, exceptions, and retesting.
 
 Read [website audit runtime](references/website-audit-runtime.md) only when an authorized URL and automated browser evidence are relevant.
@@ -41,8 +41,6 @@ Use the least intrusive combination that answers the request:
 - Run existing project performance tests, budgets, bundle analysis, or profiling tools when they are configured and safe. Do not install new project dependencies without approval.
 - Review reliable real-user monitoring, Chrome UX Report, analytics, CDN, origin, and monitoring evidence when available. Keep field and lab data distinguishable.
 - Use an available interactive browser or project-specific tests for important interactions, long-lived pages, warm-cache behavior, slow or failed dependencies, and states the single-page runner cannot establish.
-
-Put runtime artifacts in a task-specific temporary directory outside the target repository unless the user requests another location. When the user requests `.output` or another durable location, preserve the complete evidence package and report its exact path.
 
 ## Interpret the evidence
 
@@ -72,7 +70,7 @@ Return the readable report in the Codex response by default. Follow the shared r
 
 For each material finding, include the result, priority, affected scope, evidence, user or business impact, and the smallest practical recommendation. Separate measured regressions from optimization opportunities.
 
-Write a durable Markdown report only when the user asks. Use their requested location, or propose `reports/performance-review-YYYY-MM-DD.md` and confirm before adding it to the target repository. Do not place raw audit artifacts in the repository without explicit permission.
+Write a durable Markdown report only when the user asks. Use their requested location, or propose `reports/performance-review-YYYY-MM-DD.md` and confirm before adding it to the target repository.
 
 ## Safety and stopping conditions
 
