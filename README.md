@@ -1,4 +1,6 @@
-# AI Agent Skills & Toolkit for Web Development
+# Web Development AI Skills Toolkit
+
+Practical checklists, automated audits, and agent skills for building better websites.
 
 Reusable standards, checklists, guides, runbooks, and cheatsheets for web development and CMS work. The library emphasizes high-impact, observable checks; secure defaults; current primary sources; and workflows that remain practical for humans.
 
@@ -74,7 +76,7 @@ The plugin provides six focused review skills:
 
 ## Install the Codex plugin
 
-The repository includes a local Codex marketplace containing the internally named `web-dev-checklists` plugin. Install **AI Agent Skills & Toolkit for Web Development** once to use its six skills from other Codex tasks and project folders.
+The repository includes a local Codex marketplace containing the internally named `web-dev-checklists` plugin. Install **Web Development AI Skills Toolkit** once to use its six skills from other Codex tasks and project folders.
 
 Clone or download this repository, install the current [Codex CLI](https://developers.openai.com/codex/cli/), and register the repository as a local marketplace:
 
@@ -82,9 +84,9 @@ Clone or download this repository, install the current [Codex CLI](https://devel
 codex plugin marketplace add "<absolute-path-to-this-repository>"
 ```
 
-In the Codex desktop app, refresh Codex, open **Plugins**, select **Personal**, open **AI Agent Skills & Toolkit for Web Development**, and select the plus button to install it. Start a new task after installation so Codex loads the bundled skills.
+In the Codex desktop app, refresh Codex, open **Plugins**, select **Personal**, open **Web Development AI Skills Toolkit**, and select the plus button to install it. Start a new task after installation so Codex loads the bundled skills.
 
-In Codex CLI, start Codex and enter `/plugins`, select the **Personal** marketplace, install **AI Agent Skills & Toolkit for Web Development**, and then start a new session.
+In Codex CLI, start Codex and enter `/plugins`, select the **Personal** marketplace, install **Web Development AI Skills Toolkit**, and then start a new session.
 
 From any project folder, invoke a skill explicitly:
 

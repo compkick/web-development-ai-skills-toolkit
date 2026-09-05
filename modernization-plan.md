@@ -1,4 +1,4 @@
-# Modernization plan for AI Agent Skills & Toolkit for Web Development
+# Modernization plan for Web Development AI Skills Toolkit
 
 ## Purpose
 
@@ -9,9 +9,9 @@ This file is the canonical implementation roadmap. Update it as work is complete
 ## Status
 
 - Plan status: In progress
-- Current phase: Phase 4B
-- Next work item: Reinstall the updated plugin and validate all six skills in a fresh Codex task
-- Last reviewed: 2026-09-04
+- Current phase: Phase 5 (Phase 4 complete)
+- Next work item: Validate broader trigger coverage and supported platforms before publishing the core library
+- Last reviewed: 2026-09-05
 
 ## Guiding decisions
 
@@ -305,12 +305,14 @@ When an existing human checklist becomes a skill reference, keep the canonical c
 
 ### Phase 4 exit criteria
 
-- [ ] Explicit and implicit invocation work as intended.
+- [x] Explicit and implicit invocation work as intended.
 - [x] Neighboring skill descriptions have clear boundaries.
 - [x] Findings use consistent evidence, severity, and limitation language.
 - [x] Each specialist skill works independently.
 - [x] The audit skill routes work without duplicating specialist instructions.
 - [x] All skill validators pass.
+
+Phase 4 closed on 2026-09-05 following the developer's successful CLI and Codex tests of all six reviews. The fresh Codex task `01a0703e-63ba-7202-bd6d-3162dbc6f471` also confirmed natural-language invocation, specialist routing, and evidence-backed findings. Broader trigger and platform testing remains in Phase 5.
 
 ## Phase 5: Validate and publish the core library
 
@@ -393,7 +395,7 @@ Add a specialized skill only when:
 
 ## Project publishing and go-live
 
-- [x] Adopt the public name **AI Agent Skills & Toolkit for Web Development** and align the npm packages and plugin display name.
+- [x] Adopt the public name **Web Development AI Skills Toolkit** and align the public-facing titles and plugin display name; retain existing internal npm and plugin identifiers.
 - Set up public page on Computerkick
 - Share to LinkedIn and Facebook
 - Brainstorm marketing and sharing ideas
@@ -426,3 +428,5 @@ Add a specialized skill only when:
 | 2026-07-28 | Restore a compact website development checklist. | The original repository included a practical build checklist whose purpose was lost when development and launch guidance were split into specialist reviews. |
 | 2026-09-04 | Use **AI Agent Skills & Toolkit for Web Development** as the public name while retaining `web-dev-checklists` as the existing internal plugin ID. | Leading with AI agent skills makes the distinctive capability clear while still describing the human toolkit; retaining the internal ID avoids breaking installed development copies and cache paths during the 0.1 release. |
 | 2026-09-04 | License the project under MIT and publish an explicit platform test matrix. | Broad reuse is the goal, while tested and untested environments should remain distinguishable before the first public release. |
+| 2026-09-05 | Adopt **Web Development AI Skills Toolkit** with the tagline "Practical checklists, automated audits, and agent skills for building better websites." | Shorten the public title while retaining the existing internal package names, plugin ID, and paths. |
+| 2026-09-05 | Close Phase 4 and move to Phase 5 validation and publishing. | All six core reviews have been exercised through the CLI and Codex, including fresh-task natural-language routing; broader distribution testing remains outstanding. |

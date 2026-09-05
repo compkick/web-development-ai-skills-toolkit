@@ -1,14 +1,14 @@
 {
   "name": "web-dev-checklists",
-  "version": "0.1.0+codex.20260905044653",
-  "description": "Human web development checklists and evidence-backed AI review skills with a plugin-owned browser audit runtime.",
+  "version": "0.1.0+codex.20260905070627",
+  "description": "Practical checklists, automated audits, and agent skills for building better websites.",
   "author": {
     "name": "Computerkick",
     "url": "https://computerkick.com"
   },
   "skills": "./skills/",
   "interface": {
-    "displayName": "AI Agent Skills & Toolkit for Web Development",
+    "displayName": "Web Development AI Skills Toolkit",
     "shortDescription": "Web checklists and evidence-backed AI reviews.",
     "longDescription": "Practical Codex skills for accessibility, security, performance, technical SEO, launch readiness, and whole-project web reviews, backed by a plugin-owned Playwright, axe, and Lighthouse runtime.",
     "developerName": "Computerkick",
