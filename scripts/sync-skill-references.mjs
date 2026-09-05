@@ -50,10 +50,20 @@ for (const [skillName, sources] of Object.entries(config.skills)) {
   const expectedReferenceNames = new Set(resolvedSources.map((sourcePath) => path.basename(sourcePath)));
 
   for (const sourcePath of resolvedSources) {
-    const sourceContent = await readFile(sourcePath, "utf8");
+    let sourceContent = await readFile(sourcePath, "utf8");
     const sourceName = path.basename(sourcePath);
     const targetPath = path.join(referencesDirectory, sourceName);
     const relativeSource = path.relative(repositoryRoot, sourcePath).split(path.sep).join("/");
+
+    // Keep inline links between packaged references local, including heading fragments.
+    for (const linkedSourcePath of resolvedSources) {
+      const sourceLink = path.relative(path.dirname(sourcePath), linkedSourcePath).split(path.sep).join("/");
+      const packagedLink = path.basename(linkedSourcePath);
+      sourceContent = sourceContent
+        .replaceAll(`](${sourceLink})`, `](${packagedLink})`)
+        .replaceAll(`](${sourceLink}#`, `](${packagedLink}#`);
+    }
+
     const generatedContent = `<!-- Generated from ${relativeSource} by scripts/sync-skill-references.mjs. Do not edit this copy. -->\n\n${sourceContent}`;
 
     if (checkOnly) {
