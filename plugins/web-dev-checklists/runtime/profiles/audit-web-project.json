@@ -1,6 +1,6 @@
 {
   "id": "audit-web-project",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "checklistSource": "docs/web-project-audit-checklist.md",
   "standard": "Web project audit checklist",
   "runtime": {

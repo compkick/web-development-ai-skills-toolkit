@@ -17,6 +17,7 @@ const failFixture = await readFile(path.join(runtimeDirectory, "fixtures", "secu
 const testDirectory = await mkdtemp(path.join(os.tmpdir(), "web-dev-checklists-security-review-test-"));
 const passOutputDirectory = path.join(testDirectory, "pass-output");
 const failOutputDirectory = path.join(testDirectory, "fail-output");
+const framingOutputDirectory = path.join(testDirectory, "framing-output");
 let redirectProbeUserAgent = null;
 const server = http.createServer((request, response) => {
   if (request.url === "/favicon.ico") {
@@ -42,6 +43,14 @@ const server = http.createServer((request, response) => {
       "X-XSS-Protection": "1; mode=block"
     });
     return response.end(failFixture);
+  }
+
+  if (request.url === "/framing-only") {
+    response.writeHead(200, {
+      "Content-Security-Policy": "frame-ancestors https://app.storyblok.com",
+      "Content-Type": "text/html; charset=utf-8"
+    });
+    return response.end(passFixture.replace("</body>", '<script>document.cookie = "analytics_fixture=fixture; SameSite=Lax; Path=/";</script></body>'));
   }
 
   if (request.url === "/redirect-probe") {
@@ -87,15 +96,26 @@ try {
 
   await run(process.execPath, [reviewScript, "--profile", "review-web-security", "--url", `${baseUrl}/pass`, "--output", passOutputDirectory]);
   await run(process.execPath, [reviewScript, "--profile", "review-web-security", "--url", `${baseUrl}/fail`, "--output", failOutputDirectory]);
+  await run(process.execPath, [reviewScript, "--profile", "review-web-security", "--url", `${baseUrl}/framing-only`, "--output", framingOutputDirectory]);
 
   const passEvidence = await readJson(path.join(passOutputDirectory, "evidence.json"));
   const failEvidence = await readJson(path.join(failOutputDirectory, "evidence.json"));
+  const framingEvidence = await readJson(path.join(framingOutputDirectory, "evidence.json"));
   const passReport = await readFile(path.join(passOutputDirectory, "security-report.html"), "utf8");
   const failReport = await readFile(path.join(failOutputDirectory, "security-report.html"), "utf8");
   const coverage = await readJson(path.join(failOutputDirectory, "coverage.json"));
 
   validateEvidenceShape(passEvidence);
   validateEvidenceShape(failEvidence);
+  validateEvidenceShape(framingEvidence);
+  assertCheckStatus(framingEvidence, "content-security-policy", "warning");
+  assertCheckStatus(framingEvidence, "framing-protection", "pass");
+  // The fixture is HTTP; Secure warnings are tested separately with HTTPS evidence.
+  assertCheckStatus(framingEvidence, "public-cookie-flags", "pass");
+  const browserCookieEvidence = framingEvidence.checks.find((check) => check.id === "public-cookie-flags").evidence;
+  if (browserCookieEvidence.issued.length || !browserCookieEvidence.accepted.some((cookie) => cookie.name === "analytics_fixture")) {
+    throw new Error("Security fixture did not capture the JavaScript-created cookie independently of response cookies.");
+  }
   assertCheckStatus(passEvidence, "security-collection", "pass");
   assertCheckStatus(passEvidence, "https-transport", "fail");
   assertCheckStatus(passEvidence, "content-security-policy", "pass");
@@ -128,7 +148,7 @@ try {
     throw new Error("Security evidence does not reference the human-readable report.");
   }
 
-  if (coverage.schemaVersion !== "1.0.0" || coverage.profile.id !== "review-web-security" || coverage.profile.version !== "1.1.0" || coverage.items.length !== 40) {
+  if (coverage.schemaVersion !== "1.0.0" || coverage.profile.id !== "review-web-security" || coverage.profile.version !== "1.1.1" || coverage.items.length !== 40) {
     throw new Error("Coverage output does not contain the complete security profile.");
   }
 
@@ -140,7 +160,7 @@ try {
     if (coverage.items.find((item) => item.id === checkId)?.automation !== "automated") throw new Error(`${checkId} must be classified as automated coverage.`);
   }
 
-  for (const outputDirectory of [passOutputDirectory, failOutputDirectory]) {
+  for (const outputDirectory of [passOutputDirectory, failOutputDirectory, framingOutputDirectory]) {
     for (const artifact of ["evidence.json", "coverage.json", "summary.json", "page.png", "security-results.json", "security-report.html"]) {
       const artifactStats = await stat(path.join(outputDirectory, artifact));
 
@@ -152,7 +172,7 @@ try {
     }
   }
 
-  console.log("Deterministic security review runner self-test passed for protected-header and missing-header fixtures.");
+  console.log("Deterministic security review runner self-test passed for protected, missing, and framing-only policies plus browser-created cookies.");
 } finally {
   await new Promise((resolve) => server.close(resolve));
   await rm(testDirectory, { recursive: true, force: true });

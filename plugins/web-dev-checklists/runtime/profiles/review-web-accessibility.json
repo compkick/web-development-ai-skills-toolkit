@@ -1,6 +1,6 @@
 {
   "id": "review-web-accessibility",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "checklistSource": "docs/web-accessibility-review-checklist.md",
   "standard": "WCAG 2.2 Level AA",
   "coverage": [
@@ -17,8 +17,8 @@
       "section": "Prepare",
       "checklistItem": "Record anything that could not be tested.",
       "automation": "partial",
-      "evidenceCheckIds": ["automated-axe-scan", "lighthouse-accessibility"],
-      "note": "The package records automated collector errors and skipped evidence; the reviewer must add broader limitations."
+      "evidenceCheckIds": ["automated-axe-scan", "axe-manual-review", "lighthouse-accessibility"],
+      "note": "The package separates scan completion, rule violations, incomplete axe results requiring manual review, and skipped evidence; the reviewer must add broader limitations."
     },
     {
       "id": "a11y-qualified-reviewer",
@@ -161,7 +161,7 @@
       "section": "Finish the review",
       "checklistItem": "Run an automated scan, review the results, and test important workflows with a screen reader.",
       "automation": "partial",
-      "evidenceCheckIds": ["automated-axe-scan", "lighthouse-accessibility"],
+      "evidenceCheckIds": ["automated-axe-scan", "axe-manual-review", "lighthouse-accessibility"],
       "note": "The runner completes automated scans but does not claim screen-reader testing."
     },
     {
@@ -177,7 +177,7 @@
       "section": "Finish the review",
       "checklistItem": "Record affected users, evidence, severity, and any testing limitations.",
       "automation": "partial",
-      "evidenceCheckIds": ["page-http-status", "document-title", "document-language", "document-structure", "automated-axe-scan", "lighthouse-accessibility", "browser-errors"],
+      "evidenceCheckIds": ["page-http-status", "document-title", "document-language", "document-structure", "automated-axe-scan", "axe-manual-review", "lighthouse-accessibility", "browser-errors"],
       "note": "The evidence package records observations and limitations; the reviewer determines affected users and severity."
     }
   ]

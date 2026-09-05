@@ -10,6 +10,7 @@ import { writePerformanceHtmlReport } from "../reporting/performance-report.mjs"
 import { writeSecurityHtmlReport } from "../reporting/security-report.mjs";
 import { writeTechnicalSeoHtmlReport } from "../reporting/technical-seo-report.mjs";
 import { writeWebProjectAuditHtmlReport } from "../reporting/web-project-audit-report.mjs";
+import { assessContentSecurityPolicy, assessPublicCookies, buildAxeReviewChecks } from "../reporting/review-observations.mjs";
 
 const scriptsDirectory = path.dirname(fileURLToPath(import.meta.url));
 const auditScript = path.join(scriptsDirectory, "audit.mjs");
@@ -283,36 +284,7 @@ async function buildAccessibilityEvidence(profileToUse, summary, axeResult, outp
     artifacts: ["summary.json", "page.png"]
   });
 
-  if (summary.axe.status === "completed" && axeResult) {
-    checks.push({
-      id: "automated-axe-scan",
-      title: "The automated axe scan completed",
-      status: axeResult.violations.length === 0 ? "pass" : "fail",
-      method: "axe",
-      evidence: { incomplete: axeResult.incomplete.length, passes: axeResult.passes, violations: axeResult.violations.length },
-      artifacts: axeArtifacts
-    });
-
-    for (const violation of axeResult.violations) {
-      checks.push({
-        id: `axe-${violation.id}`,
-        title: violation.help,
-        status: "fail",
-        method: "axe",
-        evidence: { affectedNodes: violation.nodes.length, description: violation.description, helpUrl: violation.helpUrl, impact: violation.impact, ruleId: violation.id, tags: violation.tags },
-        artifacts: axeArtifacts
-      });
-    }
-  } else {
-    checks.push({
-      id: "automated-axe-scan",
-      title: "The automated axe scan completed",
-      status: "not-checked",
-      method: "axe",
-      evidence: { error: summary.axe.error ?? null, runtimeStatus: summary.axe.status },
-      artifacts: ["summary.json"]
-    });
-  }
+  checks.push(...buildAxeReviewChecks(summary.axe, axeResult, axeArtifacts));
 
   checks.push({
     id: "lighthouse-accessibility",
@@ -770,11 +742,8 @@ async function buildSecurityEvidence(profileToUse, summary, securityResult, outp
   addCheck("strict-transport-security", "Site presents an active HSTS policy", !securityResult || finalUrl.protocol !== "https:" ? "not-checked" : hstsMaxAge && Number(hstsMaxAge) > 0 ? "pass" : "warning", "browser", { header: hsts, maxAge: hstsMaxAge === null ? null : Number(hstsMaxAge) });
 
   const csp = headers["content-security-policy"] ?? null;
-  const cspConcerns = [];
-
-  if (csp?.includes("'unsafe-eval'")) cspConcerns.push("unsafe-eval");
-  if (csp?.includes("'unsafe-inline'") && !/nonce-|sha(256|384|512)-|'strict-dynamic'/.test(csp)) cspConcerns.push("unsafe-inline without a nonce, hash, or strict-dynamic");
-  addCheck("content-security-policy", "Site includes an enforced Content Security Policy", !securityResult ? "not-checked" : csp ? cspConcerns.length === 0 ? "pass" : "warning" : "warning", "browser", { concerns: cspConcerns, enforcedPolicy: csp, reportOnlyPolicy: headers["content-security-policy-report-only"] ?? null });
+  const cspAssessment = assessContentSecurityPolicy(csp);
+  addCheck("content-security-policy", "Site includes an enforced Content Security Policy", !securityResult ? "not-checked" : cspAssessment.status, "browser", { concerns: cspAssessment.concerns, enforcedPolicy: csp, reportOnlyPolicy: headers["content-security-policy-report-only"] ?? null, scriptElementPolicyPresent: cspAssessment.scriptElementPolicyPresent, scriptAttributePolicyPresent: cspAssessment.scriptAttributePolicyPresent, reviewNote: "Framing protection is assessed separately. Missing script restrictions may be an intentional choice; record the tradeoff after review. This check is not a complete CSP validation." });
 
   const frameAncestors = csp?.match(/(?:^|;)\s*frame-ancestors\s+([^;]+)/i)?.[1]?.trim() ?? null;
   const xFrameOptions = headers["x-frame-options"] ?? null;
@@ -788,14 +757,8 @@ async function buildSecurityEvidence(profileToUse, summary, securityResult, outp
   addCheck("referrer-policy", "Site sends an explicit Referrer-Policy header", !securityResult ? "not-checked" : referrerPolicy === null ? "informational" : referrerPolicy.toLowerCase().includes("unsafe-url") ? "warning" : "pass", "browser", { referrerPolicy });
 
   const issuedCookies = securityResult?.cookies?.issued ?? [];
-  const cookieConcerns = issuedCookies.flatMap((cookie) => {
-    const concerns = [];
-
-    if (finalUrl.protocol === "https:" && !cookie.secure) concerns.push(`${cookie.name}: missing Secure`);
-    if (cookie.sameSite?.toLowerCase() === "none" && !cookie.secure) concerns.push(`${cookie.name}: SameSite=None without Secure`);
-    return concerns;
-  });
-  addCheck("public-cookie-flags", "Site protects public cookies with appropriate attributes", !securityResult ? "not-checked" : cookieConcerns.length > 0 ? "warning" : issuedCookies.length > 0 ? "pass" : "informational", "browser", { accepted: securityResult?.cookies?.accepted ?? [], concerns: cookieConcerns, issued: issuedCookies });
+  const cookieAssessment = assessPublicCookies(securityResult?.cookies, finalUrl.protocol);
+  addCheck("public-cookie-flags", "Site protects public cookies with appropriate attributes", !securityResult ? "not-checked" : cookieAssessment.status, "browser", { accepted: securityResult?.cookies?.accepted ?? [], concerns: cookieAssessment.concerns, issued: issuedCookies, reviewNote: cookieAssessment.reviewNote });
 
   const cors = securityResult?.cors ?? {};
   const corsInvalid = cors["access-control-allow-origin"] === "*" && cors["access-control-allow-credentials"]?.toLowerCase() === "true";

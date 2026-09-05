@@ -54,6 +54,15 @@ try {
   assertCheckStatus(failEvidence, "audit-accessibility-summary", "fail");
   assertCheckStatus(failEvidence, "audit-technical-seo-summary", "fail");
   assertCheckStatus(failEvidence, "audit-homepage-summary", "fail");
+  const accessibilitySummary = failEvidence.checks.find((check) => check.id === "audit-accessibility-summary");
+  if (accessibilitySummary.evidence.observations.some((observation) => observation.id === "automated-axe-scan")) {
+    throw new Error("Combined audit incorrectly reports a completed axe scan as a problem.");
+  }
+  const failAxe = await readJson(path.join(failOutputDirectory, "axe-results.json"));
+  const manualReview = accessibilitySummary.evidence.observations.find((observation) => observation.id === "axe-manual-review");
+  if (Boolean(manualReview) !== (failAxe.incomplete.length > 0) || manualReview && manualReview.status !== "warning") {
+    throw new Error("Combined audit lost or misclassified axe manual-review results.");
+  }
 
   if (coverage.schemaVersion !== "1.0.0" || coverage.profile.id !== "audit-web-project" || coverage.items.length !== 20) {
     throw new Error("Coverage output does not contain the complete web project audit profile.");

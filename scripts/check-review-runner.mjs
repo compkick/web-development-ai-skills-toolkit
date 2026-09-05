@@ -10,6 +10,7 @@ const profileDirectory = path.join(runtimeDirectory, "profiles");
 const errors = [];
 const knownEvidenceCheckIds = new Set([
   "automated-axe-scan",
+  "axe-manual-review",
   "audit-accessibility-summary",
   "audit-homepage-summary",
   "audit-performance-summary",

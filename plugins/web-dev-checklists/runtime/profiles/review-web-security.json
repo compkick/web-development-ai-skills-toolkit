@@ -1,6 +1,6 @@
 {
   "id": "review-web-security",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "checklistSource": "docs/web-security-review-checklist.md",
   "standard": "OWASP Top 10 and OWASP ASVS",
   "runtime": {
@@ -111,7 +111,7 @@
       "checklistItem": "Review the enforced Content Security Policy and record missing, invalid, or unnecessarily broad directives.",
       "automation": "partial",
       "evidenceCheckIds": ["content-security-policy"],
-      "note": "The runner detects a missing policy and a small set of broad directives; application-specific policy review remains manual."
+      "note": "The runner flags missing policies, missing script directives or fallbacks, and a small set of broad directives. Framing-only policies need review; application-specific policy choices remain manual."
     },
     {
       "id": "security-response-headers",
@@ -127,7 +127,7 @@
       "checklistItem": "Review cookies issued by public pages and confirm their `Secure`, `HttpOnly`, and `SameSite` settings match their purpose.",
       "automation": "partial",
       "evidenceCheckIds": ["public-cookie-flags"],
-      "note": "The runner records cookie names and attributes without values; intended purpose and cookies from other states require review."
+      "note": "The runner checks response-issued and browser-observed cookie flags without storing values. Cookie purpose, severity, HttpOnly requirements, and other states require review."
     },
     {
       "id": "security-cors",

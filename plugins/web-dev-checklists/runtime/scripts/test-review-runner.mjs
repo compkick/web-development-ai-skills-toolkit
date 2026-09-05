@@ -55,7 +55,11 @@ try {
   assertCheckStatus(failEvidence, "page-http-status", "pass");
   assertCheckStatus(failEvidence, "document-title", "fail");
   assertCheckStatus(failEvidence, "document-language", "fail");
-  assertCheckStatus(failEvidence, "automated-axe-scan", "fail");
+  assertCheckStatus(failEvidence, "automated-axe-scan", "pass");
+  assertCheckStatus(passEvidence, "axe-manual-review", "pass");
+  assertCheckStatus(failEvidence, "axe-manual-review", failAxeResult.incomplete.length ? "warning" : "pass");
+  const violationChecks = failEvidence.checks.filter((check) => check.id.startsWith("axe-") && check.status === "fail");
+  if (violationChecks.length !== failAxeResult.violations.length) throw new Error("Axe violations were dropped or double-counted.");
 
   for (const expectedRuleId of ["axe-button-name", "axe-document-title", "axe-html-has-lang", "axe-image-alt"]) {
     if (!failEvidence.checks.some((check) => check.id === expectedRuleId && check.status === "fail")) {
