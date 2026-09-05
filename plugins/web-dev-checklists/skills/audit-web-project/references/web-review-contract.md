@@ -32,10 +32,7 @@ Do not bootstrap the plugin-owned runtime, download a browser, install dependenc
 
 ## Evidence storage
 
-- An output location explicitly requested by the user always takes precedence.
-- For a repository-backed review, pass an explicit output path under the target repository's `.output/` directory. Do not rely on the process working directory, and never place review output under the plugin root.
-- For a URL-only review with no target repository, use a task-specific temporary directory unless the user requests durable storage.
-- For a review that runs multiple profiles or pages, use one task-specific parent directory with clearly named profile or page subdirectories.
+- Before saving runner evidence, read and follow the runtime guide's [output-location procedure](website-audit-runtime-guide.md#output-location-when-using-an-installed-plugin).
 - Preserve each complete runner directory as one evidence package, including partial evidence when a collector fails. Do not prune raw reports or retain only normalized summaries.
 - Report the exact artifact path and treat screenshots, URLs, rendered content, response details, cookie names, release information, and optional browser errors as potentially sensitive.
 

@@ -56,13 +56,13 @@ Reuse a current evidence package when it represents the same URL, release, and r
 
 When a public baseline is needed, use the plugin-owned deterministic runner with the `audit-web-project` profile. Resolve the plugin root from this skill directory; do not assume the target repository contains the runtime.
 
-Before deciding that the runtime is unavailable, run `node runtime/scripts/status.mjs --json` from the plugin root. If it reports `ready: true`, run:
+Before deciding that the runtime is unavailable, run `node runtime/scripts/status.mjs --json` from the plugin root. If it reports `ready: true`, follow the runtime guide's [output-location procedure](references/website-audit-runtime-guide.md#output-location-when-using-an-installed-plugin) and run:
 
 ```bash
-node runtime/scripts/review.mjs --profile audit-web-project --url https://site.example --output <target-repository>/.output/audit-web-project/<run-name>
+node "<absolute-plugin-root>/runtime/scripts/review.mjs" --profile audit-web-project --url https://site.example
 ```
 
-Omit `--output` only for a deliberate URL-only review where the default working-directory output is appropriate. The profile collects accessibility, security, performance, technical SEO, and bounded homepage evidence in one browser and Lighthouse run. Read `web-project-audit-report.html` first, then use the linked detailed reports and JSON only when a finding needs diagnosis.
+The profile collects accessibility, security, performance, technical SEO, and bounded homepage evidence in one browser and Lighthouse run. Read `web-project-audit-report.html` first, then use the linked detailed reports and JSON only when a finding needs diagnosis.
 
 Treat machine passes as evidence for their named checks only. Public evidence does not verify repository quality, private environments, source controls, authentication, authorization, data handling, backups, monitoring, CMS governance, mobile behavior, or project-specific journeys.
 

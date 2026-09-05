@@ -11,6 +11,14 @@ Use the plugin-owned audit runtime to collect repeatable browser, Lighthouse, sc
 - Codex must be able to reach the target URL.
 - The user must authorize the target and any dependency or browser download.
 
+## First-run permissions
+
+On first use, Codex may request approval to download the audit dependencies and Chromium, access the target website, and write evidence files. Prompts depend on your Codex permission settings and saved approvals. Some requests may recur on later runs.
+
+For fewer interruptions, select **Approve for me** in the permissions control beneath the prompt, if available, after reading and accepting the risks. It lets an automatic reviewer decide eligible approval requests; that reviewer can make mistakes. It does not remove Codex's sandbox or guarantee a prompt-free run. Keep **Ask for approval** if you prefer manual review. **Full access** is not required, and the skills must not change your permission settings. See [OpenAI's auto-review documentation](https://learn.chatgpt.com/docs/sandboxing/auto-review).
+
+Codex's command sandbox and Chromium's browser sandbox are separate. If Codex blocks browser startup, request approval for the specific audit command. Do not use `--allow-no-sandbox` to work around Codex permissions.
+
 ## Install the runtime
 
 The audit command does not install anything automatically. Before requesting installation permission, check the versioned user cache from the plugin root:
@@ -83,6 +91,20 @@ The technical SEO profile runs Lighthouse with its desktop configuration and rec
 The launch profile is a lightweight homepage preflight that deliberately does not rerun the specialist collectors. It records the homepage response, HTTPS state, bounded HTTP redirect, semantic header/navigation/main/footer structure, noindex directives, browser-error counts, unset or invalid visible link destinations, and up to 50 unique same-host link responses. Link checks prioritize navigation, header, footer, and then page content. The profile does not request external destinations, submit forms, authenticate, run axe, run Lighthouse, collect the security or technical SEO profiles, or crawl the site. Its automated result is evidence for the agent's final go/no-go recommendation, not the final decision by itself.
 
 The web project audit profile collects the existing accessibility, security, performance, technical SEO, and homepage evidence in one browser and Lighthouse run. It creates one high-level `web-project-audit-report.html` plus the detailed area reports for drill-down. It does not inspect a repository, execute project commands, review private environments, authenticate, test mobile layouts, or verify operations; the `audit-web-project` skill adds those sources when they are available and in scope.
+
+## Output location when using an installed plugin
+
+The relative `node runtime/scripts/...` commands above assume the plugin root is the working directory. For a review in another project, set the command's working directory to the target project or task folder and invoke the installed runner by its absolute path:
+
+```bash
+node "<absolute-plugin-root>/runtime/scripts/review.mjs" --profile review-web-accessibility --url https://site.example
+```
+
+Omit `--output` so evidence goes to that folder's `.output/<profile>/<host>/<run-id>/`. The raw collector uses `runtime-audit` in place of the profile. The run ID is a UTC timestamp, such as `20260905-200505-123Z`. Each profile, additional page, and retry gets a separate timestamped directory; the evidence records the reviewed URL. Do not substitute folders such as `seo-contact` or `security-run2` unless the user requests that layout.
+
+If the command must run from the plugin root, pass an absolute `--output` path with the same structure under the target project or task folder. Never save review evidence inside the installed plugin.
+
+Use the target project or task folder for URL-only reviews too. If neither is designated, use a task-specific temporary directory with the same nested structure. An output location explicitly requested by the user takes precedence; a request to save under `.output` keeps the standard structure.
 
 ## Browser sandbox
 

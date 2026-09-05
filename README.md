@@ -114,9 +114,15 @@ $review-website-launch Review https://site.example, decide whether this release 
 $audit-web-project Audit this repository and https://site.example, then prioritize the most important technical risks and next steps.
 ```
 
-Codex can also choose an installed skill from a natural-language request such as “Is this website ready to launch from an accessibility perspective?” Explicit invocation is useful when testing a specific skill. The agent asks for approval before bootstrapping the browser runtime when needed. Runtime dependencies stay in the user cache rather than the project being reviewed.
+Codex can also choose an installed skill from a natural-language request such as “Is this website ready to launch from an accessibility perspective?” Explicit invocation is useful when testing a specific skill. Runtime dependencies stay in the user cache rather than the project being reviewed.
 
 When updating a locally installed development build, validate the plugin, update its Codex cachebuster, reinstall it from the **Personal** marketplace, and start another new task before retesting.
+
+### First-run permissions
+
+On first use, Codex may request approval to download the audit dependencies and Chromium, access the target website, and write evidence files. Prompts depend on your Codex permission settings and saved approvals. Some requests may recur on later runs.
+
+For fewer interruptions, select **Approve for me** in the permissions control beneath the prompt, if available. Read the warning and accept only if you are comfortable letting an automatic reviewer approve eligible actions without asking you each time. The reviewer can make mistakes. **Ask for approval** remains supported; **Full access** is not required. See the [setup permission guidance](docs/website-audit-runtime-guide.md#first-run-permissions) and [OpenAI's auto-review documentation](https://learn.chatgpt.com/docs/sandboxing/auto-review).
 
 ### Versioning
 
