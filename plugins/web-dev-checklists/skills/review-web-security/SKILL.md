@@ -38,8 +38,7 @@ Do not imply that a public URL check covers the other sections. Ask only for mis
 
 Use the least intrusive combination that answers the request:
 
-- Use the plugin-owned deterministic runner with the `review-web-security` profile for an authorized public URL. Resolve the plugin root from this skill directory; do not assume the target project's working directory contains the runtime.
-- Before deciding that the plugin runtime is unavailable, run `node runtime/scripts/status.mjs --json` from the resolved plugin root. This read-only command checks the versioned user-cache location. If it reports `ready: true`, run the review profile directly; do not look for `node_modules` under the plugin or run bootstrap.
+- Use the plugin-owned deterministic runner with the `review-web-security` profile for an authorized public URL. Follow the [shared runtime procedure](references/website-audit-runtime-guide.md#install-the-runtime) for plugin resolution and readiness.
 - Read `evidence.json` for stable public observations, `coverage.json` for the automation boundary, and `security-report.html` for the human-readable evidence summary. A machine `pass` applies only to its named check.
 - Inspect source, dependency manifests, lockfiles, framework and runtime versions, configuration, infrastructure definitions, tests, and deployment guidance when repository access is available.
 - Prefer the project's existing dependency, static-analysis, and secret-scanning tools when they are configured and safe. Do not install new project dependencies or copy secret values into evidence without approval.
@@ -58,15 +57,7 @@ Review automated warnings manually before calling them vulnerabilities. Group sy
 
 ## Report results
 
-Return the readable report in the Codex response by default. Follow the shared report structure and include:
-
-1. Overall assessment and the most important actions
-2. Scope, authorization, environment, tools, and evidence
-3. Critical and high-priority findings
-4. Other findings and recommendations
-5. Checks that passed, grouped concisely
-6. Items not checked, not applicable, or limited by missing access
-7. Retest needs and the location of supporting artifacts
+Use the [shared report structure](references/web-review-contract.md#report-structure). Include the authorization boundary and distinguish public, source, authenticated, and operational evidence.
 
 For each material finding, include the result, severity, affected scope, evidence or safe reproduction steps, risk, and the smallest practical recommendation. Do not include credentials, tokens, secret values, private data, or unnecessary exploit detail.
 

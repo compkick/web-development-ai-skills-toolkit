@@ -10,6 +10,7 @@ if (jsonOutput) {
   console.log(`Website audit runtime status: ${status.ready ? "ready" : "not ready"}`);
   console.log(`Runtime directory: ${status.runtimeDirectory}`);
   console.log(`Runtime key: ${status.runtimeKey}`);
+  console.log(`Worker revision: ${status.workerKey}${status.workerInstalled ? " (staged)" : " (will be staged on the next run)"}`);
   console.log(`Shared browser cache: ${status.browserDirectory}${status.browserCacheExists ? " (present)" : " (not present)"}`);
 
   if (status.installedAt) console.log(`Installed at: ${status.installedAt}`);

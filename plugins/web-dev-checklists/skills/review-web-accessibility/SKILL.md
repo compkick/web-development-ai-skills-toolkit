@@ -35,10 +35,9 @@ Use the least intrusive combination that answers the request:
 
 - Inspect source, components, styles, configuration, tests, and documentation when repository access is available.
 - Run existing project accessibility or browser tests when they are already configured and safe to execute.
-- Use the plugin-owned deterministic review runner with the `review-web-accessibility` profile for authorized pages when screenshot, HTTP, browser-error, axe, or Lighthouse evidence adds value. Resolve the plugin root from this skill directory; do not assume the target project's working directory contains the runtime.
+- Use the plugin-owned deterministic review runner with the `review-web-accessibility` profile for authorized pages when screenshot, HTTP, browser-error, axe, or Lighthouse evidence adds value. Follow the [shared runtime procedure](references/website-audit-runtime-guide.md#install-the-runtime) for plugin resolution and readiness.
 - Treat the profile's 1440 × 900 axe scan and Lighthouse desktop configuration as the repeatable desktop baseline. Use separate interactive evidence for narrow-width reflow, mobile layouts, zoom, touch behavior, and responsive interactions; do not imply that the desktop scan tested those states. On first mention of a 320 CSS-pixel WCAG 1.4.10 check, call it a **WCAG zoom-equivalent reflow check** and state that 320 CSS pixels represents a 1280 CSS-pixel desktop viewport at 400 percent zoom, not a mobile-device simulation. Report contemporary mobile viewport testing separately when it is in scope.
-- Before deciding that the plugin runtime is unavailable, run `node runtime/scripts/status.mjs --json` from the resolved plugin root. This read-only command checks the versioned user-cache location. If it reports `ready: true`, run the review profile directly; do not look for `node_modules` under the plugin or run bootstrap.
-- Before reporting that automated evidence was saved, verify the package contains `summary.json`, `evidence.json`, `coverage.json`, and `page.png`; when axe completed, also preserve `axe-results.json`, `axe-report.html`, and any referenced `axe-elements/` screenshots; when Lighthouse completed, also preserve `lighthouse-report.json` and `lighthouse-report.html`. If either collector did not complete, preserve the partial package and report the missing artifacts and recorded error instead of implying they were saved.
+- Before reporting that automated evidence was saved, verify the package contains `summary.json`, `evidence.json`, `coverage.json`, and `page.png`; when axe completed, also preserve `axe-results.json`, `accessibility-report.html`, and any referenced `axe-elements/` screenshots; when Lighthouse completed, also preserve `lighthouse-report.json` and `lighthouse-report.html`. If either collector did not complete, preserve the partial package and report the missing artifacts and recorded error instead of implying they were saved.
 - Use an available interactive browser for keyboard navigation, focus behavior, responsive states, menus, dialogs, forms, and complete journeys that a single-page scan cannot establish.
 - Use actual screen-reader or other assistive-technology results only when that technology was genuinely available and used. An accessibility tree, ARIA snapshot, axe result, or code inspection is not a screen-reader test.
 - Review supplied audit reports or human test evidence when direct access is unavailable.
@@ -55,15 +54,7 @@ Group repeated component-level problems into useful findings instead of producin
 
 ## Report results
 
-Return the readable report in the Codex response by default. Follow the shared report structure and include:
-
-1. Overall assessment and the most important actions
-2. Scope, environment, sample, tools, and evidence
-3. Critical and high-priority findings
-4. Other findings and recommendations
-5. Checks that passed, grouped concisely
-6. Items not checked, not applicable, or limited by missing evidence
-7. Retest needs and the location of supporting artifacts
+Use the [shared report structure](references/web-review-contract.md#report-structure). Keep automated, interactive, and assistive-technology results distinguishable, and state the representative sample.
 
 For each material finding, include the result, severity, affected scope, evidence or reproduction steps, user impact, and the smallest practical recommendation. Keep automated and manual results distinguishable.
 

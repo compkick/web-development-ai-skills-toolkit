@@ -36,7 +36,17 @@
           "required": ["name", "sandboxed"],
           "properties": {
             "name": { "type": "string" },
-            "sandboxed": { "type": "boolean" }
+            "sandboxed": { "type": "boolean" },
+            "formFactor": { "enum": ["desktop", "mobile"] },
+            "viewport": {
+              "type": "object",
+              "required": ["width", "height"],
+              "properties": {
+                "width": { "type": "integer", "minimum": 1 },
+                "height": { "type": "integer", "minimum": 1 }
+              },
+              "additionalProperties": false
+            }
           },
           "additionalProperties": false
         }

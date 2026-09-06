@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -17,26 +17,58 @@ export const RAW_AUDIT_OUTPUT_GROUP = "runtime-audit";
 export const RUNTIME_CACHE_ENVIRONMENT_VARIABLE = "WEB_DEV_CHECKLISTS_CACHE";
 export const runtimeSourceDirectory = path.resolve(configDirectory, "..");
 
-const RUNTIME_SOURCE_FILES = ["package.json", "package-lock.json", "collectors/homepage-links.mjs", "collectors/http-redirect.mjs", "collectors/tls-baseline.mjs", "config/runtime-config.mjs", "reporting/axe-report.mjs", "reporting/page-screenshot.mjs", "scripts/worker.mjs"];
-
 export async function getRuntimeLocation() {
-  const hash = createHash("sha256");
-
-  for (const sourceFile of RUNTIME_SOURCE_FILES) {
-    hash.update(await readFile(path.join(runtimeSourceDirectory, sourceFile)));
+  const manifest = JSON.parse(await readFile(path.join(runtimeSourceDirectory, "package.json"), "utf8"));
+  const lock = JSON.parse(await readFile(path.join(runtimeSourceDirectory, "package-lock.json"), "utf8"));
+  const runtimeKey = dependencyFingerprint(manifest, lock);
+  const sourceFiles = ["scripts/worker.mjs"];
+  for (const directory of ["browser", "collectors", "config", "evidence", "reporting"]) {
+    sourceFiles.push(...await listModules(path.join(runtimeSourceDirectory, directory), directory));
   }
-
-  const runtimeKey = hash.digest("hex").slice(0, 16);
+  sourceFiles.sort();
+  const hash = createHash("sha256");
+  for (const sourceFile of sourceFiles) hash.update(sourceFile).update("\0").update(await readFile(path.join(runtimeSourceDirectory, sourceFile)));
+  const workerKey = hash.digest("hex").slice(0, 16);
   const configuredCacheRoot = process.env[RUNTIME_CACHE_ENVIRONMENT_VARIABLE];
   const cacheRoot = configuredCacheRoot ? path.resolve(configuredCacheRoot) : getDefaultRuntimeCacheRoot();
+  const runtimeDirectory = path.join(cacheRoot, runtimeKey);
+  // Each immutable worker revision resolves dependencies from its parent runtime directory.
+  const workerDirectory = path.join(runtimeDirectory, "workers", workerKey);
 
   return {
     browserDirectory: path.join(cacheRoot, "browsers"),
     cacheRoot,
-    runtimeDirectory: path.join(cacheRoot, runtimeKey),
+    runtimeDirectory,
     runtimeKey,
-    sourceFiles: RUNTIME_SOURCE_FILES
+    workerDirectory,
+    workerKey,
+    workerPath: path.join(workerDirectory, "scripts", "worker.mjs"),
+    sourceFiles,
+    dependencies: manifest.dependencies
   };
+}
+
+export function dependencyFingerprint(manifest, lock, environment = { platform: process.platform, arch: process.arch, abi: process.versions.modules }) {
+  const packages = { ...lock.packages };
+  delete packages[""];
+  const installation = { dependencies: manifest.dependencies, optionalDependencies: manifest.optionalDependencies, overrides: manifest.overrides, engines: manifest.engines, lockfileVersion: lock.lockfileVersion, packages, environment };
+  return createHash("sha256").update(JSON.stringify(sortKeys(installation))).digest("hex").slice(0, 16);
+}
+
+function sortKeys(value) {
+  if (Array.isArray(value)) return value.map(sortKeys);
+  if (!value || typeof value !== "object") return value;
+  return Object.fromEntries(Object.keys(value).sort().map((key) => [key, sortKeys(value[key])]));
+}
+
+async function listModules(directory, relativeDirectory) {
+  const modules = [];
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    const relativePath = `${relativeDirectory}/${entry.name}`;
+    if (entry.isDirectory()) modules.push(...await listModules(path.join(directory, entry.name), relativePath));
+    else if (entry.isFile() && entry.name.endsWith(".mjs")) modules.push(relativePath);
+  }
+  return modules;
 }
 
 export function getDefaultEvidenceOutputDirectory(profileId, targetUrl, runDate = new Date()) {

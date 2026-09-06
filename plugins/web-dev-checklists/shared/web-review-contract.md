@@ -58,12 +58,12 @@ Keep minor observations grouped. Do not create a finding for every successful ch
 
 ## Report structure
 
-Use this default structure unless the skill needs a more specific format:
+Return the readable report in the Codex response by default. Use this structure unless the skill needs a more specific format:
 
 1. Summary and overall assessment
 2. Scope, environment, tools, and evidence reviewed
 3. Critical and high-priority findings
 4. Other findings and recommendations
 5. Checks that passed or need no action
-6. Items not checked, limitations, and requested follow-up evidence
+6. Items not checked or not applicable, limitations, retest needs, follow-up evidence, and supporting artifact paths
 7. Go/no-go recommendation when the task concerns launch or release readiness

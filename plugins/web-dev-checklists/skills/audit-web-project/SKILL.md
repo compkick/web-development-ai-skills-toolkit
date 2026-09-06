@@ -54,9 +54,9 @@ Review representative source and configuration rather than every file. Look for 
 
 Reuse a current evidence package when it represents the same URL, release, and relevant configuration. Do not rerun five specialist profiles when their evidence is already current.
 
-When a public baseline is needed, use the plugin-owned deterministic runner with the `audit-web-project` profile. Resolve the plugin root from this skill directory; do not assume the target repository contains the runtime.
+When a public baseline is needed, use the plugin-owned deterministic runner with the `audit-web-project` profile. Follow the [shared runtime procedure](references/website-audit-runtime-guide.md#install-the-runtime) for plugin resolution and readiness.
 
-Before deciding that the runtime is unavailable, run `node runtime/scripts/status.mjs --json` from the plugin root. If it reports `ready: true`, follow the runtime guide's [output-location procedure](references/website-audit-runtime-guide.md#output-location-when-using-an-installed-plugin) and run:
+Follow the runtime guide's [output-location procedure](references/website-audit-runtime-guide.md#output-location-when-using-an-installed-plugin) and run:
 
 ```bash
 node "<absolute-plugin-root>/runtime/scripts/review.mjs" --profile audit-web-project --url https://site.example
@@ -80,15 +80,7 @@ Prioritize by user impact, security risk, likelihood, urgency, and effort. Group
 
 ## Report results
 
-Return the readable audit in the Codex response by default:
-
-1. Overall assessment and the three to five most important actions
-2. Scope, environments, release, tools, and evidence reviewed
-3. Critical and high-priority findings
-4. Findings grouped by relevant area
-5. Important checks that passed, summarized briefly
-6. Missing evidence, untested areas, accepted risks, and recommended specialist follow-up
-7. Artifact paths and a practical next-step sequence
+Use the [shared report structure](references/web-review-contract.md#report-structure). Lead with the three to five most important actions. Group findings by relevant area, distinguish accepted risks from missing evidence, and finish with recommended specialist follow-up and a practical next-step sequence.
 
 Give each material finding a result, priority, affected scope, evidence, impact, and smallest practical recommendation. Include an owner and target date when known. Do not list every successful machine check or dump all referenced checklists into the response.
 

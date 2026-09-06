@@ -29,7 +29,7 @@ try {
   outputDirectory = await findSingleDefaultOutputDirectory(testDirectory, RAW_AUDIT_OUTPUT_GROUP);
   const summary = JSON.parse(await readFile(path.join(outputDirectory, "summary.json"), "utf8"));
   const axeResult = JSON.parse(await readFile(path.join(outputDirectory, "axe-results.json"), "utf8"));
-  const axeReport = await readFile(path.join(outputDirectory, "axe-report.html"), "utf8");
+  const axeReport = await readFile(path.join(outputDirectory, "accessibility-report.html"), "utf8");
   const lighthouseReport = JSON.parse(await readFile(path.join(outputDirectory, "lighthouse-report.json"), "utf8"));
 
   if (summary.page.screenshotReadiness?.status !== "ready" || summary.page.screenshotReadiness.images.loaded !== 1) {
@@ -50,7 +50,7 @@ try {
     throw new Error("Audit runtime self-test did not produce a referenced axe element screenshot.");
   }
 
-  for (const artifact of ["summary.json", "page.png", "axe-results.json", "axe-report.html", "lighthouse-report.json", "lighthouse-report.html"]) {
+  for (const artifact of ["summary.json", "page.png", "axe-results.json", "accessibility-report.html", "lighthouse-report.json", "lighthouse-report.html"]) {
     const artifactStats = await stat(path.join(outputDirectory, artifact));
 
     if (!artifactStats.isFile() || artifactStats.size === 0) {

@@ -4,18 +4,20 @@ import process from "node:process";
 import { spawnSync } from "node:child_process";
 import { getRuntimeLocation, runtimeSourceDirectory } from "../config/runtime-config.mjs";
 import { getRuntimeStatus } from "../config/runtime-status.mjs";
+import { stageRuntimeWorker } from "../config/runtime-worker.mjs";
 
 const skipBrowserDownload = parseArguments(process.argv.slice(2));
 requireSupportedNode();
 
-const { browserDirectory, runtimeDirectory, runtimeKey, sourceFiles } = await getRuntimeLocation();
+const location = await getRuntimeLocation();
+const { browserDirectory, runtimeDirectory, runtimeKey } = location;
 const readyMarkerPath = path.join(runtimeDirectory, "runtime-ready.json");
 const runtimeStatus = await getRuntimeStatus();
 
 if (!runtimeStatus.ready) {
   await mkdir(runtimeDirectory, { recursive: true });
 
-  for (const sourceFile of sourceFiles) {
+  for (const sourceFile of ["package.json", "package-lock.json"]) {
     const targetPath = path.join(runtimeDirectory, sourceFile);
     await mkdir(path.dirname(targetPath), { recursive: true });
     await copyFile(path.join(runtimeSourceDirectory, sourceFile), targetPath);
@@ -30,6 +32,8 @@ if (!runtimeStatus.ready) {
 
   await writeFile(readyMarkerPath, `${JSON.stringify({ runtimeKey, installedAt: new Date().toISOString() }, null, 2)}\n`, "utf8");
 }
+
+await stageRuntimeWorker(location);
 
 if (!skipBrowserDownload) {
   const playwrightCli = path.join(runtimeDirectory, "node_modules", "playwright", "cli.js");

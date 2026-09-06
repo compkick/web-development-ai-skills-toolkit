@@ -20,10 +20,11 @@ try {
     throw new Error("Runtime status did not report an empty cache as not ready.");
   }
 
-  await mkdir(path.join(location.runtimeDirectory, "node_modules", "playwright"), { recursive: true });
-  await mkdir(path.join(location.runtimeDirectory, "scripts"), { recursive: true });
-  await writeFile(path.join(location.runtimeDirectory, "node_modules", "playwright", "package.json"), "{}\n", "utf8");
-  await writeFile(path.join(location.runtimeDirectory, "scripts", "worker.mjs"), "export {};\n", "utf8");
+  for (const [name, version] of Object.entries(location.dependencies)) {
+    const packageDirectory = path.join(location.runtimeDirectory, "node_modules", name);
+    await mkdir(packageDirectory, { recursive: true });
+    await writeFile(path.join(packageDirectory, "package.json"), JSON.stringify({ version }), "utf8");
+  }
   await writeFile(path.join(location.runtimeDirectory, "runtime-ready.json"), `${JSON.stringify({ installedAt: "2026-08-25T00:00:00.000Z", runtimeKey: location.runtimeKey }, null, 2)}\n`, "utf8");
 
   const readyStatus = runStatus(testCacheRoot);
@@ -31,6 +32,8 @@ try {
   if (readyStatus.status !== 0 || readyStatus.output.ready !== true || readyStatus.output.reasons.length !== 0) {
     throw new Error("Runtime status did not recognize a complete matching cache.");
   }
+
+  if (readyStatus.output.workerInstalled !== false) throw new Error("Worker staging must be independent of dependency readiness.");
 
   await writeFile(path.join(location.runtimeDirectory, "runtime-ready.json"), `${JSON.stringify({ runtimeKey: "outdated" }, null, 2)}\n`, "utf8");
   const outdatedStatus = runStatus(testCacheRoot);

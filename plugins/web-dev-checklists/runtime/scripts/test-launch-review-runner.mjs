@@ -1,8 +1,8 @@
-import { access, mkdtemp, readFile, readdir, rm, stat } from "node:fs/promises";
+import { exists } from "../evidence/package.mjs";
+import { createFixtureDirectory, listen, closeFixture, runCommand, readJson, assertEvidence, assertCheckStatus, assertArtifacts, sendHtml } from "../testing/fixture-harness.mjs";
+import { readFile, readdir, stat } from "node:fs/promises";
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
 import http from "node:http";
-import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
@@ -14,7 +14,8 @@ const reviewScript = path.join(scriptsDirectory, "review.mjs");
 const passFixture = await readFile(path.join(runtimeDirectory, "fixtures", "launch-pass.html"), "utf8");
 const failFixture = await readFile(path.join(runtimeDirectory, "fixtures", "launch-fail.html"), "utf8");
 const limitFixture = passFixture.replace(/<nav aria-label="Primary navigation">[\s\S]*?<\/nav>/, `<nav aria-label="Primary navigation">${Array.from({ length: 51 }, (_, index) => `<a href="/sample-${index}">Page ${index}</a>`).join(" ")}</nav>`);
-const testDirectory = await mkdtemp(path.join(os.tmpdir(), "web-dev-checklists-launch-test-"));
+const testDirectory = await createFixtureDirectory("web-dev-checklists-launch-test-");
+const run = (command, args, cwd = testDirectory) => runCommand(command, args, cwd);
 const passOutputDirectory = path.join(testDirectory, "pass-output");
 const failOutputDirectory = path.join(testDirectory, "fail-output");
 const limitOutputDirectory = path.join(testDirectory, "limit-output");
@@ -41,10 +42,7 @@ const server = http.createServer((request, response) => {
 });
 
 try {
-  await new Promise((resolve, reject) => {
-    server.once("error", reject);
-    server.listen(0, "127.0.0.1", resolve);
-  });
+  await listen(server);
 
   const address = server.address();
   const baseUrl = `http://127.0.0.1:${address.port}`;
@@ -74,9 +72,9 @@ try {
   assert.ok(failEvidence.limitations.some((note) => note.includes("Screenshot preparation was incomplete")));
   assert.ok(failReport.includes("Screenshot preparation was incomplete"), "Capture limitations must reach the human-readable report.");
 
-  validateEvidenceShape(passEvidence);
-  validateEvidenceShape(failEvidence);
-  validateEvidenceShape(limitEvidence);
+  assertEvidence(passEvidence, "review-website-launch");
+  assertEvidence(failEvidence, "review-website-launch");
+  assertEvidence(limitEvidence, "review-website-launch");
   assertCheckStatus(passEvidence, "launch-collection", "pass");
   assertCheckStatus(passEvidence, "homepage-structure", "pass");
   assertCheckStatus(passEvidence, "homepage-navigation-links", "pass");
@@ -125,20 +123,16 @@ try {
   await verifyReportStates(passEvidence, failEvidence, limitEvidence, coverage);
 
   for (const outputDirectory of [passOutputDirectory, failOutputDirectory, limitOutputDirectory]) {
-    for (const artifact of ["evidence.json", "coverage.json", "summary.json", "page.png", "launch-results.json", "launch-readiness-report.html"]) {
-      const artifactStats = await stat(path.join(outputDirectory, artifact));
-      if (!artifactStats.isFile() || artifactStats.size === 0) throw new Error(`Launch review runner produced an empty or invalid artifact: ${artifact}`);
-    }
+    await assertArtifacts(outputDirectory, ["evidence.json", "coverage.json", "summary.json", "page.png", "launch-results.json", "launch-readiness-report.html"]);
 
-    for (const unexpectedArtifact of ["axe-results.json", "axe-report.html", "lighthouse-report.json", "lighthouse-report.html", "security-results.json", "seo-results.json"]) {
+    for (const unexpectedArtifact of ["axe-results.json", "accessibility-report.html", "lighthouse-report.json", "lighthouse-report.html", "security-results.json", "seo-results.json"]) {
       if (await exists(path.join(outputDirectory, unexpectedArtifact))) throw new Error(`Launch profile unexpectedly produced ${unexpectedArtifact}.`);
     }
   }
 
   console.log("Deterministic launch review runner self-test passed for ready, attention, shared-link, sample-limit, footer-navigation, and incomplete-report cases.");
 } finally {
-  await new Promise((resolve) => server.close(resolve));
-  await rm(testDirectory, { recursive: true, force: true });
+  await closeFixture(server, testDirectory);
 }
 
 async function verifyReportStates(passEvidence, failEvidence, limitEvidence, coverage) {
@@ -173,47 +167,4 @@ async function verifyReportStates(passEvidence, failEvidence, limitEvidence, cov
     assert.ok(report.includes(`Automated preflight: ${expected}</strong>`), `${name} should produce ${expected}, not a false Clear.`);
     if (expected === "Incomplete") assert.ok(!report.includes("Automated preflight: Clear"));
   }
-}
-
-function sendHtml(response, html) {
-  response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-  response.end(html);
-}
-
-function assertCheckStatus(evidence, checkId, expectedStatus) {
-  const check = evidence.checks.find((candidate) => candidate.id === checkId);
-  if (!check || check.status !== expectedStatus) throw new Error(`Expected ${checkId} to be ${expectedStatus}, found ${check?.status ?? "missing"}.`);
-}
-
-function validateEvidenceShape(evidence) {
-  if (evidence.schemaVersion !== "1.0.0" || evidence.profile.id !== "review-website-launch" || !Array.isArray(evidence.checks) || !Array.isArray(evidence.artifacts) || !Array.isArray(evidence.limitations)) {
-    throw new Error("Launch evidence output does not match the required top-level shape.");
-  }
-
-  for (const check of evidence.checks) {
-    if (!check.id || !check.title || !new Set(["pass", "fail", "warning", "informational", "not-checked"]).has(check.status) || !check.method || typeof check.evidence !== "object" || !Array.isArray(check.artifacts)) {
-      throw new Error(`Invalid launch evidence check shape: ${check.id ?? "missing id"}`);
-    }
-  }
-}
-
-function run(command, argumentsToRun, workingDirectory = process.cwd()) {
-  return new Promise((resolve, reject) => {
-    const child = spawn(command, argumentsToRun, { cwd: workingDirectory, env: process.env, stdio: "inherit" });
-    child.once("error", reject);
-    child.once("exit", (code) => code === 0 ? resolve() : reject(new Error(`Launch review command exited with code ${code}.`)));
-  });
-}
-
-async function exists(filePath) {
-  try {
-    await access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-async function readJson(filePath) {
-  return JSON.parse(await readFile(filePath, "utf8"));
 }

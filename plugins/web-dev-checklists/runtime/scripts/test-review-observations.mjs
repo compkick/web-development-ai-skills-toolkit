@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { assessContentSecurityPolicy, assessPublicCookies, buildAxeReviewChecks } from "../reporting/review-observations.mjs";
 
-const artifacts = ["axe-results.json", "axe-report.html"];
+const artifacts = ["axe-results.json", "accessibility-report.html"];
 const rule = (id, count) => ({ id, help: id, description: id, helpUrl: "https://example.invalid/rule", impact: "serious", tags: [], nodes: Array.from({ length: count }, () => ({})) });
 const axeResult = {
   passes: 49,

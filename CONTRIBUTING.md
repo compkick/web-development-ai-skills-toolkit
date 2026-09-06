@@ -82,6 +82,20 @@ npm run deps:audit
 
 After changing the website audit runtime or deterministic review profiles, bootstrap it in an isolated cache and run `npm run runtime:test` plus `npm run reviews:test` against the local fixtures.
 
+`repo:check` includes JSON Schema validation, evaluator contracts, report rendering, cache behavior, and bounded HTTP tests without launching a browser. Ajv and its format checks are repository-only development dependencies. The separate browser-fixture CI job installs the pinned runtime and Chromium in a fresh cache and runs both browser suites with sandboxing enabled. See [Playwright's CI setup](https://playwright.dev/docs/ci-intro).
+
+### Runtime code locations
+
+- `runtime/scripts/`: CLI entry points and integration tests.
+- `runtime/config/`: settings, dependency fingerprints, worker staging, and readiness.
+- `runtime/browser/` and `runtime/collectors/`: browser lifecycle and bounded evidence collection.
+- `runtime/evaluators/`: profile-specific assessment rules; keep these explicit.
+- `runtime/evidence/`: shared package structure, artifact handling, and failed-run records.
+- `runtime/reporting/`: shared HTML layout and safety helpers, plus specialist report content.
+- `runtime/testing/`: shared fixture lifecycle, subprocess timeouts, artifact assertions, and schema validation.
+
+These paths are relative to `plugins/web-dev-checklists/`. Change a shared behavior once in its owning module, then test every affected profile. Keep generated reference copies; edit their canonical sources instead.
+
 The official skill and plugin validators require Python and the locked development dependency in `requirements-dev.txt`. Install it in a local virtual environment rather than relying on a global package:
 
 ```bash

@@ -1,7 +1,6 @@
-import { spawn } from "node:child_process";
-import { mkdtemp, readFile, rm, stat } from "node:fs/promises";
+import { createFixtureDirectory, listen, closeFixture, runCommand, readJson, assertEvidence, assertCheckStatus, assertArtifacts, sendHtml } from "../testing/fixture-harness.mjs";
+import { readFile, stat } from "node:fs/promises";
 import http from "node:http";
-import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
@@ -11,7 +10,8 @@ const runtimeDirectory = path.resolve(scriptsDirectory, "..");
 const reviewScript = path.join(scriptsDirectory, "review.mjs");
 const passFixtureTemplate = await readFile(path.join(runtimeDirectory, "fixtures", "technical-seo-pass.html"), "utf8");
 const failFixtureTemplate = await readFile(path.join(runtimeDirectory, "fixtures", "technical-seo-fail.html"), "utf8");
-const testDirectory = await mkdtemp(path.join(os.tmpdir(), "web-dev-checklists-technical-seo-test-"));
+const testDirectory = await createFixtureDirectory("web-dev-checklists-technical-seo-test-");
+const run = (command, args, cwd = testDirectory) => runCommand(command, args, cwd);
 const passOutputDirectory = path.join(testDirectory, "pass-output");
 const failOutputDirectory = path.join(testDirectory, "fail-output");
 let baseUrl;
@@ -39,10 +39,7 @@ const server = http.createServer((request, response) => {
 });
 
 try {
-  await new Promise((resolve, reject) => {
-    server.once("error", reject);
-    server.listen(0, "127.0.0.1", resolve);
-  });
+  await listen(server);
 
   const address = server.address();
   baseUrl = `http://127.0.0.1:${address.port}`;
@@ -54,8 +51,8 @@ try {
   const coverage = await readJson(path.join(failOutputDirectory, "coverage.json"));
   const passSeoResult = await readJson(path.join(passOutputDirectory, "seo-results.json"));
 
-  validateEvidenceShape(passEvidence);
-  validateEvidenceShape(failEvidence);
+  assertEvidence(passEvidence, "review-technical-seo");
+  assertEvidence(failEvidence, "review-technical-seo");
   assertCheckStatus(passEvidence, "page-http-status", "pass");
   assertCheckStatus(passEvidence, "indexing-allowed", "pass");
   assertCheckStatus(passEvidence, "document-title", "pass");
@@ -80,10 +77,7 @@ try {
   }
 
   for (const outputDirectory of [passOutputDirectory, failOutputDirectory]) {
-    for (const artifact of ["evidence.json", "coverage.json", "summary.json", "page.png", "seo-results.json", "lighthouse-report.json", "lighthouse-report.html", "technical-seo-report.html"]) {
-      const artifactStats = await stat(path.join(outputDirectory, artifact));
-      if (!artifactStats.isFile() || artifactStats.size === 0) throw new Error(`Technical SEO runner produced an empty or invalid artifact: ${artifact}`);
-    }
+    await assertArtifacts(outputDirectory, ["evidence.json", "coverage.json", "summary.json", "page.png", "seo-results.json", "lighthouse-report.json", "lighthouse-report.html", "technical-seo-report.html"]);
 
     const report = await readFile(path.join(outputDirectory, "technical-seo-report.html"), "utf8");
     if (!report.includes("Technical SEO review evidence") || !report.includes("Canonical checklist coverage") || /<script(?:\s|>)/i.test(report)) {
@@ -93,36 +87,5 @@ try {
 
   console.log("Deterministic review runner self-test passed for technical SEO pass and attention fixtures.");
 } finally {
-  await new Promise((resolve) => server.close(resolve));
-  await rm(testDirectory, { recursive: true, force: true });
-}
-
-function sendHtml(response, html, headers = {}) {
-  response.writeHead(200, { "Content-Type": "text/html; charset=utf-8", ...headers });
-  response.end(html);
-}
-
-function assertCheckStatus(evidence, checkId, expectedStatus) {
-  const check = evidence.checks.find((candidate) => candidate.id === checkId);
-  if (!check || check.status !== expectedStatus) throw new Error(`Expected ${checkId} to be ${expectedStatus}, found ${check?.status ?? "missing"}.`);
-}
-
-function validateEvidenceShape(evidence) {
-  if (evidence.schemaVersion !== "1.0.0" || evidence.profile.id !== "review-technical-seo" || !Array.isArray(evidence.checks) || !Array.isArray(evidence.artifacts) || !Array.isArray(evidence.limitations)) {
-    throw new Error("Technical SEO evidence output does not match the required top-level shape.");
-  }
-
-  if (evidence.run.browser.formFactor !== "desktop") throw new Error("Technical SEO evidence must record the desktop browser baseline.");
-}
-
-function run(command, argumentsToRun) {
-  return new Promise((resolve, reject) => {
-    const child = spawn(command, argumentsToRun, { cwd: testDirectory, env: process.env, stdio: "inherit" });
-    child.once("error", reject);
-    child.once("exit", (code) => code === 0 ? resolve() : reject(new Error(`Review command exited with code ${code}.`)));
-  });
-}
-
-async function readJson(filePath) {
-  return JSON.parse(await readFile(filePath, "utf8"));
+  await closeFixture(server, testDirectory);
 }
