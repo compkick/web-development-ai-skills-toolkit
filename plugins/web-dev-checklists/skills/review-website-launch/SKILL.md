@@ -42,9 +42,7 @@ Ask only for missing information that could change the recommendation or make th
 
 ## Run the bounded preflight
 
-For an authorized public homepage, use the plugin-owned deterministic runner with the `review-website-launch` profile. Resolve the plugin root from this skill directory; do not assume the reviewed project contains the runtime.
-
-Before deciding that the runtime is unavailable, run `node runtime/scripts/status.mjs --json` from the plugin root. If it reports `ready: true`, run the profile directly. If it is not ready, obtain approval before bootstrapping dependencies or downloading Chromium.
+For an authorized public homepage, use the plugin-owned deterministic runner with the `review-website-launch` profile. Follow the [shared runtime procedure](references/website-audit-runtime-guide.md#install-the-runtime) for plugin resolution and readiness.
 
 Read `evidence.json`, `coverage.json`, `launch-results.json`, and `launch-readiness-report.html`. Treat the report's automated preflight as one evidence source, not the final go/no-go decision.
 

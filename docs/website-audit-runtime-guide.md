@@ -21,7 +21,7 @@ Codex's command sandbox and Chromium's browser sandbox are separate. If Codex bl
 
 ## Install the runtime
 
-The audit command does not install anything automatically. Before requesting installation permission, check the versioned user cache from the plugin root:
+The audit command does not install dependencies or download a browser automatically. For agent runs, resolve the plugin root two directories above the loaded skill directory (`<plugin-root>/skills/<skill-name>/`); do not assume the target project contains the runtime. Before requesting installation permission, check the dependency cache from that plugin root:
 
 ```bash
 node runtime/scripts/status.mjs --json
@@ -44,6 +44,10 @@ node runtime/scripts/bootstrap.mjs --skip-browser-download
 ```
 
 Set `WEB_DEV_CHECKLISTS_CACHE` when an organization requires a different cache location.
+
+Dependencies are cached by the locked dependency graph, operating system, architecture, and Node.js ABI. Release metadata and worker-code changes do not require another dependency installation. Each run stages the current plugin's worker code in an immutable `workers/<revision>/` directory below the dependency cache, so concurrent plugin versions can reuse dependencies without running stale code. The shared `browsers/` cache remains separate. `runtime/config/runtime-config.mjs` owns these locations and fingerprints.
+
+Existing installations need one approved bootstrap to move to this cache layout. Old cache directories are not deleted automatically.
 
 ## Run an audit
 
@@ -123,9 +127,10 @@ Screenshots, including axe element screenshots, Lighthouse reports, URLs, and op
 Treat each run directory as one evidence package. When a user requests `.output` or another durable destination, preserve the complete directory and verify the expected files before reporting success; do not keep only the normalized JSON files or delete the raw axe, Lighthouse, screenshot, or element evidence during the task. If a collector did not complete, retain the partial package and use `summary.json` and `evidence.json` to report its status and error.
 
 - `summary.json` contains the page result, browser used, desktop form factor and viewport, Lighthouse scores, and automated accessibility counts.
+- `run-failure.json` records the stage when the runner cannot complete startup, navigation, or capture. Raw error text is included only with `--include-error-details`. The command still exits unsuccessfully; a profile run also writes incomplete `evidence.json`, `coverage.json`, and its applicable summary HTML report. Earlier partial artifacts are retained, and non-empty output directories are never overwritten.
 - `page.png` is a full-page screenshot of the rendered page.
 - `axe-results.json` contains reduced axe findings without copied HTML snippets.
-- `axe-report.html` presents confirmed violations and incomplete checks in a human-readable format and links to bounded screenshots under `axe-elements/`.
+- `accessibility-report.html` presents confirmed violations and incomplete checks in a human-readable format and links to bounded screenshots under `axe-elements/`.
 - `lighthouse-report.json` and `lighthouse-report.html` contain the Lighthouse results.
 - `browser-errors.json` is created only when `--include-error-details` is explicitly requested.
 - `security-results.json` contains reduced TLS, transport, selected response-header, public-cookie-attribute, disclosure, redirect, and `security.txt` observations when security collection is enabled. Cookie values are not stored.

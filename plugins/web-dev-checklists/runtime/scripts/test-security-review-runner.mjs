@@ -1,7 +1,7 @@
-import { access, mkdtemp, readFile, rm, stat } from "node:fs/promises";
-import { spawn } from "node:child_process";
+import { exists } from "../evidence/package.mjs";
+import { createFixtureDirectory, listen, closeFixture, runCommand, readJson, assertEvidence, assertCheckStatus, assertArtifacts } from "../testing/fixture-harness.mjs";
+import { readFile, stat } from "node:fs/promises";
 import http from "node:http";
-import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
@@ -14,7 +14,8 @@ const runtimeDirectory = path.resolve(scriptsDirectory, "..");
 const reviewScript = path.join(scriptsDirectory, "review.mjs");
 const passFixture = await readFile(path.join(runtimeDirectory, "fixtures", "security-pass.html"), "utf8");
 const failFixture = await readFile(path.join(runtimeDirectory, "fixtures", "security-fail.html"), "utf8");
-const testDirectory = await mkdtemp(path.join(os.tmpdir(), "web-dev-checklists-security-review-test-"));
+const testDirectory = await createFixtureDirectory("web-dev-checklists-security-review-test-");
+const run = (command, args, cwd = testDirectory) => runCommand(command, args, cwd);
 const passOutputDirectory = path.join(testDirectory, "pass-output");
 const failOutputDirectory = path.join(testDirectory, "fail-output");
 const framingOutputDirectory = path.join(testDirectory, "framing-output");
@@ -66,10 +67,7 @@ const server = http.createServer((request, response) => {
 assertTlsEvaluation();
 
 try {
-  await new Promise((resolve, reject) => {
-    server.once("error", reject);
-    server.listen(0, "127.0.0.1", resolve);
-  });
+  await listen(server);
 
   const address = server.address();
   const baseUrl = `http://127.0.0.1:${address.port}`;
@@ -105,9 +103,9 @@ try {
   const failReport = await readFile(path.join(failOutputDirectory, "security-report.html"), "utf8");
   const coverage = await readJson(path.join(failOutputDirectory, "coverage.json"));
 
-  validateEvidenceShape(passEvidence);
-  validateEvidenceShape(failEvidence);
-  validateEvidenceShape(framingEvidence);
+  assertEvidence(passEvidence, "review-web-security");
+  assertEvidence(failEvidence, "review-web-security");
+  assertEvidence(framingEvidence, "review-web-security");
   assertCheckStatus(framingEvidence, "content-security-policy", "warning");
   assertCheckStatus(framingEvidence, "framing-protection", "pass");
   // The fixture is HTTP; Secure warnings are tested separately with HTTPS evidence.
@@ -161,11 +159,7 @@ try {
   }
 
   for (const outputDirectory of [passOutputDirectory, failOutputDirectory, framingOutputDirectory]) {
-    for (const artifact of ["evidence.json", "coverage.json", "summary.json", "page.png", "security-results.json", "security-report.html"]) {
-      const artifactStats = await stat(path.join(outputDirectory, artifact));
-
-      if (!artifactStats.isFile() || artifactStats.size === 0) throw new Error(`Security review runner produced an empty or invalid artifact: ${artifact}`);
-    }
+    await assertArtifacts(outputDirectory, ["evidence.json", "coverage.json", "summary.json", "page.png", "security-results.json", "security-report.html"]);
 
     for (const unexpectedArtifact of ["axe-results.json", "lighthouse-report.json", "lighthouse-report.html"]) {
       if (await exists(path.join(outputDirectory, unexpectedArtifact))) throw new Error(`Security profile unexpectedly produced ${unexpectedArtifact}.`);
@@ -174,14 +168,7 @@ try {
 
   console.log("Deterministic security review runner self-test passed for protected, missing, and framing-only policies plus browser-created cookies.");
 } finally {
-  await new Promise((resolve) => server.close(resolve));
-  await rm(testDirectory, { recursive: true, force: true });
-}
-
-function assertCheckStatus(evidence, checkId, expectedStatus) {
-  const check = evidence.checks.find((candidate) => candidate.id === checkId);
-
-  if (!check || check.status !== expectedStatus) throw new Error(`Expected ${checkId} to be ${expectedStatus}, found ${check?.status ?? "missing"}.`);
+  await closeFixture(server, testDirectory);
 }
 
 function assertCheckTitle(evidence, checkId, expectedTitle) {
@@ -198,37 +185,4 @@ function assertTlsEvaluation() {
   if (!tls13.strongCipher || !tls13.forwardSecret || !tls13.approvedKeyExchangeGroup || !tls12.strongCipher || !tls12.forwardSecret || !tls12.approvedKeyExchangeGroup || weakTls12.strongCipher || weakTls12.forwardSecret || weakTls12.approvedKeyExchangeGroup !== null) {
     throw new Error("TLS baseline evaluation did not distinguish strong, forward-secret negotiations from a weak static-RSA negotiation.");
   }
-}
-
-function validateEvidenceShape(evidence) {
-  if (evidence.schemaVersion !== "1.0.0" || evidence.profile.id !== "review-web-security" || !Array.isArray(evidence.checks) || !Array.isArray(evidence.artifacts) || !Array.isArray(evidence.limitations)) {
-    throw new Error("Security evidence output does not match the required top-level shape.");
-  }
-
-  for (const check of evidence.checks) {
-    if (!check.id || !check.title || !new Set(["pass", "fail", "warning", "informational", "not-checked"]).has(check.status) || !check.method || typeof check.evidence !== "object" || !Array.isArray(check.artifacts)) {
-      throw new Error(`Invalid security evidence check shape: ${check.id ?? "missing id"}`);
-    }
-  }
-}
-
-function run(command, argumentsToRun, workingDirectory = process.cwd()) {
-  return new Promise((resolve, reject) => {
-    const child = spawn(command, argumentsToRun, { cwd: workingDirectory, env: process.env, stdio: "inherit" });
-    child.once("error", reject);
-    child.once("exit", (code) => code === 0 ? resolve() : reject(new Error(`Security review command exited with code ${code}.`)));
-  });
-}
-
-async function exists(filePath) {
-  try {
-    await access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-async function readJson(filePath) {
-  return JSON.parse(await readFile(filePath, "utf8"));
 }

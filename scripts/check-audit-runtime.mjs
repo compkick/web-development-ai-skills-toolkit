@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { spawnSync } from "node:child_process";
@@ -23,36 +23,7 @@ for (const [dependency, version] of Object.entries(packageJson.dependencies ?? {
   }
 }
 
-const scripts = [
-  "collectors/homepage-links.mjs",
-  "collectors/http-redirect.mjs",
-  "collectors/tls-baseline.mjs",
-  "config/runtime-config.mjs",
-  "config/runtime-status.mjs",
-  "reporting/axe-report.mjs",
-  "reporting/launch-report.mjs",
-  "reporting/page-screenshot.mjs",
-  "reporting/performance-report.mjs",
-  "reporting/review-observations.mjs",
-  "reporting/security-report.mjs",
-  "reporting/technical-seo-report.mjs",
-  "reporting/web-project-audit-report.mjs",
-  "scripts/audit.mjs",
-  "scripts/bootstrap.mjs",
-  "scripts/review.mjs",
-  "scripts/status.mjs",
-  "scripts/test-runtime-status.mjs",
-  "scripts/test-review-runner.mjs",
-  "scripts/test-review-observations.mjs",
-  "scripts/test-performance-review-runner.mjs",
-  "scripts/test-launch-review-runner.mjs",
-  "scripts/test-security-review-runner.mjs",
-  "scripts/test-technical-seo-review-runner.mjs",
-  "scripts/test-web-project-audit-runner.mjs",
-  "scripts/test-runtime.mjs",
-  "scripts/test-page-screenshot.mjs",
-  "scripts/worker.mjs"
-];
+const scripts = await listScripts(runtimeDirectory);
 
 for (const script of scripts) {
   const scriptPath = path.join(runtimeDirectory, script);
@@ -74,3 +45,14 @@ if (errors.length > 0) {
 }
 
 console.log(`Website audit runtime: ${scripts.length} scripts valid and ${Object.keys(packageJson.dependencies).length} dependencies pinned.`);
+
+async function listScripts(directory, relative = "") {
+  const scripts = [];
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    if (entry.name === "node_modules") continue;
+    const name = relative ? `${relative}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) scripts.push(...await listScripts(path.join(directory, entry.name), name));
+    else if (entry.isFile() && entry.name.endsWith(".mjs")) scripts.push(name);
+  }
+  return scripts.sort();
+}

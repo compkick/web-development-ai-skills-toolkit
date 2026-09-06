@@ -1,90 +1,20 @@
-import { access, readFile } from "node:fs/promises";
+import { buildCoverage } from "../plugins/web-dev-checklists/runtime/evidence/package.mjs";
+import { validateCoverage } from "../plugins/web-dev-checklists/runtime/testing/schema-validation.mjs";
+import { access, readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
-import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const runtimeDirectory = path.join(repositoryRoot, "plugins", "web-dev-checklists", "runtime");
 const profileDirectory = path.join(runtimeDirectory, "profiles");
 const errors = [];
-const knownEvidenceCheckIds = new Set([
-  "automated-axe-scan",
-  "axe-manual-review",
-  "audit-accessibility-summary",
-  "audit-homepage-summary",
-  "audit-performance-summary",
-  "audit-public-site-summary",
-  "audit-security-summary",
-  "audit-technical-seo-summary",
-  "browser-errors",
-  "certificate-validity",
-  "content-security-policy",
-  "content-type-protection",
-  "canonical-declaration",
-  "cors-policy",
-  "document-language",
-  "document-structure",
-  "document-title",
-  "framing-protection",
-  "http-to-https-redirect",
-  "https-transport",
-  "https-url",
-  "homepage-content-links",
-  "homepage-content-summary",
-  "homepage-footer-links",
-  "homepage-link-check-coverage",
-  "homepage-navigation-links",
-  "homepage-structure",
-  "insecure-page-resources",
-  "lighthouse-accessibility",
-  "lighthouse-performance-run",
-  "lighthouse-performance-score",
-  "lighthouse-seo-run",
-  "lighthouse-seo-score",
-  "lab-cumulative-layout-shift",
-  "lab-largest-contentful-paint",
-  "lab-supporting-metrics",
-  "lab-total-blocking-time",
-  "image-delivery",
-  "layout-stability",
-  "lcp-resource-loading",
-  "main-thread-work",
-  "main-heading",
-  "meta-description",
-  "page-http-status",
-  "public-cookie-flags",
-  "referrer-policy",
-  "response-disclosure",
-  "redirect-chain",
-  "rendered-content",
-  "robots-txt",
-  "security-collection",
-  "security-txt",
-  "seo-collection",
-  "server-response-and-redirects",
-  "sitemap-discovery",
-  "strict-transport-security",
-  "render-blocking-resources",
-  "resource-caching-and-compression",
-  "third-party-impact",
-  "tls-cipher-suite",
-  "tls-deprecated-versions",
-  "tls-forward-secrecy",
-  "tls-key-exchange-group",
-  "tls-supported-versions",
-  "unused-code",
-  "crawlable-links",
-  "indexing-allowed",
-  "language-alternates",
-  "launch-collection",
-  "structured-data"
-]);
-const profiles = ["review-web-accessibility", "review-web-security", "review-web-performance", "review-technical-seo", "review-website-launch", "audit-web-project"];
+const profiles = (await readdir(profileDirectory)).filter((file) => file.endsWith(".json")).map((file) => file.slice(0, -5)).sort();
 
 for (const profileId of profiles) {
   const profilePath = path.join(profileDirectory, `${profileId}.json`);
   const profile = await readJson(profilePath);
+  validateCoverage(buildCoverage(profile), profileId);
 
   if (profile.id !== profileId) errors.push(`${profilePath} id must match its filename.`);
   if (!/^\d+\.\d+\.\d+$/.test(profile.version)) errors.push(`${profilePath} version must be semantic versioning without a range.`);
@@ -120,25 +50,7 @@ for (const profileId of profiles) {
     if (!new Set(["automated", "partial", "manual"]).has(item.automation)) errors.push(`${profilePath} has invalid automation value for ${item.id}: ${item.automation}`);
     if (!Array.isArray(item.evidenceCheckIds)) errors.push(`${profilePath} evidenceCheckIds must be an array for ${item.id}.`);
 
-    for (const evidenceCheckId of item.evidenceCheckIds ?? []) {
-      if (!knownEvidenceCheckIds.has(evidenceCheckId)) errors.push(`${profilePath} references unknown evidence check ${evidenceCheckId} from ${item.id}.`);
-    }
   }
-}
-
-for (const schemaName of ["review-evidence-v1.schema.json", "review-coverage-v1.schema.json"]) {
-  const schema = await readJson(path.join(runtimeDirectory, "schemas", schemaName));
-
-  if (schema.$schema !== "https://json-schema.org/draft/2020-12/schema" || schema.type !== "object" || !Array.isArray(schema.required)) {
-    errors.push(`${schemaName} is not a supported object schema.`);
-  }
-}
-
-for (const relativeScriptPath of ["runtime/scripts/review.mjs", "runtime/scripts/test-review-runner.mjs", "runtime/scripts/test-security-review-runner.mjs", "runtime/scripts/test-performance-review-runner.mjs", "runtime/scripts/test-technical-seo-review-runner.mjs", "runtime/scripts/test-launch-review-runner.mjs", "runtime/scripts/test-web-project-audit-runner.mjs"]) {
-  const scriptPath = path.join(repositoryRoot, "plugins", "web-dev-checklists", relativeScriptPath);
-  const result = spawnSync(process.execPath, ["--check", scriptPath], { encoding: "utf8" });
-
-  if (result.status !== 0) errors.push(`${relativeScriptPath} failed Node.js syntax validation: ${result.stderr.trim()}`);
 }
 
 for (const fixtureName of ["accessibility-pass.html", "accessibility-fail.html", "security-pass.html", "security-fail.html", "performance-pass.html", "performance-fail.html", "technical-seo-pass.html", "technical-seo-fail.html", "launch-pass.html", "launch-fail.html", "audit-pass.html", "audit-fail.html"]) {
@@ -156,7 +68,7 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-console.log(`Deterministic review runner: ${profiles.length} profiles map every canonical checklist item and schemas are valid JSON.`);
+console.log(`Deterministic review runner: ${profiles.length} profiles map every canonical checklist item and coverage conforms to its JSON schema.`);
 
 async function readJson(filePath) {
   return JSON.parse(await readFile(filePath, "utf8"));

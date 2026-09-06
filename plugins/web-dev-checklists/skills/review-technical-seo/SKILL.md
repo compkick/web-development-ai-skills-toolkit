@@ -33,8 +33,7 @@ Record available Search Console, analytics, server-log, sitemap, crawl, and migr
 
 Use the least intrusive combination that answers the request:
 
-- Use the plugin-owned deterministic runner with the `review-technical-seo` profile for each authorized public URL selected for the sample. Resolve the plugin root from this skill directory; do not assume the target project's working directory contains the runtime.
-- Before deciding that the plugin runtime is unavailable, run `node runtime/scripts/status.mjs --json` from the resolved plugin root. If it reports `ready: true`, run the profile directly; do not look for `node_modules` under the plugin or run bootstrap.
+- Use the plugin-owned deterministic runner with the `review-technical-seo` profile for each authorized public URL selected for the sample. Follow the [shared runtime procedure](references/website-audit-runtime-guide.md#install-the-runtime) for plugin resolution and readiness.
 - Read `evidence.json` for stable normalized observations, `coverage.json` for the automation boundary, `technical-seo-report.html` for the concise evidence summary, `seo-results.json` for rendered metadata and bounded robots/sitemap observations, and the Lighthouse HTML report for detailed diagnostics.
 - Treat each profile run as one rendered public page, not a whole-site crawl. The runner inventories links without fetching every destination and makes only bounded same-origin requests for `robots.txt` and up to three sitemap previews.
 - Inspect source, rendering strategy, routes, metadata generation, redirect configuration, sitemap generation, robots controls, canonical logic, structured data, localization, error handling, and deployment configuration when repository access is available.
@@ -66,15 +65,7 @@ Prioritize blocked or unintentionally indexed pages, wrong status codes, broken 
 
 ## Report results
 
-Return the readable report in the Codex response by default. Follow the shared report structure and include:
-
-1. Overall assessment and the most important actions
-2. Scope, environments, representative pages, tools, and evidence
-3. Crawlability and indexability findings
-4. URLs, canonicals, redirects, sitemaps, and migration findings
-5. Rendered content, metadata, structured data, and localization findings
-6. Search Console, analytics, logs, or baseline observations when available
-7. Passed checks, items not checked, limitations, retest needs, and supporting artifact paths
+Use the [shared report structure](references/web-review-contract.md#report-structure). Group findings by crawlability/indexability; URLs, canonicals, redirects, sitemaps, and migrations; and rendered content, metadata, structured data, and localization. Include Search Console, analytics, logs, or baseline observations when available.
 
 For each material finding, include the result, priority, affected scope, evidence, likely search or user impact, and the smallest practical recommendation. Do not turn every Lighthouse suggestion, crawl difference, or absent optional enhancement into a finding.
 

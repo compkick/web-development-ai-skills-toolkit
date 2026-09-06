@@ -33,8 +33,7 @@ Choose a representative sample rather than implying that one URL covers the site
 
 Use the least intrusive combination that answers the request:
 
-- Use the plugin-owned deterministic runner with the `review-web-performance` profile for an authorized public URL. Resolve the plugin root from this skill directory; do not assume the target project's working directory contains the runtime.
-- Before deciding that the plugin runtime is unavailable, run `node runtime/scripts/status.mjs --json` from the resolved plugin root. If it reports `ready: true`, run the profile directly; do not look for `node_modules` under the plugin or run bootstrap.
+- Use the plugin-owned deterministic runner with the `review-web-performance` profile for an authorized public URL. Follow the [shared runtime procedure](references/website-audit-runtime-guide.md#install-the-runtime) for plugin resolution and readiness.
 - Read `evidence.json` for stable normalized observations, `coverage.json` for the automation boundary, `performance-report.html` for the concise evidence summary, and the Lighthouse HTML report for detailed diagnostics.
 - Treat the profile as one repeatable 1440 × 900 desktop lab run. It does not measure field INP, mobile performance, warm-cache behavior, geographic variation, authenticated journeys, or important interactions.
 - Inspect source, build configuration, server rendering, data fetching, caching, compression, images, fonts, scripts, styles, third parties, and deployment configuration when repository access is available.
@@ -58,15 +57,7 @@ Prioritize meaningful regressions, slow critical journeys, poor field Core Web V
 
 ## Report results
 
-Return the readable report in the Codex response by default. Follow the shared report structure and include:
-
-1. Overall assessment and the most important actions
-2. Scope, environment, pages, devices, conditions, budgets, tools, and evidence
-3. Field Core Web Vitals and important user outcomes when available
-4. Desktop lab results and likely causes
-5. Critical and high-priority findings
-6. Other findings, passed checks, and recommendations
-7. Items not checked, limitations, retest needs, and supporting artifact paths
+Use the [shared report structure](references/web-review-contract.md#report-structure). Include pages, devices, conditions, and budgets in the scope. Present field Core Web Vitals and important user outcomes when available, then desktop lab results and likely causes.
 
 For each material finding, include the result, priority, affected scope, evidence, user or business impact, and the smallest practical recommendation. Separate measured regressions from optimization opportunities.
 

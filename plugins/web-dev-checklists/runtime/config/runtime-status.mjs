@@ -6,7 +6,7 @@ export async function getRuntimeStatus() {
   const location = await getRuntimeLocation();
   const readyMarkerPath = path.join(location.runtimeDirectory, "runtime-ready.json");
   const playwrightPackagePath = path.join(location.runtimeDirectory, "node_modules", "playwright", "package.json");
-  const workerPath = path.join(location.runtimeDirectory, "scripts", "worker.mjs");
+  const workerPath = location.workerPath;
   const [readyMarker, playwrightInstalled, workerInstalled, browserCacheExists] = await Promise.all([
     readJson(readyMarkerPath),
     exists(playwrightPackagePath),
@@ -19,7 +19,10 @@ export async function getRuntimeStatus() {
   if (!readyMarker) reasons.push("The matching runtime-ready.json marker is missing or unreadable.");
   else if (!readyMarkerMatches) reasons.push("The runtime-ready.json marker does not match this plugin runtime.");
   if (!playwrightInstalled) reasons.push("The pinned Playwright dependency is not installed in the runtime cache.");
-  if (!workerInstalled) reasons.push("The cached audit worker is missing.");
+  for (const [name, version] of Object.entries(location.dependencies)) {
+    const installed = await readJson(path.join(location.runtimeDirectory, "node_modules", name, "package.json"));
+    if (installed?.version !== version) reasons.push(`The pinned ${name}@${version} dependency is missing or does not match.`);
+  }
 
   return {
     browserCacheExists,
@@ -32,7 +35,9 @@ export async function getRuntimeStatus() {
     reasons,
     runtimeDirectory: location.runtimeDirectory,
     runtimeKey: location.runtimeKey,
-    workerInstalled
+    workerInstalled,
+    workerDirectory: location.workerDirectory,
+    workerKey: location.workerKey
   };
 }
 

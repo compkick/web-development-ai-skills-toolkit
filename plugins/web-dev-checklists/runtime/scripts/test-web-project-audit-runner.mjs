@@ -1,7 +1,6 @@
-import { spawn } from "node:child_process";
-import { mkdtemp, readFile, rm, stat } from "node:fs/promises";
+import { createFixtureDirectory, listen, closeFixture, runCommand, readJson, assertEvidence, assertCheckStatus, assertArtifacts, sendHtml } from "../testing/fixture-harness.mjs";
+import { readFile, stat } from "node:fs/promises";
 import http from "node:http";
-import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
@@ -12,7 +11,8 @@ const runtimeDirectory = path.resolve(scriptsDirectory, "..");
 const reviewScript = path.join(scriptsDirectory, "review.mjs");
 const passFixtureTemplate = await readFile(path.join(runtimeDirectory, "fixtures", "audit-pass.html"), "utf8");
 const failFixture = await readFile(path.join(runtimeDirectory, "fixtures", "audit-fail.html"), "utf8");
-const testDirectory = await mkdtemp(path.join(os.tmpdir(), "ai-agent-skills-toolkit-web-audit-test-"));
+const testDirectory = await createFixtureDirectory("ai-agent-skills-toolkit-web-audit-test-");
+const run = (command, args, cwd = testDirectory) => runCommand(command, args, cwd);
 const passOutputDirectory = path.join(testDirectory, "pass-output");
 const failOutputDirectory = path.join(testDirectory, "fail-output");
 let baseUrl;
@@ -29,10 +29,7 @@ const server = http.createServer((request, response) => {
 });
 
 try {
-  await new Promise((resolve, reject) => {
-    server.once("error", reject);
-    server.listen(0, "127.0.0.1", resolve);
-  });
+  await listen(server);
 
   const address = server.address();
   baseUrl = `http://127.0.0.1:${address.port}`;
@@ -44,8 +41,8 @@ try {
   const coverage = await readJson(path.join(failOutputDirectory, "coverage.json"));
   const failReport = await readFile(path.join(failOutputDirectory, "web-project-audit-report.html"), "utf8");
 
-  validateEvidenceShape(passEvidence);
-  validateEvidenceShape(failEvidence);
+  assertEvidence(passEvidence, "audit-web-project");
+  assertEvidence(failEvidence, "audit-web-project");
 
   for (const checkId of ["audit-public-site-summary", "audit-accessibility-summary", "audit-security-summary", "audit-performance-summary", "audit-technical-seo-summary", "audit-homepage-summary"]) {
     if (!failEvidence.checks.some((check) => check.id === checkId)) throw new Error(`Web project audit evidence is missing ${checkId}.`);
@@ -79,16 +76,12 @@ try {
   await verifyReportStates(passEvidence, coverage);
 
   for (const outputDirectory of [passOutputDirectory, failOutputDirectory]) {
-    for (const artifact of ["evidence.json", "coverage.json", "summary.json", "page.png", "axe-results.json", "axe-report.html", "lighthouse-report.json", "lighthouse-report.html", "security-results.json", "security-report.html", "seo-results.json", "technical-seo-report.html", "launch-results.json", "launch-readiness-report.html", "performance-report.html", "web-project-audit-report.html"]) {
-      const artifactStats = await stat(path.join(outputDirectory, artifact));
-      if (!artifactStats.isFile() || artifactStats.size === 0) throw new Error(`Web project audit produced an empty or invalid artifact: ${artifact}`);
-    }
+    await assertArtifacts(outputDirectory, ["evidence.json", "coverage.json", "summary.json", "page.png", "axe-results.json", "accessibility-report.html", "lighthouse-report.json", "lighthouse-report.html", "security-results.json", "security-report.html", "seo-results.json", "technical-seo-report.html", "launch-results.json", "launch-readiness-report.html", "performance-report.html", "web-project-audit-report.html"]);
   }
 
   console.log("Deterministic web project audit self-test passed for combined public evidence, problem, healthy-summary, and incomplete-summary cases.");
 } finally {
-  await new Promise((resolve) => server.close(resolve));
-  await rm(testDirectory, { recursive: true, force: true });
+  await closeFixture(server, testDirectory);
 }
 
 async function verifyReportStates(sourceEvidence, coverage) {
@@ -114,35 +107,7 @@ function protectedHeaders() {
   };
 }
 
-function sendHtml(response, html, headers = {}) {
-  send(response, 200, html, { "Content-Type": "text/html; charset=utf-8", ...headers });
-}
-
 function send(response, status, body, headers = {}) {
   response.writeHead(status, headers);
   response.end(body);
-}
-
-function assertCheckStatus(evidence, checkId, expectedStatus) {
-  const check = evidence.checks.find((candidate) => candidate.id === checkId);
-  if (!check || check.status !== expectedStatus) throw new Error(`Expected ${checkId} to be ${expectedStatus}, found ${check?.status ?? "missing"}.`);
-}
-
-function validateEvidenceShape(evidence) {
-  if (evidence.schemaVersion !== "1.0.0" || evidence.profile.id !== "audit-web-project" || !Array.isArray(evidence.checks) || !Array.isArray(evidence.artifacts) || !Array.isArray(evidence.limitations)) {
-    throw new Error("Web project audit evidence output does not match the required top-level shape.");
-  }
-  if (evidence.run.browser.formFactor !== "desktop") throw new Error("Web project audit evidence must record the desktop browser baseline.");
-}
-
-function run(command, argumentsToRun) {
-  return new Promise((resolve, reject) => {
-    const child = spawn(command, argumentsToRun, { cwd: testDirectory, env: process.env, stdio: "inherit" });
-    child.once("error", reject);
-    child.once("exit", (code) => code === 0 ? resolve() : reject(new Error(`Web project audit command exited with code ${code}.`)));
-  });
-}
-
-async function readJson(filePath) {
-  return JSON.parse(await readFile(filePath, "utf8"));
 }
