@@ -60,6 +60,7 @@ Sitefinity is retained as specialist maintenance guidance. New general and WordP
 - [Contributing](CONTRIBUTING.md)
 - [Agent authoring instructions](AGENTS.md)
 - [Modernization plan](modernization-plan.md)
+- [Publishing copy and artwork](publishing-kit.md)
 - [Supported platforms](docs/supported-platforms-reference.md)
 - [MIT license](LICENSE)
 
