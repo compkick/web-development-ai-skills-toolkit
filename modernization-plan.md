@@ -10,7 +10,7 @@ This file is the canonical implementation roadmap. Update it as work is complete
 
 - Plan status: In progress
 - Current phase: Phase 5 (Phase 4 complete)
-- Next work item: Validate broader trigger coverage and supported platforms before publishing the core library
+- Next work item: Finish negative-trigger and installed-metadata checks, confirm Linux browser CI, and tag the first public release
 - Last reviewed: 2026-09-05
 
 ## Guiding decisions
@@ -316,23 +316,23 @@ Phase 4 closed on 2026-09-05 following the developer's successful CLI and Codex 
 
 ## Phase 5: Validate and publish the core library
 
-- [ ] Test positive and negative trigger examples.
-- [ ] Test a static or content-led site.
-- [ ] Test a JavaScript web application.
-- [ ] Test a CMS-backed site.
-- [ ] Test missing-tool and incomplete-context behavior.
+- [x] Test positive trigger examples.
+- [ ] Test negative trigger examples.
+- [x] Test a static or content-led site.
+- [x] Test a JavaScript web application.
+- [x] Test a CMS-backed site.
+- [x] Test missing-tool and incomplete-context behavior.
 - [ ] Verify scripts on the supported operating systems.
-- [ ] Obtain approval before independent-agent forward testing if that testing
-      could be lengthy or modify live systems.
-- [ ] Forward-test skills using fresh context and raw artifacts.
+- [x] Obtain approval before independent-agent forward testing if that testing could be lengthy or modify live systems.
+- [x] Forward-test skills using fresh context and raw artifacts.
 - [x] Add `.codex-plugin/plugin.json`.
 - [x] Add a repository or personal marketplace entry for local installation.
 - [x] Choose and add a license.
 - [x] Adopt semantic versioning and validate one shared release version across the repository package, audit runtime, and plugin manifest base version.
 - [x] Add plugin installation and usage guidance to the repository README.
 - [x] Add basic plugin metadata.
-- [ ] Add presentation assets if they materially improve discovery.
-- [x] Validate Markdown, links, manifests, and skills in CI.
+- [x] Add presentation assets if they materially improve discovery.
+- [ ] Validate Markdown, links, manifests, and skills in CI for the release candidate.
 
 ### Phase 5 exit criteria
 
@@ -341,9 +341,21 @@ Phase 4 closed on 2026-09-05 following the developer's successful CLI and Codex 
   - [x] The plugin installs from the **Personal** marketplace in the Plugins browser.
   - [x] A new task exposes `review-web-accessibility` and `review-web-security` outside this repository.
 - [ ] All six skills appear with correct metadata.
-- [ ] Representative forward tests produce useful and bounded results.
-- [ ] Packaged skills include all required references and scripts.
+- [x] Representative forward tests produce useful and bounded results.
+- [x] Packaged skills include all required references and scripts.
 - [ ] The first public release is tagged and reproducible.
+
+### Phase 5 evidence and remaining work
+
+Testing reviewed on 2026-09-05:
+
+- The owner tested security, SEO, accessibility, and launch readiness on a fresh Windows 11 PC using a fresh Codex task and `computerkick.com` (WordPress/Elementor). The supplied command log confirms first-use dependency and Chromium bootstrap, bounded representative-page reviews, and recovery from a Codex sandbox startup restriction. The owner reviewed the saved artifacts. This establishes fresh-PC and fresh-context testing, not every operating system or every skill on that PC.
+- The owner exercised all six skills through CLI and Codex. The latest saved deterministic packages cover `computerkick.com`, `cms.example`, the JavaScript application at `app.example`, and `staging.example`. Their evidence/coverage schemas, listed artifacts, and custom-report local links passed inspection. This is public-page coverage, not authenticated CMS testing or complete application-journey testing. The application capture records image/scroll limitations rather than a complete visual pass.
+- Approved Windows tests passed `repo:check`, `runtime:test`, all six `reviews:test` suites, and official skill/plugin validation. Missing-cache fixtures and the saved mistyped-host run produce incomplete evidence instead of a website failure. Fresh-agent reports also identify backend and operational checks they cannot verify. Reference synchronization and packaged runtime checks pass.
+
+Keep Phase 5 open for a small, concrete final pass: test unrelated requests that should not invoke these skills; visually confirm all six installed display names/descriptions; restore passing release-candidate CI, including the Linux browser job; and tag the reviewed release with reproducible setup instructions. Windows is tested; macOS remains explicitly best effort. GitHub confirms that the repository is private and has no published releases; no tag is present locally. The latest Actions run, `34001003941` for commit `ed86cfc`, failed before any jobs were recorded; the preceding two runs passed. The CI checkbox is reopened for the current candidate, not because the earlier validation never happened. Confirm public access before announcing the release.
+
+Publishing copy and the presentation-asset record live in [publishing-kit.md](publishing-kit.md). These are prepared materials, not evidence that a page, post, plugin listing, or release has been published. The draft's repository and Issues URLs currently fail anonymous link validation because the repository is private; the other local checks pass.
 
 ## Phase 6: Optional specialized skills
 
