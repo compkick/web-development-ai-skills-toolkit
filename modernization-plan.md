@@ -9,9 +9,9 @@ This file is the canonical implementation roadmap. Update it as work is complete
 ## Status
 
 - Plan status: In progress
-- Current phase: Phase 5 (Phase 4 complete)
-- Next work item: Finish installed-metadata checks, confirm Linux browser CI, and tag the first public release
-- Last reviewed: 2026-09-05
+- Current phase: Phase 6 (Phases 1–5 complete)
+- Next work item: Prepare the public release and marketplace submission; clear the remaining release gates
+- Last reviewed: 2026-09-09
 
 ## Guiding decisions
 
@@ -314,7 +314,7 @@ When an existing human checklist becomes a skill reference, keep the canonical c
 
 Phase 4 closed on 2026-09-05 following the developer's successful CLI and Codex tests of all six reviews. The fresh Codex task `01a0703e-63ba-7202-bd6d-3162dbc6f471` also confirmed natural-language invocation, specialist routing, and evidence-backed findings. Broader trigger and platform testing remains in Phase 5.
 
-## Phase 5: Validate and publish the core library
+## Phase 5: Validate the core library
 
 - [x] Test positive trigger examples.
 - [x] Test negative trigger examples.
@@ -322,7 +322,7 @@ Phase 4 closed on 2026-09-05 following the developer's successful CLI and Codex 
 - [x] Test a JavaScript web application.
 - [x] Test a CMS-backed site.
 - [x] Test missing-tool and incomplete-context behavior.
-- [ ] Verify scripts on the supported operating systems.
+- [x] Verify runtime scripts on Windows and Ubuntu; macOS remains untested.
 - [x] Obtain approval before independent-agent forward testing if that testing could be lengthy or modify live systems.
 - [x] Forward-test skills using fresh context and raw artifacts.
 - [x] Add `.codex-plugin/plugin.json`.
@@ -332,7 +332,6 @@ Phase 4 closed on 2026-09-05 following the developer's successful CLI and Codex 
 - [x] Add plugin installation and usage guidance to the repository README.
 - [x] Add basic plugin metadata.
 - [x] Add presentation assets if they materially improve discovery.
-- [ ] Validate Markdown, links, manifests, and skills in CI for the release candidate.
 
 ### Phase 5 exit criteria
 
@@ -340,26 +339,55 @@ Phase 4 closed on 2026-09-05 following the developer's successful CLI and Codex 
   - [x] The repository-local marketplace registers successfully with Codex CLI.
   - [x] The plugin installs from the **Personal** marketplace in the Plugins browser.
   - [x] A new task exposes `review-web-accessibility` and `review-web-security` outside this repository.
-- [ ] All six skills appear with correct metadata.
 - [x] Representative forward tests produce useful and bounded results.
 - [x] Packaged skills include all required references and scripts.
-- [ ] The first public release is tagged and reproducible.
 
-### Phase 5 evidence and remaining work
+### Phase 5 evidence and closure
 
 Testing reviewed on 2026-09-05:
 
-- The owner tested security, SEO, accessibility, and launch readiness on the separate DorkAround Box 2026 using a fresh Codex task and `computerkick.com` (WordPress/Elementor). The supplied command log confirms first-use dependency and Chromium bootstrap, bounded representative-page reviews, and recovery from a Codex sandbox startup restriction. The owner reviewed the saved artifacts. This establishes fresh-PC and fresh-context testing, not every operating system or every skill on that PC.
-- The owner exercised all six skills through CLI and Codex. The latest saved deterministic packages cover `computerkick.com`, `cms.example`, the JavaScript application at `app.example`, and `staging.example`. Their evidence/coverage schemas, listed artifacts, and custom-report local links passed inspection. This is public-page coverage, not authenticated CMS testing or complete application-journey testing. The AARP capture records image/scroll limitations rather than a complete visual pass.
+- The owner tested security, SEO, accessibility, and launch readiness on a fresh Windows 11 PC using a fresh Codex task and `computerkick.com` (WordPress/Elementor). The supplied command log confirms first-use dependency and Chromium bootstrap, bounded representative-page reviews, and recovery from a Codex sandbox startup restriction. The owner reviewed the saved artifacts. This establishes fresh-PC and fresh-context testing, not every operating system or every skill on that PC.
+- The owner exercised all six skills through CLI and Codex. The latest saved deterministic packages cover a variety of static websites, CMS and WordPress websites, a JavaScript application and a Next.JS / React app. Their evidence/coverage schemas, listed artifacts, and custom-report local links passed inspection. This is public-page coverage, not authenticated CMS testing or complete application-journey testing. The AARP capture records image/scroll limitations rather than a complete visual pass.
 - Approved Windows tests passed `repo:check`, `runtime:test`, all six `reviews:test` suites, and official skill/plugin validation. Missing-cache fixtures and the saved mistyped-host run produce incomplete evidence instead of a website failure. Fresh-agent reports also identify backend and operational checks they cannot verify. Reference synchronization and packaged runtime checks pass.
 
 - On 2026-09-09, the owner supplied negative-trigger logs: a website-opinion request explicitly opting out of skills used direct browser/search tools without a toolkit invocation in the supplied log; a subsequent standalone headline-rewrite request received only rewritten copy. These establish representative opt-out and unrelated-request behavior, not exhaustive trigger coverage.
 
-Keep Phase 5 open for a small, concrete final pass: visually confirm all six installed display names/descriptions; restore passing release-candidate CI, including the Linux browser job; and tag the reviewed release with reproducible setup instructions. Windows is tested; macOS is untested and is not a release gate. The latest inspected Actions run, `34013296270` for commit `73e4760`, failed before any jobs were recorded. On 2026-09-09, the invalid job-level `runner.temp` expression was replaced with a step that exports the isolated cache path through `GITHUB_ENV`. A passing GitHub run is still required; a local workflow correction is not CI evidence. Confirm public access before announcing the release.
+Phase 5 closed on 2026-09-09 by agreement with the owner, with publication separated into Phase 6. GitHub Actions run `34392195263` for commit `fb046b5` passed the Ubuntu 22.04 browser-fixture job: fresh dependency/bootstrap setup, matching Chromium installation, runtime and screenshot tests, and all six review-profile suites. Windows and Ubuntu runtime testing are complete; macOS is untested and is not a release gate. The validation job passed Markdown linting and internal links, then stopped at two anonymous 404 responses for the private repository and Issues page. Later validation stages did not run in that job. Full release-candidate CI, final installed display-metadata inspection, and the release tag move to Phase 6 as unfinished gates, not completed tests.
 
 Publishing copy and the presentation-asset record live in [publishing-kit.md](publishing-kit.md). These are prepared materials, not evidence that a page, post, plugin listing, or release has been published. The draft's repository and Issues URLs currently fail anonymous link validation because the repository is private; the other local checks pass.
 
-## Phase 6: Optional specialized skills
+## Phase 6: Publish the core library
+
+Keep release preparation separate from completed functional testing. A public GitHub release and an approved marketplace listing are different distribution channels; neither automatically creates the other. Public GitHub plus marketplace distribution is the recommended approach, pending the owner's decision. Do not change repository visibility or submit/publish externally without approval.
+
+### Release preparation
+
+- [ ] Confirm distribution channels and review tracked files and Git history for sensitive or non-redistributable material before public exposure.
+- [ ] Validate Markdown, links, manifests, and skills in CI for the release candidate, including official skill/plugin validation; resolve the private-link failures without silently disabling checks.
+- [ ] Confirm all six installed skills appear with correct display names and descriptions.
+- [ ] Build a clean release bundle with the six skills, generated references, shared runtime, and required assets; exclude evidence, caches, and installed dependencies.
+- [ ] Test installation and runtime resolution from the exact release bundle in fresh context.
+- [ ] Tag the reviewed version and publish reproducible installation instructions and release notes.
+
+### Public distribution and discovery
+
+- [ ] If approved, make GitHub public and verify anonymous repository, download, and Issues access.
+- [ ] Publish the Computerkick project page with the prepared descriptions, features, limitations, requirements, and installation instructions.
+- [ ] Provide public support, privacy, and terms pages that accurately describe the toolkit and data handling.
+- [ ] Prepare marketplace listing assets, starter prompts, release notes, and at least five positive and three negative reproducible test cases.
+- [ ] Confirm publisher identity and submission access, and verify that the portal bundle preserves the shared runtime layout.
+- [ ] Submit the skills-only plugin for review; address review feedback and publish after approval.
+- [ ] Verify the published listing and installation, then share to LinkedIn and Facebook and evaluate other useful discovery channels.
+
+Use [publishing-kit.md](publishing-kit.md) for reusable copy and assets. Marketplace requirements were checked against the [official submission guide](https://developers.openai.com/plugins/deploy/submission) on 2026-09-09; recheck them before submission. The marketplace submission test cases are reviewer-facing release materials, distinct from the representative Phase 5 trigger tests.
+
+### Phase 6 exit criteria
+
+- [ ] Release-candidate CI is green and the tagged package is reproducible.
+- [ ] Approved distribution channels are live and installation has been verified.
+- [ ] Listing, support, limitations, and release notes match the published version.
+
+## Phase 7: Optional specialized skills
 
 ### WordPress skills
 
@@ -405,14 +433,13 @@ Add a specialized skill only when:
 7. Five specialist core skills
 8. Cross-discipline audit skill
 9. Core plugin validation and packaging
-10. Optional specialized skill families
+10. Public release and marketplace publishing
+11. Optional specialized skill families
 
 ## Project publishing and go-live
 
 - [x] Adopt the public name **Web Development AI Skills Toolkit** and align the public-facing titles and plugin display name; retain existing internal npm and plugin identifiers.
-- Set up public page on Computerkick
-- Share to LinkedIn and Facebook
-- Brainstorm marketing and sharing ideas
+Publication tasks and discovery work are tracked in Phase 6 above.
 
 ## Plan maintenance rules
 
@@ -426,6 +453,7 @@ Add a specialized skill only when:
 
 | Date | Decision | Reason |
 | --- | --- | --- |
+| 2026-09-09 | Close Phase 5 functional validation, make Phase 6 publication, and move optional specialized skills to Phase 7. | Windows and Linux runtime tests and representative agent tests are complete; unfinished release CI, metadata inspection, packaging, and public distribution remain explicit Phase 6 gates. |
 | 2026-07-21 | Modernize and normalize documentation before building skills. | Skills should encode reviewed guidance, not preserve stale advice. |
 | 2026-07-21 | Make WordPress the primary CMS documentation track. | Expected future work is more WordPress-focused. |
 | 2026-07-21 | Retain Sitefinity as lower-priority specialist guidance. | Existing knowledge remains useful, but should not define the core library. |
