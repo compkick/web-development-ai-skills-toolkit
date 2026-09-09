@@ -12,7 +12,7 @@ A Sitefinity upgrade happens once to the code, on a single branch. Then the new 
 
 The upgraded code and upgraded database must move together. Do not point old code at an upgraded database unless you have verified that the version combination is supported.
 
-Run Visual Studio as administrator only when the local IIS or file-system operation requires elevation.
+Run Visual Studio as administrator for this Sitefinity/local IIS setup.
 
 Confirm that uploaded media and other mutable Sitefinity data use the project's documented persistent storage provider rather than an ephemeral deployment location.
 
@@ -72,11 +72,11 @@ Before changing code or data, confirm the following:
 
 ### Code prep
 
-- Checkout to develop branch
+- Checkout to develop/integration branch
 - Make sure your local git is current (fetch and pull, for develop and main)
-- Optional - Create a clearly named pre-upgrade branch or tag when the team's source-control policy uses one
-- **Important:** Verify that the database connection string points to your restored local dev database
-- From the integration branch, create a clearly named upgrade branch that includes the target release
+- Optional - Create a clearly named pre-upgrade backup branch or tag when the team's source-control policy uses one
+- **Important:** Verify that the database connection string points to your local dev database
+- From the develop branch, create a clearly named upgrade branch that includes the target release
 - Close Visual Studio (if open)
 - Confirm no secrets, licenses, `.bacpac` files, or database backups are staged in git
 
@@ -117,6 +117,7 @@ sf upgrade "{path to solution file to upgrade}" "{specific version to upgrade to
 
 ### Rebuild solution
 
+- Reopen Visual Studio to the solution file
 - Clean solution
 - Rebuild solution
 
@@ -194,6 +195,7 @@ If you run into build errors after an upgrade, a common fix is to run Clean Solu
 - Review Visual Studio build output
 - Review Azure DevOps pipeline logs
 - Review Azure App Service application and event logs
+- If stale deployment files cause startup errors, confirm the target app/slot and back up any persistent files. Clear the deployed application files, then redeploy the verified build.
 - Check browser console errors on affected frontend/admin pages
 - Confirm the active connection string points to the expected database
 - Confirm the deployed license file matches the upgraded Sitefinity version
