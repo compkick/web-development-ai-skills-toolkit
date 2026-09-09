@@ -1,0 +1,107 @@
+name: Documentation and skills
+
+on:
+  pull_request:
+    paths:
+      - "**/*.md"
+      - ".editorconfig"
+      - ".gitattributes"
+      - ".github/workflows/docs.yml"
+      - ".agents/plugins/**"
+      - ".markdownlint.jsonc"
+      - "package.json"
+      - "package-lock.json"
+      - "scripts/**"
+      - "requirements-dev.txt"
+      - "plugins/**"
+  push:
+    branches:
+      - develop
+      - main
+    paths:
+      - "**/*.md"
+      - ".editorconfig"
+      - ".gitattributes"
+      - ".github/workflows/docs.yml"
+      - ".agents/plugins/**"
+      - ".markdownlint.jsonc"
+      - "package.json"
+      - "package-lock.json"
+      - "scripts/**"
+      - "requirements-dev.txt"
+      - "plugins/**"
+  schedule:
+    - cron: "23 8 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: documentation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Validate documentation and skill references
+        run: npm run repo:check
+
+  browser-fixtures:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 35
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install repository test dependencies
+        run: npm ci
+
+      - name: Configure isolated runtime cache
+        # runner context is unavailable in job-level env; export it from a step.
+        run: echo "WEB_DEV_CHECKLISTS_CACHE=$RUNNER_TEMP/toolkit-runtime" >> "$GITHUB_ENV"
+
+      - name: Bootstrap isolated audit dependencies
+        run: npm run runtime:bootstrap -- --skip-browser-download
+
+      - name: Install matching Chromium and Linux browser dependencies
+        run: |
+          node --input-type=module <<'NODE'
+          import { spawnSync } from 'node:child_process';
+          import path from 'node:path';
+          import { getRuntimeLocation } from './plugins/web-dev-checklists/runtime/config/runtime-config.mjs';
+          const { runtimeDirectory, browserDirectory } = await getRuntimeLocation();
+          const result = spawnSync(process.execPath, [path.join(runtimeDirectory, 'node_modules/playwright/cli.js'), 'install', '--with-deps', 'chromium'], {
+            env: { ...process.env, PLAYWRIGHT_BROWSERS_PATH: browserDirectory }, stdio: 'inherit'
+          });
+          if (result.error) throw result.error;
+          process.exit(result.status ?? 1);
+          NODE
+
+      - name: Test the browser runtime and screenshot readiness
+        run: npm run runtime:test
+
+      - name: Test all six deterministic review profiles
+        run: npm run reviews:test

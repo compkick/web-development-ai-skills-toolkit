@@ -1,0 +1,4 @@
+interface:
+  display_name: "Website Launch Readiness Review"
+  short_description: "Make an evidence-backed launch decision."
+  default_prompt: "Use $review-website-launch to decide whether this website is ready to launch."

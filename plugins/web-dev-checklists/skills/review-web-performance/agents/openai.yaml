@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Web Performance"
+  short_description: "Review website performance with lab evidence"
+  default_prompt: "Use $review-web-performance to review this website and prioritize its performance findings."

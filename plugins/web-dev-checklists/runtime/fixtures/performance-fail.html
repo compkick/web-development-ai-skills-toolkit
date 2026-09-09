@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Performance attention fixture</title>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      window.setTimeout(() => {
+        const blockingStart = performance.now();
+        while (performance.now() - blockingStart < 1800) {
+          Math.sqrt(Math.random());
+        }
+      }, 250);
+    });
+  </script>
+</head>
+<body>
+  <main>
+    <h1>Performance attention fixture</h1>
+    <p>This local fixture deliberately blocks the main thread so the performance profile has an attention result.</p>
+  </main>
+</body>
+</html>

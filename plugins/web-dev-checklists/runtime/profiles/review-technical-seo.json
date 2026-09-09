@@ -1,0 +1,172 @@
+{
+  "id": "review-technical-seo",
+  "version": "1.0.0",
+  "checklistSource": "docs/technical-seo-review-checklist.md",
+  "standard": "Google Search technical requirements and durable technical SEO guidance",
+  "runtime": {
+    "collectSeo": true,
+    "skipAccessibility": true
+  },
+  "coverage": [
+    {
+      "id": "seo-prepare-scope",
+      "section": "Prepare",
+      "checklistItem": "Identify the public hosts, environments, important page types, and URL changes in scope.",
+      "automation": "partial",
+      "evidenceCheckIds": ["seo-collection", "redirect-chain"],
+      "note": "The runner records one requested and final URL; the reviewer identifies all hosts, environments, templates, and URL changes that represent the site."
+    },
+    {
+      "id": "seo-prepare-indexing-intent",
+      "section": "Prepare",
+      "checklistItem": "Confirm which pages should and should not appear in search results.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Indexing intent is a project and content decision that must be recorded before interpreting robots and noindex signals."
+    },
+    {
+      "id": "seo-prepare-baseline",
+      "section": "Prepare",
+      "checklistItem": "Record access to search and analytics tools and establish a baseline before major changes.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The local runner does not access Search Console, analytics, server logs, rankings, or historical data."
+    },
+    {
+      "id": "seo-crawl-representative-pages",
+      "section": "Crawl and indexing",
+      "checklistItem": "Crawl representative public pages and review status codes, links, canonicals, and robots directives.",
+      "automation": "partial",
+      "evidenceCheckIds": ["page-http-status", "crawlable-links", "canonical-declaration", "indexing-allowed", "robots-txt"],
+      "note": "The profile reviews one supplied page and inventories its links; a representative multi-page crawl still requires selected URLs or an approved crawler."
+    },
+    {
+      "id": "seo-crawl-important-pages",
+      "section": "Crawl and indexing",
+      "checklistItem": "Confirm important pages are linked, return the correct status, and contain useful content.",
+      "automation": "partial",
+      "evidenceCheckIds": ["page-http-status", "crawlable-links", "rendered-content"],
+      "note": "The runner checks the supplied page and its link inventory; importance, inbound discovery, content usefulness, and other pages require representative review."
+    },
+    {
+      "id": "seo-crawl-unwanted-pages",
+      "section": "Crawl and indexing",
+      "checklistItem": "Keep private, test, staging, search-result, and other unwanted pages out of the index.",
+      "automation": "partial",
+      "evidenceCheckIds": ["indexing-allowed"],
+      "note": "The runner observes indexing directives for one public page; the reviewer must identify and test every unwanted environment and page class."
+    },
+    {
+      "id": "seo-crawl-private-access",
+      "section": "Crawl and indexing",
+      "checklistItem": "Use authentication or access controls for private environments, not `robots.txt` alone.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Private-environment protection requires hosting, identity, network, and authorized access evidence that a public page review cannot establish."
+    },
+    {
+      "id": "seo-crawl-sitemaps-and-links",
+      "section": "Crawl and indexing",
+      "checklistItem": "Provide accurate XML sitemaps and remove broken links, redirect chains, and loops.",
+      "automation": "partial",
+      "evidenceCheckIds": ["sitemap-discovery", "crawlable-links", "redirect-chain"],
+      "note": "The runner previews up to three same-origin sitemap files and inventories page links without fetching them; full sitemap accuracy, broken-link checking, and redirect-loop testing require a bounded crawl."
+    },
+    {
+      "id": "seo-url-preferred-host",
+      "section": "URLs and canonicals",
+      "checklistItem": "Use one consistent HTTPS host and redirect other versions to it.",
+      "automation": "partial",
+      "evidenceCheckIds": ["https-url", "redirect-chain", "canonical-declaration"],
+      "note": "The profile records the supplied URL's redirect and final host; HTTP, www, non-www, alternate-domain, and environment variants require separate authorized checks."
+    },
+    {
+      "id": "seo-url-canonical",
+      "section": "URLs and canonicals",
+      "checklistItem": "Give indexable pages a correct canonical URL and keep site signals consistent.",
+      "automation": "partial",
+      "evidenceCheckIds": ["canonical-declaration", "indexing-allowed", "sitemap-discovery"],
+      "note": "The runner checks canonical syntax and reports whether it is self-referential; correctness and consistency across internal links, redirects, sitemaps, and duplicate pages require broader evidence."
+    },
+    {
+      "id": "seo-url-duplicates",
+      "section": "URLs and canonicals",
+      "checklistItem": "Control duplicate URLs created by filters, tracking parameters, print views, or alternate formats.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Duplicate discovery requires URL-pattern, crawl, analytics, source, and platform evidence beyond one supplied page."
+    },
+    {
+      "id": "seo-url-not-found-and-migration",
+      "section": "URLs and canonicals",
+      "checklistItem": "Return real not-found responses and test old-to-new redirects when URLs change.",
+      "automation": "partial",
+      "evidenceCheckIds": ["page-http-status", "redirect-chain"],
+      "note": "The runner records the supplied URL's status and redirect chain; representative missing URLs and the approved old-to-new migration map must be tested separately."
+    },
+    {
+      "id": "seo-content-title-heading",
+      "section": "Page content and metadata",
+      "checklistItem": "Give each important page a useful title and main heading.",
+      "automation": "partial",
+      "evidenceCheckIds": ["document-title", "main-heading", "meta-description"],
+      "note": "The profile checks presence on one page and records a meta-description candidate; usefulness, uniqueness, language, and alignment with visible content require human and multi-page review."
+    },
+    {
+      "id": "seo-content-rendered",
+      "section": "Page content and metadata",
+      "checklistItem": "Confirm important content is present in rendered HTML and works without user interaction.",
+      "automation": "partial",
+      "evidenceCheckIds": ["rendered-content", "browser-errors"],
+      "note": "The Playwright run records rendered text and browser errors for the initial page state; content importance, crawler rendering differences, and interaction-dependent states require further review."
+    },
+    {
+      "id": "seo-content-structured-data",
+      "section": "Page content and metadata",
+      "checklistItem": "Add valid structured data only when it matches visible page content.",
+      "automation": "partial",
+      "evidenceCheckIds": ["structured-data", "rendered-content"],
+      "note": "The runner parses JSON-LD syntax and inventories Microdata and RDFa; schema validity, rich-result eligibility, and agreement with visible content require authoritative validation and human review."
+    },
+    {
+      "id": "seo-content-language-alternates",
+      "section": "Page content and metadata",
+      "checklistItem": "Check language and `hreflang` relationships for localized sites.",
+      "automation": "partial",
+      "evidenceCheckIds": ["language-alternates"],
+      "note": "The profile inventories the current page's declarations and Lighthouse syntax result; reciprocal links, canonicals, regional targeting, and the complete locale set require multi-page review."
+    },
+    {
+      "id": "seo-launch-remove-noindex",
+      "section": "Launch and monitoring",
+      "checklistItem": "Remove unintended `noindex` controls when the production site is ready.",
+      "automation": "automated",
+      "evidenceCheckIds": ["indexing-allowed"],
+      "note": "For the supplied page, the runner checks rendered robots directives, the X-Robots-Tag header, robots.txt blocking observed by Lighthouse, and the resulting crawlability audit."
+    },
+    {
+      "id": "seo-launch-production-signals",
+      "section": "Launch and monitoring",
+      "checklistItem": "Confirm robots rules, sitemaps, canonicals, redirects, and structured data in production.",
+      "automation": "partial",
+      "evidenceCheckIds": ["robots-txt", "sitemap-discovery", "canonical-declaration", "redirect-chain", "structured-data"],
+      "note": "The profile gathers these signals for one production URL; representative templates, URL variants, sitemap contents, and structured-data meaning still require review."
+    },
+    {
+      "id": "seo-launch-submit-monitor",
+      "section": "Launch and monitoring",
+      "checklistItem": "Submit sitemaps and monitor indexing, crawl errors, traffic, and important landing pages.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Submission and monitoring require authorized Search Console, analytics, logging, and operational evidence."
+    },
+    {
+      "id": "seo-launch-redirect-ownership",
+      "section": "Launch and monitoring",
+      "checklistItem": "Keep redirect ownership and monitoring in place after a migration.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Ownership, alerting, retention periods, and post-migration monitoring are operational responsibilities outside the deterministic page run."
+    }
+  ]
+}

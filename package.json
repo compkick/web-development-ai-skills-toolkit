@@ -1,0 +1,48 @@
+{
+  "name": "ai-agent-skills-toolkit-web-development",
+  "private": true,
+  "version": "0.1.2",
+  "description": "Practical checklists, automated audits, and agent skills for building better websites.",
+  "license": "MIT",
+  "author": {
+    "name": "Computerkick",
+    "url": "https://computerkick.com"
+  },
+  "scripts": {
+    "docs:lint": "markdownlint-cli2 \"**/*.md\" \"#**/node_modules/**\" \"#.venv\" \"#.output\"",
+    "docs:links": "node scripts/check-doc-links.mjs",
+    "docs:links:internal": "node scripts/check-doc-links.mjs --internal-only",
+    "docs:links:external": "node scripts/check-doc-links.mjs --external-only",
+    "docs:check": "npm run docs:lint && npm run docs:links",
+    "skills:refs": "node scripts/sync-skill-references.mjs",
+    "skills:refs:check": "node scripts/sync-skill-references.mjs --check",
+    "runtime:bootstrap": "node plugins/web-dev-checklists/runtime/scripts/bootstrap.mjs",
+    "runtime:status": "node plugins/web-dev-checklists/runtime/scripts/status.mjs",
+    "runtime:audit": "node plugins/web-dev-checklists/runtime/scripts/audit.mjs",
+    "runtime:check": "node scripts/check-audit-runtime.mjs && node plugins/web-dev-checklists/runtime/scripts/test-runtime-status.mjs && node plugins/web-dev-checklists/runtime/scripts/test-runtime-cache.mjs && node plugins/web-dev-checklists/runtime/scripts/test-http-text.mjs",
+    "runtime:test": "node plugins/web-dev-checklists/runtime/scripts/test-runtime.mjs && node plugins/web-dev-checklists/runtime/scripts/test-page-screenshot.mjs",
+    "review:website": "node plugins/web-dev-checklists/runtime/scripts/review.mjs",
+    "reviews:check": "node scripts/check-review-runner.mjs && node plugins/web-dev-checklists/runtime/scripts/test-review-observations.mjs && node plugins/web-dev-checklists/runtime/scripts/test-review-contracts.mjs && node plugins/web-dev-checklists/runtime/scripts/test-report-layout.mjs",
+    "reviews:test": "npm run reviews:test-accessibility && npm run reviews:test-security && npm run reviews:test-performance && npm run reviews:test-technical-seo && npm run reviews:test-launch && npm run reviews:test-audit",
+    "reviews:test-accessibility": "node plugins/web-dev-checklists/runtime/scripts/test-review-runner.mjs",
+    "reviews:test-security": "node plugins/web-dev-checklists/runtime/scripts/test-security-review-runner.mjs",
+    "reviews:test-performance": "node plugins/web-dev-checklists/runtime/scripts/test-performance-review-runner.mjs",
+    "reviews:test-technical-seo": "node plugins/web-dev-checklists/runtime/scripts/test-technical-seo-review-runner.mjs",
+    "reviews:test-launch": "node plugins/web-dev-checklists/runtime/scripts/test-launch-review-runner.mjs",
+    "reviews:test-audit": "node plugins/web-dev-checklists/runtime/scripts/test-web-project-audit-runner.mjs",
+    "versions:check": "node scripts/check-versions.mjs",
+    "deps:audit": "npm audit --audit-level=high && npm audit --prefix plugins/web-dev-checklists/runtime --audit-level=high",
+    "repo:check": "npm run docs:check && npm run skills:refs:check && npm run runtime:check && npm run reviews:check && npm run versions:check && npm run deps:audit"
+  },
+  "devDependencies": {
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "markdownlint-cli2": "0.23.2"
+  },
+  "overrides": {
+    "markdown-it": "14.3.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

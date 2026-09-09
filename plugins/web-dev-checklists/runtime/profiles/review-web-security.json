@@ -1,0 +1,333 @@
+{
+  "id": "review-web-security",
+  "version": "1.1.1",
+  "checklistSource": "docs/web-security-review-checklist.md",
+  "standard": "OWASP Top 10 and OWASP ASVS",
+  "runtime": {
+    "collectSecurity": true,
+    "skipAccessibility": true,
+    "skipLighthouse": true
+  },
+  "coverage": [
+    {
+      "id": "security-define-authorization",
+      "section": "Define the review",
+      "checklistItem": "Record the authorized targets, accounts, test window, contacts, and prohibited actions.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Authorization and prohibited actions must come from the owner of the system."
+    },
+    {
+      "id": "security-define-risk",
+      "section": "Define the review",
+      "checklistItem": "Identify sensitive data, privileged functions, public entry points, and likely abuse cases.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The public runner cannot infer business sensitivity or likely abuse cases."
+    },
+    {
+      "id": "security-define-scope",
+      "section": "Define the review",
+      "checklistItem": "Choose and record the review sections based on exposure, data sensitivity, transactions, user privileges, and the evidence available.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Scope selection requires project context and human judgment."
+    },
+    {
+      "id": "security-https-certificate",
+      "section": "Public website baseline",
+      "checklistItem": "Confirm the canonical site loads over HTTPS with a certificate that is trusted, valid for the hostname, and within its validity dates.",
+      "automation": "partial",
+      "evidenceCheckIds": ["https-transport", "certificate-validity"],
+      "note": "The browser verifies the loaded URL and accepted certificate; the reviewer still confirms that the URL is canonical."
+    },
+    {
+      "id": "security-http-redirect",
+      "section": "Public website baseline",
+      "checklistItem": "Confirm plain HTTP redirects to the canonical HTTPS URL without a downgrade or redirect loop.",
+      "automation": "partial",
+      "evidenceCheckIds": ["http-to-https-redirect"],
+      "note": "The runner follows a bounded redirect chain on the authorized hostname; the reviewer confirms the final URL is canonical."
+    },
+    {
+      "id": "security-tls-cipher",
+      "section": "Public website baseline",
+      "checklistItem": "Confirm the site negotiates a strong cipher suite.",
+      "automation": "partial",
+      "evidenceCheckIds": ["tls-cipher-suite"],
+      "note": "The runner evaluates the normally negotiated cipher suite but does not enumerate every suite the server accepts."
+    },
+    {
+      "id": "security-tls-forward-secrecy",
+      "section": "Public website baseline",
+      "checklistItem": "Confirm the site uses a forward-secret key exchange.",
+      "automation": "partial",
+      "evidenceCheckIds": ["tls-forward-secrecy"],
+      "note": "The runner evaluates the negotiated connection; it does not test session resumption or every client configuration."
+    },
+    {
+      "id": "security-tls-key-exchange-group",
+      "section": "Public website baseline",
+      "checklistItem": "Confirm the site negotiates an approved key-exchange group.",
+      "automation": "partial",
+      "evidenceCheckIds": ["tls-key-exchange-group"],
+      "note": "The runner compares the negotiated group with its maintained baseline; project or regulatory policy still requires review."
+    },
+    {
+      "id": "security-tls-supported-versions",
+      "section": "Public website baseline",
+      "checklistItem": "Confirm the site supports TLS 1.3 or TLS 1.2.",
+      "automation": "automated",
+      "evidenceCheckIds": ["tls-supported-versions"],
+      "note": "The runner makes bounded TLS 1.3 and TLS 1.2 handshakes to the reviewed HTTPS hostname and port."
+    },
+    {
+      "id": "security-tls-deprecated-versions",
+      "section": "Public website baseline",
+      "checklistItem": "Confirm the site rejects TLS 1.0 and TLS 1.1.",
+      "automation": "automated",
+      "evidenceCheckIds": ["tls-deprecated-versions"],
+      "note": "The runner makes bounded TLS 1.0 and TLS 1.1 handshakes without sending an HTTP request."
+    },
+    {
+      "id": "security-insecure-resources",
+      "section": "Public website baseline",
+      "checklistItem": "Confirm pages, subresources, and form actions do not use insecure HTTP where HTTPS is required.",
+      "automation": "partial",
+      "evidenceCheckIds": ["insecure-page-resources"],
+      "note": "The runner checks the rendered page and observed requests, not every page or application state."
+    },
+    {
+      "id": "security-hsts",
+      "section": "Public website baseline",
+      "checklistItem": "Confirm production HTTPS responses send an HSTS policy with the project-approved duration and domain scope.",
+      "automation": "partial",
+      "evidenceCheckIds": ["strict-transport-security"],
+      "note": "The runner records the header and active max-age; the reviewer decides the approved duration and subdomain scope."
+    },
+    {
+      "id": "security-csp",
+      "section": "Public website baseline",
+      "checklistItem": "Review the enforced Content Security Policy and record missing, invalid, or unnecessarily broad directives.",
+      "automation": "partial",
+      "evidenceCheckIds": ["content-security-policy"],
+      "note": "The runner flags missing policies, missing script directives or fallbacks, and a small set of broad directives. Framing-only policies need review; application-specific policy choices remain manual."
+    },
+    {
+      "id": "security-response-headers",
+      "section": "Public website baseline",
+      "checklistItem": "Confirm responses restrict framing, prevent content-type sniffing, and use an appropriate referrer policy.",
+      "automation": "partial",
+      "evidenceCheckIds": ["framing-protection", "content-type-protection", "referrer-policy"],
+      "note": "The runner checks the main document response; policy appropriateness and other response types require review."
+    },
+    {
+      "id": "security-public-cookies",
+      "section": "Public website baseline",
+      "checklistItem": "Review cookies issued by public pages and confirm their `Secure`, `HttpOnly`, and `SameSite` settings match their purpose.",
+      "automation": "partial",
+      "evidenceCheckIds": ["public-cookie-flags"],
+      "note": "The runner checks response-issued and browser-observed cookie flags without storing values. Cookie purpose, severity, HttpOnly requirements, and other states require review."
+    },
+    {
+      "id": "security-cors",
+      "section": "Public website baseline",
+      "checklistItem": "Review CORS headers on sampled public responses and confirm they grant access only to intended origins, methods, headers, and credentials.",
+      "automation": "partial",
+      "evidenceCheckIds": ["cors-policy"],
+      "note": "The runner records CORS headers on the main response and flags one invalid combination; it does not send active cross-origin probes."
+    },
+    {
+      "id": "security-errors-disclosure",
+      "section": "Public website baseline",
+      "checklistItem": "Confirm normal responses and approved error pages do not reveal stack traces, debug details, private data, or unnecessary software versions.",
+      "automation": "partial",
+      "evidenceCheckIds": ["response-disclosure", "browser-errors"],
+      "note": "The runner checks selected response headers and browser-error counts on one normal page; approved error pages and response bodies require manual review."
+    },
+    {
+      "id": "security-disclosure-file",
+      "section": "Public website baseline",
+      "checklistItem": "Recommended: publish a current `/.well-known/security.txt` file when the organization accepts vulnerability reports.",
+      "automation": "partial",
+      "evidenceCheckIds": ["security-txt"],
+      "note": "The runner checks the conventional file on the authorized origin; the organization decides whether it is applicable and whether the contact process works."
+    },
+    {
+      "id": "security-supported-dependencies",
+      "section": "Source and configuration",
+      "checklistItem": "Confirm runtimes, frameworks, plugins, and dependencies are supported and do not have unresolved vulnerabilities that exceed the project's risk tolerance.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "This requires source, inventory, advisory, and project risk evidence."
+    },
+    {
+      "id": "security-secrets-configuration",
+      "section": "Source and configuration",
+      "checklistItem": "Scan the release for exposed secrets and unsafe production configuration without copying secret values into the review evidence.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Use approved source and secret-scanning tools; the public runner does not inspect the release package."
+    },
+    {
+      "id": "security-debug-services",
+      "section": "Source and configuration",
+      "checklistItem": "Confirm production debug features and unused services are disabled and known management, diagnostic, backup, and storage endpoints are appropriately restricted.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "This requires known configuration and endpoints; the runner does not enumerate routes or services."
+    },
+    {
+      "id": "security-server-authorization",
+      "section": "Source and configuration",
+      "checklistItem": "Confirm authorization for protected pages, data, files, object identifiers, and actions is enforced on the server.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Authorization testing requires approved accounts, roles, data, and actions."
+    },
+    {
+      "id": "security-input-output",
+      "section": "Source and configuration",
+      "checklistItem": "Confirm untrusted input is validated on the server and output is encoded or sanitized for the context where it is used.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "A CSP observation does not prove input validation or contextual output handling."
+    },
+    {
+      "id": "security-file-uploads",
+      "section": "Source and configuration",
+      "checklistItem": "Confirm file uploads restrict type, size, storage location, execution, and access when uploads are supported.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Upload controls require authorized source and workflow testing."
+    },
+    {
+      "id": "security-csrf-workflow",
+      "section": "Source and configuration",
+      "checklistItem": "Confirm state-changing requests have appropriate CSRF protection and important workflows resist tampering, skipped steps, and duplicate actions.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The public runner does not submit forms or modify application state."
+    },
+    {
+      "id": "security-integrations",
+      "section": "Source and configuration",
+      "checklistItem": "Review applicable APIs, webhooks, redirects, parsers, templates, and server-side requests for injection, unsafe destinations, and unintended access.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "This requires project-specific source and authorized integration testing."
+    },
+    {
+      "id": "security-cryptography",
+      "section": "Source and configuration",
+      "checklistItem": "Confirm the application uses supported cryptographic libraries and protocols and does not implement custom cryptography.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Negotiated browser TLS does not establish how the application implements cryptography."
+    },
+    {
+      "id": "security-data-protection",
+      "section": "Source and configuration",
+      "checklistItem": "Confirm sensitive data and private files are protected in storage, caches, logs, exports, backups, and management tools.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "This requires data-flow, storage, access, and operational evidence."
+    },
+    {
+      "id": "security-authentication-workflows",
+      "section": "Authenticated behavior",
+      "checklistItem": "Using approved test accounts, test sign-in, sign-out, account recovery, password changes, and multifactor authentication when supported.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Credentials and authenticated actions require explicit approval and project-specific interaction."
+    },
+    {
+      "id": "security-least-privilege",
+      "section": "Authenticated behavior",
+      "checklistItem": "Confirm roles, privileged accounts, and service accounts have only the access they require.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Role design and account access require administrative evidence."
+    },
+    {
+      "id": "security-role-object-access",
+      "section": "Authenticated behavior",
+      "checklistItem": "Test representative roles and object identifiers to confirm users cannot access another user's data or perform privileged actions.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Cross-role authorization testing requires explicit authorization, test accounts, and safe test data."
+    },
+    {
+      "id": "security-session-management",
+      "section": "Authenticated behavior",
+      "checklistItem": "Confirm sessions rotate when privilege changes, expire as intended, become invalid after sign-out, and use appropriately protected cookies.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Public cookie observations do not establish authenticated session behavior."
+    },
+    {
+      "id": "security-authenticated-workflows",
+      "section": "Authenticated behavior",
+      "checklistItem": "Test important workflows for unauthorized changes, skipped steps, repeated submissions, and failures that expose data or bypass controls.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "State-changing workflow tests are project-specific and require explicit authorization."
+    },
+    {
+      "id": "security-logging",
+      "section": "Operations and recovery",
+      "checklistItem": "Confirm important security events are logged and that logs do not contain secrets.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Log coverage and contents require access to the approved logging system."
+    },
+    {
+      "id": "security-alerting",
+      "section": "Operations and recovery",
+      "checklistItem": "Confirm that meaningful alerts reach an owner.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Alert routing and ownership require operational evidence or an approved test."
+    },
+    {
+      "id": "security-response-procedures",
+      "section": "Operations and recovery",
+      "checklistItem": "Confirm emergency patching, vulnerability reports, incident response, and credential rotation have owners and usable procedures.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Operational ownership and procedure usability require human review."
+    },
+    {
+      "id": "security-backup-recovery",
+      "section": "Operations and recovery",
+      "checklistItem": "Confirm backups are protected and restoration has been tested.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Backup protection and restoration require operational evidence."
+    },
+    {
+      "id": "security-review-findings",
+      "section": "Finish the review",
+      "checklistItem": "Review automated findings manually before treating them as confirmed issues.",
+      "automation": "partial",
+      "evidenceCheckIds": ["page-http-status", "security-collection", "https-transport", "certificate-validity", "tls-cipher-suite", "tls-forward-secrecy", "tls-key-exchange-group", "tls-supported-versions", "tls-deprecated-versions", "http-to-https-redirect", "insecure-page-resources", "strict-transport-security", "content-security-policy", "framing-protection", "content-type-protection", "referrer-policy", "public-cookie-flags", "cors-policy", "response-disclosure", "security-txt", "browser-errors"],
+      "note": "The evidence package supplies observations; a reviewer must confirm their context and impact."
+    },
+    {
+      "id": "security-retest",
+      "section": "Finish the review",
+      "checklistItem": "Retest fixes and look for the same problem in shared code or related endpoints.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Retesting depends on a changed release and the affected shared code or endpoints."
+    },
+    {
+      "id": "security-record-results",
+      "section": "Finish the review",
+      "checklistItem": "Record evidence, untested areas, accepted risks, follow-up work, owners, and any required ASVS mapping.",
+      "automation": "partial",
+      "evidenceCheckIds": ["security-collection"],
+      "note": "The package records public evidence and automation limits; owners, accepted risk, follow-up, and ASVS mapping require human decisions."
+    }
+  ]
+}

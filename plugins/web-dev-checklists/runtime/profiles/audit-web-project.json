@@ -1,0 +1,173 @@
+{
+  "id": "audit-web-project",
+  "version": "1.0.1",
+  "checklistSource": "docs/web-project-audit-checklist.md",
+  "standard": "Web project audit checklist",
+  "runtime": {
+    "collectLaunch": true,
+    "collectSecurity": true,
+    "collectSeo": true
+  },
+  "coverage": [
+    {
+      "id": "audit-define-scope",
+      "section": "Define the audit",
+      "checklistItem": "Write down the audit goal, scope, environment, owner, and deadline.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The audit goal, project boundaries, ownership, and deadline must come from the project team."
+    },
+    {
+      "id": "audit-define-context",
+      "section": "Define the audit",
+      "checklistItem": "Identify the site's purpose, users, critical journeys, sensitive data, and major systems.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Business purpose, user needs, critical journeys, data sensitivity, and system relationships require project context."
+    },
+    {
+      "id": "audit-define-limitations",
+      "section": "Define the audit",
+      "checklistItem": "Record any missing access or evidence as a limitation, not a pass.",
+      "automation": "partial",
+      "evidenceCheckIds": ["audit-public-site-summary"],
+      "note": "The runner records incomplete public collectors. The reviewer must also record missing repository, account, environment, and operational evidence."
+    },
+    {
+      "id": "audit-repository-readme",
+      "section": "Review the repository",
+      "checklistItem": "Confirm the README explains how to set up, run, test, build, and deploy the project.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Repository documentation must be read and tested in the actual project context."
+    },
+    {
+      "id": "audit-repository-checks",
+      "section": "Review the repository",
+      "checklistItem": "Build the project and run its normal checks when repository health is in scope.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Project commands can change files, download dependencies, or require services, so the agent runs them only when safe and in scope."
+    },
+    {
+      "id": "audit-repository-security",
+      "section": "Review the repository",
+      "checklistItem": "Review dependency support, secret handling, branch protection, and production access.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "These controls require source, dependency, hosting, and repository-platform evidence."
+    },
+    {
+      "id": "audit-repository-environments",
+      "section": "Review the repository",
+      "checklistItem": "Confirm non-production environments are private and do not use production data unexpectedly.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Environment access and data handling cannot be established from one public page."
+    },
+    {
+      "id": "audit-repository-agents",
+      "section": "Review the repository",
+      "checklistItem": "Use the [agent-ready repository checklist](agent-ready-repository-checklist.md) when coding agents will work in the repository.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Agent use and repository instructions require project-specific review."
+    },
+    {
+      "id": "audit-implementation-architecture",
+      "section": "Review the implementation",
+      "checklistItem": "Compare the documented architecture with what is deployed and note major maintenance risks.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Architecture and maintenance risk require documentation, source, deployment, and owner evidence."
+    },
+    {
+      "id": "audit-implementation-tests",
+      "section": "Review the implementation",
+      "checklistItem": "Review test coverage for important user journeys and failure cases.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "The public runner does not inspect project tests or execute application-specific journeys."
+    },
+    {
+      "id": "audit-website-journeys",
+      "section": "Review the website",
+      "checklistItem": "Test important pages and journeys on representative desktop and mobile layouts.",
+      "automation": "partial",
+      "evidenceCheckIds": ["audit-homepage-summary", "audit-accessibility-summary", "audit-performance-summary"],
+      "note": "The profile reviews one desktop homepage. Representative pages, mobile layouts, authentication, and important journeys remain manual or project-owned tests."
+    },
+    {
+      "id": "audit-website-errors",
+      "section": "Review the website",
+      "checklistItem": "Look for broken links, browser errors, failed requests, mixed content, and stale content.",
+      "automation": "partial",
+      "evidenceCheckIds": ["audit-homepage-summary", "audit-security-summary"],
+      "note": "The runner checks browser errors, insecure resources, homepage content, and a bounded same-host link sample. Wider crawling and content approval remain manual."
+    },
+    {
+      "id": "audit-website-specialists",
+      "section": "Review the website",
+      "checklistItem": "Use the accessibility, security, performance, SEO, or privacy checklist when that area needs a deeper review.",
+      "automation": "partial",
+      "evidenceCheckIds": ["audit-accessibility-summary", "audit-security-summary", "audit-performance-summary", "audit-technical-seo-summary"],
+      "note": "The combined profile provides a public baseline. The agent routes material findings and incomplete areas to the specialist skills; privacy requires project and data-handling evidence."
+    },
+    {
+      "id": "audit-operations-ownership",
+      "section": "Review operations",
+      "checklistItem": "Confirm ownership of hosting, domains, certificates, vendors, and administrator accounts.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Ownership and account records are operational evidence."
+    },
+    {
+      "id": "audit-operations-recovery",
+      "section": "Review operations",
+      "checklistItem": "Confirm the site is backed up and a representative restore has been tested.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Backup contents and restore evidence cannot be verified through a public website review."
+    },
+    {
+      "id": "audit-operations-monitoring",
+      "section": "Review operations",
+      "checklistItem": "Review monitoring, logging, support, incident response, patching, and vulnerability handling.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Operational procedures require access to the relevant systems, runbooks, and owners."
+    },
+    {
+      "id": "audit-operations-content",
+      "section": "Review operations",
+      "checklistItem": "Review content ownership and publishing workflow when a CMS is in scope.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "CMS governance requires platform access and content-owner confirmation."
+    },
+    {
+      "id": "audit-finish-findings",
+      "section": "Finish the audit",
+      "checklistItem": "Group related problems and separate confirmed failures from missing evidence and optional improvements.",
+      "automation": "partial",
+      "evidenceCheckIds": ["audit-public-site-summary"],
+      "note": "The report groups public machine observations by area. The agent adds source, operational, and manual findings and interprets their significance."
+    },
+    {
+      "id": "audit-finish-priorities",
+      "section": "Finish the audit",
+      "checklistItem": "Prioritize findings by user impact, security risk, effort, and urgency.",
+      "automation": "partial",
+      "evidenceCheckIds": ["audit-public-site-summary"],
+      "note": "Machine statuses help organize evidence, but final priority requires project impact, likelihood, effort, and timing."
+    },
+    {
+      "id": "audit-finish-ownership",
+      "section": "Finish the audit",
+      "checklistItem": "Give every accepted finding an owner and record any untested areas or follow-up reviews.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "Finding ownership, risk acceptance, and follow-up are accountable project decisions."
+    }
+  ]
+}

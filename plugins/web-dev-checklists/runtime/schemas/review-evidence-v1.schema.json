@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:web-dev-checklists:schema:review-evidence:1",
+  "title": "Web Development AI Skills Toolkit review evidence",
+  "type": "object",
+  "required": ["schemaVersion", "profile", "target", "run", "checks", "artifacts", "limitations"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "profile": {
+      "type": "object",
+      "required": ["id", "version", "standard"],
+      "properties": {
+        "id": { "type": "string" },
+        "version": { "type": "string" },
+        "standard": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "target": {
+      "type": "object",
+      "required": ["requestedUrl", "finalUrl"],
+      "properties": {
+        "requestedUrl": { "type": "string", "format": "uri" },
+        "finalUrl": { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+    "run": {
+      "type": "object",
+      "required": ["startedAt", "completedAt", "browser"],
+      "properties": {
+        "startedAt": { "type": "string", "format": "date-time" },
+        "completedAt": { "type": "string", "format": "date-time" },
+        "browser": {
+          "type": "object",
+          "required": ["name", "sandboxed"],
+          "properties": {
+            "name": { "type": "string" },
+            "sandboxed": { "type": "boolean" },
+            "formFactor": { "enum": ["desktop", "mobile"] },
+            "viewport": {
+              "type": "object",
+              "required": ["width", "height"],
+              "properties": {
+                "width": { "type": "integer", "minimum": 1 },
+                "height": { "type": "integer", "minimum": 1 }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "status", "method", "evidence", "artifacts"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "status": { "enum": ["pass", "fail", "warning", "informational", "not-checked"] },
+          "method": { "enum": ["browser", "http", "tls", "axe", "lighthouse", "combined"] },
+          "evidence": { "type": "object" },
+          "artifacts": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "purpose"],
+        "properties": {
+          "path": { "type": "string" },
+          "purpose": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "limitations": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

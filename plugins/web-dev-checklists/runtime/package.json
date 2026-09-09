@@ -1,0 +1,20 @@
+{
+  "name": "ai-agent-skills-toolkit-web-audit-runtime",
+  "private": true,
+  "version": "0.1.2",
+  "author": {
+    "name": "Computerkick",
+    "url": "https://computerkick.com"
+  },
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "chrome-launcher": "1.2.1",
+    "lighthouse": "13.4.1",
+    "playwright": "1.62.1"
+  }
+}
