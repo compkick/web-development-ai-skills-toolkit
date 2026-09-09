@@ -18,8 +18,8 @@ Contributors who run the official skill and plugin validators also need Python 3
 | Platform | Repository checks | Browser review runtime | Current status |
 | --- | --- | --- | --- |
 | Windows 11 x64 with PowerShell | Tested | Tested with Playwright Chromium against local fixtures and real websites | Primary supported development environment |
-| Ubuntu with Node.js 24 | Earlier GitHub Actions runs passed; current candidate workflow failed before jobs started | Ubuntu 22.04 browser-fixture job added; no passing result recorded | Resolve workflow failure and record a passing browser CI run before claiming runtime validation |
-| Current macOS | Expected to work through Node.js and Playwright | Not yet tested | Best effort until a release test is recorded |
+| Ubuntu with Node.js 24 | Current candidate passed Markdown lint and internal links; private repository URLs blocked external links and later checks | Ubuntu 22.04 bootstrap, Chromium, runtime/screenshot tests, and all six review-profile suites passed in Actions run `34392195263` on 2026-09-09 | Browser runtime tested; full release-candidate validation remains a Phase 6 gate |
+| Current macOS | Not tested | Not tested | Unverified; not a release gate |
 
 The runtime prefers its matching Playwright Chromium build. Chrome and Edge are launch-tested fallbacks, not a promise that every browser version or managed-device policy will work.
 

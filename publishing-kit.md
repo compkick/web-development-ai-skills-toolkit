@@ -4,7 +4,7 @@
 
 Copy-ready descriptions and artwork for the project's WordPress page, LinkedIn announcement, and future plugin listing. Keep technical setup details authoritative in the [README](README.md) and [runtime guide](docs/website-audit-runtime-guide.md).
 
-Publication status: draft materials for development version **0.1.1**. Phase 5 is not closed. GitHub confirms the repository is private and has no published releases. Before posting, confirm public repository access, the release version/tag, and the final support destination. The public repository and Issues links below intentionally point at the future public destinations; anonymous link validation returns 404 until access is available.
+Publication status: draft materials for development version **0.1.2**. Phase 5 validation is closed; Phase 6 tracks release preparation and publishing. The last verified repository state was private with no published releases. Before posting, confirm public repository access, the release version/tag, and the final support destination. The public repository and Issues links below intentionally point at the future public destinations; anonymous link validation returns 404 until access is available.
 
 ## Name and positioning
 
@@ -122,7 +122,13 @@ You do not need to install the audit dependencies into the website being reviewe
 
 ### Changelog
 
-#### 0.1.1 — current development version
+#### 0.1.2 — current development version
+
+- Fixed GitHub Actions runtime-cache setup and verified the Ubuntu browser-test suites.
+- Completed Phase 5 validation and separated publishing into Phase 6.
+- Prepared publishing materials and standardized test-machine descriptions.
+
+#### 0.1.1 — shared runtime and reporting cleanup
 
 - Consolidated shared report layout, evidence handling, browser collection, and test helpers.
 - Separated dependency caching from worker-code revisions, reducing unnecessary reinstalls.
