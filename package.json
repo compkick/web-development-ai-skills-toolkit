@@ -13,7 +13,7 @@
     "docs:links": "node scripts/check-doc-links.mjs",
     "docs:links:internal": "node scripts/check-doc-links.mjs --internal-only",
     "docs:links:external": "node scripts/check-doc-links.mjs --external-only",
-    "docs:check": "npm run docs:lint && npm run docs:links",
+    "docs:check": "npm run docs:lint && npm run docs:links:internal",
     "skills:refs": "node scripts/sync-skill-references.mjs",
     "skills:refs:check": "node scripts/sync-skill-references.mjs --check",
     "runtime:bootstrap": "node plugins/web-dev-checklists/runtime/scripts/bootstrap.mjs",
@@ -40,7 +40,10 @@
     "markdownlint-cli2": "0.23.2"
   },
   "overrides": {
-    "markdown-it": "14.3.0"
+    "markdown-it": "14.3.0",
+    "markdownlint-cli2": {
+      "smol-toml": "1.7.1"
+    }
   },
   "engines": {
     "node": ">=22"

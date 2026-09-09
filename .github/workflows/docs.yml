@@ -62,6 +62,30 @@ jobs:
       - name: Validate documentation and skill references
         run: npm run repo:check
 
+  external-links:
+    name: External links (informational)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Check external links without blocking the build
+        shell: bash
+        run: |
+          if npm run docs:links:external; then
+            echo "External links passed." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::warning::External link checks did not pass. See this job's log; repository validation is unaffected."
+            echo "External links need review. This check is informational; it does not block the build. See the log for failed URLs." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
   browser-fixtures:
     runs-on: ubuntu-22.04
     timeout-minutes: 35
