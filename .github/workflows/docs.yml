@@ -65,8 +65,6 @@ jobs:
   browser-fixtures:
     runs-on: ubuntu-22.04
     timeout-minutes: 35
-    env:
-      WEB_DEV_CHECKLISTS_CACHE: ${{ runner.temp }}/toolkit-runtime
 
     steps:
       - name: Check out repository
@@ -80,6 +78,10 @@ jobs:
 
       - name: Install repository test dependencies
         run: npm ci
+
+      - name: Configure isolated runtime cache
+        # runner context is unavailable in job-level env; export it from a step.
+        run: echo "WEB_DEV_CHECKLISTS_CACHE=$RUNNER_TEMP/toolkit-runtime" >> "$GITHUB_ENV"
 
       - name: Bootstrap isolated audit dependencies
         run: npm run runtime:bootstrap -- --skip-browser-download
