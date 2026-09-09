@@ -10,7 +10,7 @@ This file is the canonical implementation roadmap. Update it as work is complete
 
 - Plan status: In progress
 - Current phase: Phase 5 (Phase 4 complete)
-- Next work item: Finish negative-trigger and installed-metadata checks, confirm Linux browser CI, and tag the first public release
+- Next work item: Finish installed-metadata checks, confirm Linux browser CI, and tag the first public release
 - Last reviewed: 2026-09-05
 
 ## Guiding decisions
@@ -317,7 +317,7 @@ Phase 4 closed on 2026-09-05 following the developer's successful CLI and Codex 
 ## Phase 5: Validate and publish the core library
 
 - [x] Test positive trigger examples.
-- [ ] Test negative trigger examples.
+- [x] Test negative trigger examples.
 - [x] Test a static or content-led site.
 - [x] Test a JavaScript web application.
 - [x] Test a CMS-backed site.
@@ -353,7 +353,9 @@ Testing reviewed on 2026-09-05:
 - The owner exercised all six skills through CLI and Codex. The latest saved deterministic packages cover `computerkick.com`, `cms.example`, the JavaScript application at `app.example`, and `staging.example`. Their evidence/coverage schemas, listed artifacts, and custom-report local links passed inspection. This is public-page coverage, not authenticated CMS testing or complete application-journey testing. The AARP capture records image/scroll limitations rather than a complete visual pass.
 - Approved Windows tests passed `repo:check`, `runtime:test`, all six `reviews:test` suites, and official skill/plugin validation. Missing-cache fixtures and the saved mistyped-host run produce incomplete evidence instead of a website failure. Fresh-agent reports also identify backend and operational checks they cannot verify. Reference synchronization and packaged runtime checks pass.
 
-Keep Phase 5 open for a small, concrete final pass: test unrelated requests that should not invoke these skills; visually confirm all six installed display names/descriptions; restore passing release-candidate CI, including the Linux browser job; and tag the reviewed release with reproducible setup instructions. Windows is tested; macOS remains explicitly best effort. GitHub confirms that the repository is private and has no published releases; no tag is present locally. The latest Actions run, `34001003941` for commit `ed86cfc`, failed before any jobs were recorded; the preceding two runs passed. The CI checkbox is reopened for the current candidate, not because the earlier validation never happened. Confirm public access before announcing the release.
+- On 2026-09-09, the owner supplied negative-trigger logs: a website-opinion request explicitly opting out of skills used direct browser/search tools without a toolkit invocation in the supplied log; a subsequent standalone headline-rewrite request received only rewritten copy. These establish representative opt-out and unrelated-request behavior, not exhaustive trigger coverage.
+
+Keep Phase 5 open for a small, concrete final pass: visually confirm all six installed display names/descriptions; restore passing release-candidate CI, including the Linux browser job; and tag the reviewed release with reproducible setup instructions. Windows is tested; macOS is untested and is not a release gate. The latest inspected Actions run, `34013296270` for commit `73e4760`, failed before any jobs were recorded. On 2026-09-09, the invalid job-level `runner.temp` expression was replaced with a step that exports the isolated cache path through `GITHUB_ENV`. A passing GitHub run is still required; a local workflow correction is not CI evidence. Confirm public access before announcing the release.
 
 Publishing copy and the presentation-asset record live in [publishing-kit.md](publishing-kit.md). These are prepared materials, not evidence that a page, post, plugin listing, or release has been published. The draft's repository and Issues URLs currently fail anonymous link validation because the repository is private; the other local checks pass.
 
