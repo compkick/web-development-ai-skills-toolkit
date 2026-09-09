@@ -68,7 +68,7 @@ Run the full repository suite:
 npm run repo:check
 ```
 
-The full suite checks Markdown structure, internal and external links, and generated skill references. Focused commands are also available:
+The build-validation suite checks Markdown structure, internal links, and generated skill references. External links run separately as an informational CI job: unavailable websites and private GitHub links produce a warning, not a failed build. No authentication tokens or private-link exceptions are used. Run `npm run docs:links:external` explicitly when checking publication readiness; that command still exits nonzero for failures. Focused commands are also available:
 
 ```bash
 npm run docs:lint
