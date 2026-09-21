@@ -98,7 +98,7 @@ For Codex, install the Codex CLI and register your local repository as a marketp
 codex plugin marketplace add "<absolute-path-to-this-repository>"
 ```
 
-Open the plugin browser, select **Personal**, and install **Web Development AI Skills Toolkit**. In Codex CLI, enter `/plugins` to open that browser. Start a new task/session after installation. See the [repository installation guide](README.md#install-the-codex-plugin) and [official plugin documentation](https://learn.chatgpt.com/docs/plugins).
+Open the plugin browser, select **Personal**, and install **Web Development AI Skills Toolkit**. In Codex CLI, enter `/plugins` to open that browser. Start a new task/session after installation. See the [repository installation guide](README.md#codex) and [official plugin documentation](https://learn.chatgpt.com/docs/plugins).
 
 Try a request such as:
 
