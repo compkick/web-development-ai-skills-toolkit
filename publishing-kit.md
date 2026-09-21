@@ -4,7 +4,7 @@
 
 Copy-ready descriptions and artwork for the project's WordPress page, LinkedIn announcement, and future plugin listing. Keep technical setup details authoritative in the [README](README.md) and [runtime guide](docs/website-audit-runtime-guide.md).
 
-Publication status: draft materials for development version **0.1.2**. Phase 5 validation is closed; Phase 6 tracks release preparation and publishing. The last verified repository state was private with no published releases. Before posting, confirm public repository access, the release version/tag, and the final support destination. The public repository and Issues links below intentionally point at the future public destinations; anonymous link validation returns 404 until access is available.
+Publication status: draft materials; package metadata remains **0.1.2**, with additional committed fixes intended for the next release. The `v0.1.2` tag exists; the authenticated GitHub release list was empty when checked on 2026-09-20. The repository remains private. Phase 5 validation is closed; Phase 6 tracks final packaging and publication. Before posting, confirm the published version, public access, and support destination. The repository and Issues links below are future public destinations; anonymous requests may return 404 while access is private.
 
 ## Name and positioning
 
@@ -115,14 +115,19 @@ First-use approvals may cover downloads, browser execution, network access, and 
 - **Checklists only:** a browser or Markdown reader. No Codex, Node.js, or Python installation is needed.
 - **Automated reports:** Node.js 22.19.0 or newer, npm, an approved Chromium download or a compatible installed Chrome/Edge browser, and network access to the authorized target.
 - **AI-assisted reviews:** a working Codex environment with plugin support and the toolkit installed. Codex usage is separate from the toolkit's MIT license.
-- **Platform status:** Windows 11 x64 is directly tested. Linux browser validation is pending confirmation; macOS is best effort. Check the [platform matrix](docs/supported-platforms-reference.md) before claiming broader support.
+- **Platform status:** Windows 11 x64 and Ubuntu CI are tested, including all six browser-profile suites. macOS, Claude Code, and Bionic compatibility are unverified. See the [platform matrix](docs/supported-platforms-reference.md) for exact coverage and remaining release tests.
 - **Contributors:** repository validation dependencies are installed with `npm ci`. Python and PyYAML are for the official skill/plugin validators, not ordinary website reports.
 
 You do not need to install the audit dependencies into the website being reviewed. The standalone CLI profiles do not require an OpenAI API key.
 
 ### Changelog
 
-#### 0.1.2 — current development version
+#### Unreleased
+
+- Corrected the minimum Node.js version to 22.19.0 across setup guidance, package engines, and bootstrap validation; added version-boundary tests.
+- Corrected the OWASP ASVS reference and regenerated packaged references.
+
+#### 0.1.2 — tagged baseline
 
 - Fixed GitHub Actions runtime-cache setup and verified the Ubuntu browser-test suites.
 - Completed Phase 5 validation and separated publishing into Phase 6.
@@ -142,7 +147,7 @@ You do not need to install the audit dependencies into the website being reviewe
 - Added the plugin-owned browser runtime and HTML/JSON evidence reports.
 - Established the human checklist library, packaged references, and local plugin installation workflow.
 
-These notes describe repository development versions, not verified GitHub release tags. Replace this note with the tagged release record when the first public release is published.
+The `v0.1.2` tag identifies the tested baseline. Unreleased changes are not part of that tag. Add the final release link and date when publishing; do not move the existing tag to include later fixes.
 
 ### License
 
@@ -159,9 +164,11 @@ The [modernization plan](modernization-plan.md) is the source of truth. These ar
 
 ### Support and feedback
 
-For setup questions, start with the README and runtime guide. Report reproducible bugs and feature requests through [GitHub Issues](https://github.com/compkick/web-development-ai-skills-toolkit/issues) once the repository and issue tracker are publicly available.
+For setup questions, start with the README and runtime guide. For support, update inquiries, bug reports, feature requests, or security questions, use the [Computerkick contact form](https://computerkick.com/contact/).
 
 Include the toolkit version, operating system, Node.js version, profile, command, and a sanitized description of the problem. Share a minimal example rather than private screenshots, tokens, customer data, or a full evidence archive.
+
+Report suspected toolkit vulnerabilities privately through the same form, following [the security reporting guidance](SECURITY.md). Do not post vulnerability details in public Issues or pull requests.
 
 For information about the creator and web development work, visit [Computerkick](https://computerkick.com). No response-time guarantee or managed support service is included.
 

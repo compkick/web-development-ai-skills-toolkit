@@ -18,10 +18,19 @@ Contributors who run the official skill and plugin validators also need Python 3
 | Platform | Repository checks | Browser review runtime | Current status |
 | --- | --- | --- | --- |
 | Windows 11 x64 with PowerShell | Tested | Tested with Playwright Chromium against local fixtures and real websites | Primary supported development environment |
-| Ubuntu with Node.js 24 | Current candidate passed Markdown lint and internal links; private repository URLs blocked external links and later checks | Ubuntu 22.04 bootstrap, Chromium, runtime/screenshot tests, and all six review-profile suites passed in Actions run `34392195263` on 2026-09-09 | Browser runtime tested; full release-candidate validation remains a Phase 6 gate |
+| Ubuntu with Node.js 24 | Passed `repo:check` on the validation job's `ubuntu-latest` runner | Ubuntu 22.04 bootstrap, Chromium, runtime/screenshot tests, and all six review-profile suites passed | Tested in CI; rerun against the final release candidate |
 | Current macOS | Not tested | Not tested | Unverified; not a release gate |
 
 The runtime prefers its matching Playwright Chromium build. Chrome and Edge are launch-tested fallbacks, not a promise that every browser version or managed-device policy will work.
+
+## Recorded validation
+
+- GitHub Actions run `34416716606` passed repository validation and browser fixtures for the `v0.1.2` tagged commit `10f02be`.
+- GitHub Actions run `35559645407` passed both jobs for commit `bbad993`, including the Node.js minimum correction. GitHub records this run on 2026-09-21 UTC (2026-09-20 in the maintainer's local timezone).
+- Windows 11 x64 with Node.js 24.19.0 passed `repo:check`, runtime/screenshot tests, and all six profile suites for the Node-minimum changes on 2026-09-20. This run used an isolated dependency cache and installed Google Chrome; earlier Windows testing also covered Playwright Chromium.
+- Official plugin and six skill validators passed locally on 2026-09-20. See [the validator record](../CONTRIBUTING.md#official-validator-record).
+
+External-link CI is informational: a green job does not prove that every public URL is reachable. Recheck anonymous repository and download access after publication. These results do not establish a fresh installation of the final distributable or Claude Code/Bionic compatibility.
 
 ## Release testing
 

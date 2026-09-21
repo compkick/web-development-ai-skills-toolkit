@@ -58,11 +58,14 @@ Sitefinity is retained as specialist maintenance guidance. New general and WordP
 ## Repository guidance
 
 - [Contributing](CONTRIBUTING.md)
+- [Security reporting](SECURITY.md)
 - [Agent authoring instructions](AGENTS.md)
 - [Modernization plan](modernization-plan.md)
 - [Publishing copy and artwork](publishing-kit.md)
 - [Supported platforms](docs/supported-platforms-reference.md)
 - [MIT license](LICENSE)
+
+For support, update inquiries, or security questions, use the [Computerkick contact form](https://computerkick.com/contact/). For suspected vulnerabilities, follow the [private reporting guidance](SECURITY.md) instead of posting details publicly.
 
 Human-facing documentation lives in the flat `docs/` directory and uses lowercase kebab-case filenames. The Codex plugin lives under `plugins/web-dev-checklists/`, with packaged skills kept separately from their canonical human-readable guidance.
 
