@@ -8,12 +8,12 @@ Use the checklists yourself, run evidence reports from the command line, or ask 
 
 The plugin provides six focused review skills:
 
-- [`review-web-accessibility`](plugins/web-dev-checklists/skills/review-web-accessibility/SKILL.md) — produce an evidence-backed accessibility review that separates automated, source-based, interactive, assistive-technology, and untested results.
-- [`review-web-security`](plugins/web-dev-checklists/skills/review-web-security/SKILL.md) — combine bounded public checks, source and configuration evidence, approved authenticated testing, and operational evidence without claiming a penetration test.
-- [`review-web-performance`](plugins/web-dev-checklists/skills/review-web-performance/SKILL.md) — combine repeatable desktop Lighthouse evidence with real-user data, source review, budgets, and representative workflows without treating one score as the result.
-- [`review-technical-seo`](plugins/web-dev-checklists/skills/review-technical-seo/SKILL.md) — combine rendered crawl and indexing evidence with source, migration, Search Console, analytics, and representative-page review without promising rankings or indexing.
-- [`review-website-launch`](plugins/web-dev-checklists/skills/review-website-launch/SKILL.md) — combine a bounded homepage and link preflight with prior specialist reviews and human confirmations to make a concise go/no-go recommendation and tailored launch checklist.
-- [`audit-web-project`](plugins/web-dev-checklists/skills/audit-web-project/SKILL.md) — combine repository, public website, operational, and supplied evidence into a routed cross-discipline assessment with consolidated priorities.
+- [`audit-web-project`](plugins/web-dev-checklists/skills/audit-web-project/SKILL.md) — Review a website or codebase for overall technical health and prioritize what needs attention.
+- [`review-web-accessibility`](plugins/web-dev-checklists/skills/review-web-accessibility/SKILL.md) — Find barriers that make a website difficult for people with disabilities to use, and identify what still needs manual testing.
+- [`review-web-security`](plugins/web-dev-checklists/skills/review-web-security/SKILL.md) — Check HTTPS, security headers, cookies, and other available evidence for security weaknesses without attempting to exploit them.
+- [`review-web-performance`](plugins/web-dev-checklists/skills/review-web-performance/SKILL.md) — Identify what slows a website down and recommend improvements to loading speed and responsiveness.
+- [`review-technical-seo`](plugins/web-dev-checklists/skills/review-technical-seo/SKILL.md) — Find technical issues that could prevent search engines from crawling, indexing, or understanding a website.
+- [`review-website-launch`](plugins/web-dev-checklists/skills/review-website-launch/SKILL.md) — Assess launch readiness and recommend go or no-go, with a checklist of what still needs fixing or confirmation.
 
 ## Created By
 

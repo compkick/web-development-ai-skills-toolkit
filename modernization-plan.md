@@ -10,8 +10,8 @@ This file is the canonical implementation roadmap. Update it as work is complete
 
 - Plan status: In progress
 - Current phase: Phase 6 (Phases 1–5 complete)
-- Next work item: Define and fresh-test the exact release package
-- Last reviewed: 2026-09-20
+- Next work item: Finish the fresh Windows 11 PC walkthrough, record its tested commit and results, then validate the exact release package
+- Last reviewed: 2026-09-21
 
 ## Guiding decisions
 
@@ -365,12 +365,22 @@ Keep release preparation separate from completed functional testing. A public Gi
 - [x] Align Node.js requirements, fix the ASVS link, and refresh platform and publishing records.
 - [x] Run and record official plugin and all six skill validators locally; see [the validator record](CONTRIBUTING.md#official-validator-record).
 - [x] Add private vulnerability-reporting guidance using the owner-confirmed Computerkick contact form; see [SECURITY.md](SECURITY.md).
+- [x] Align the package, runtime, lockfiles, and plugin base version at `0.1.3`; keep the existing `v0.1.2` tag unchanged.
+- [x] Reorganize the README for users: prerequisites, installation, explicit and implicit chat usage, manual runs, human checklists, and support; separate contributor guidance and label unverified agent compatibility.
 - [ ] Confirm distribution channels and review tracked files and Git history for sensitive or non-redistributable material before public exposure.
 - [ ] Validate the final release candidate in CI and record official skill/plugin validation for that candidate. Official validators currently run locally, not in CI; external-link checks remain visible but informational.
 - [ ] Confirm all six installed skills appear with correct display names and descriptions.
 - [ ] Build a clean release bundle with the six skills, generated references, shared runtime, and required assets; exclude evidence, caches, and installed dependencies.
 - [ ] Test installation and runtime resolution from the exact release bundle in fresh context.
 - [ ] Tag the reviewed version and publish reproducible installation instructions and release notes.
+
+### Release-preparation progress — 2026-09-21
+
+Version preparation and user-facing documentation are committed through `9901cca`. The README now separates installation from use, explains URL-only reviews without a website repository, and makes Node.js/npm prerequisites and first-use bootstrap explicit. The owner's checklist introduction and publishing-kit edits are retained.
+
+The owner is walking through setup on a fresh Windows 11 PC. Results for this `0.1.3` candidate have not yet been supplied; earlier successful installation tests do not close the final-package gate. Record the exact tested commit, environment, first-use setup, skill discovery, and report results before marking that gate complete.
+
+Next: finish that walkthrough, define and validate the complete release package, and complete the sensitive-material review before public exposure. Final-candidate validation, tagging, GitHub publication, and marketplace submission remain open. Claude Code and Bionic compatibility are still unverified.
 
 ### Public distribution and discovery
 
