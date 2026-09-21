@@ -4,8 +4,6 @@
 
 Copy-ready descriptions and artwork for the project's WordPress page, LinkedIn announcement, and future plugin listing. Keep technical setup details authoritative in the [README](README.md) and [runtime guide](docs/website-audit-runtime-guide.md).
 
-Publication status: draft materials; package metadata remains **0.1.2**, with additional committed fixes intended for the next release. The `v0.1.2` tag exists; the authenticated GitHub release list was empty when checked on 2026-09-20. The repository remains private. Phase 5 validation is closed; Phase 6 tracks final packaging and publication. Before posting, confirm the published version, public access, and support destination. The repository and Issues links below are future public destinations; anonymous requests may return 404 while access is private.
-
 ## Name and positioning
 
 - Full project name: **Web Development AI Skills Toolkit**
@@ -49,7 +47,7 @@ It combines human-readable checklists with automated evidence collection and AI-
 
 The checklists remain the source of truth. Automation covers the checks it can actually perform, and the agent explains what still needs access, context, or a human decision.
 
-### Who it's for
+### Target audience
 
 Web developers, engineers, technical project leads, and small teams maintaining websites, inheriting projects, or preparing a release. General reviews work across frameworks and CMS platforms; the documentation also includes WordPress lifecycle checklists and Sitefinity maintenance guidance.
 
@@ -75,7 +73,7 @@ Web developers, engineers, technical project leads, and small teams maintaining 
 - The deterministic launch report is a bounded preflight, not final approval. The project owner remains responsible for the launch decision.
 - Live content, network conditions, scores, and agent judgments can vary even though the collection procedure is repeatable.
 
-### How to get it and install it
+### Start here
 
 Start with the [repository and setup instructions](https://github.com/compkick/web-development-ai-skills-toolkit). You can use the human checklists without installing anything.
 
@@ -122,10 +120,12 @@ You do not need to install the audit dependencies into the website being reviewe
 
 ### Changelog
 
-#### Unreleased
+#### 0.1.3 — unreleased
 
 - Corrected the minimum Node.js version to 22.19.0 across setup guidance, package engines, and bootstrap validation; added version-boundary tests.
 - Corrected the OWASP ASVS reference and regenerated packaged references.
+- Updated platform/CI evidence and recorded official plugin and skill validation.
+- Added private security reporting and standardized support on the Computerkick contact form.
 
 #### 0.1.2 — tagged baseline
 
