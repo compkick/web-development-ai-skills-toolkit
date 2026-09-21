@@ -92,13 +92,7 @@ npm run review:website -- --profile review-web-accessibility --url https://site.
 
 Replace `https://site.example` with a website you are authorized to review. Open `accessibility-report.html` in the resulting `.output` directory. Other profiles create their own report files.
 
-For Codex, install the Codex CLI and register your local repository as a marketplace:
-
-```bash
-codex plugin marketplace add "<absolute-path-to-this-repository>"
-```
-
-Open the plugin browser, select **Personal**, and install **Web Development AI Skills Toolkit**. In Codex CLI, enter `/plugins` to open that browser. Start a new task/session after installation. See the [repository installation guide](README.md#codex) and [official plugin documentation](https://learn.chatgpt.com/docs/plugins).
+For Codex, use the desktop app's **Plugins → Add plugin marketplace** dialog to add `compkick/web-development-ai-skills-toolkit` directly from GitHub. Select **Personal** and install **Web Development AI Skills Toolkit**, then start a new chat. No separate CLI installation or manual clone is required for this route. See the [repository installation guide](README.md#codex) for Git ref settings, prerequisites, and local-folder/CLI alternatives.
 
 Try a request such as:
 

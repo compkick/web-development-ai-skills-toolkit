@@ -52,19 +52,45 @@ Keep the plugin folder intact: the skills use its shared runtime. See the [suppo
 
 ### Codex
 
-The repository includes a local Codex marketplace containing the internally named `web-dev-checklists` plugin. Install **Web Development AI Skills Toolkit** once to use its six skills from other Codex tasks and project folders.
+The repository includes a Codex marketplace containing the internally named `web-dev-checklists` plugin. Add the marketplace, then install the plugin. The desktop app can do both; a separate CLI installation or manual clone is not required for that route.
 
 Complete the [requirements](#requirements) first. Install the complete plugin, including its shared runtime; the skill folders are not standalone packages.
 
-Clone or download this repository, install the current [Codex CLI](https://developers.openai.com/codex/cli/), and register the repository as a local marketplace:
+#### Recommended: Install directly through the desktop app
+
+Open **Plugins → Add plugin marketplace** and enter:
+
+- **Source:** `compkick/web-development-ai-skills-toolkit`
+- **Git ref:** `main`, or a published release tag to pin a specific version.
+- **Sparse paths:** leave empty. The marketplace and complete plugin, including the shared runtime, must be available.
+
+Choose **Add marketplace**, select **Personal**, open **Web Development AI Skills Toolkit**, and choose **Install** (the plus button in some versions). Start a new chat after installation. If the toolkit already appears in your plugin browser, skip adding the marketplace.
+
+While the repository is private, access requires GitHub authentication with permission to read it. For pre-release testing, use `develop` as the Git ref; use a published tag only after that release exists. Node.js and npm are still required to run automated reports.
+
+#### Alternative: Install from a local folder
+
+Clone or download the complete repository. In the desktop app's **Add plugin marketplace** dialog, set **Source** to the absolute repository folder, leave **Git ref** and **Sparse paths** empty, and add the marketplace. Then install the toolkit from **Personal** as above.
+
+#### Alternative: Use the CLI
+
+With the [Codex CLI](https://developers.openai.com/codex/cli/) installed, register your local repository:
 
 ```bash
 codex plugin marketplace add "<absolute-path-to-this-repository>"
 ```
 
-In the Codex desktop app, refresh Codex, open **Plugins**, select **Personal**, open **Web Development AI Skills Toolkit**, and select the plus button to install it. Start a new task after installation so Codex loads the bundled skills.
+This command adds the plugin catalog; it does **not** install the toolkit. If your terminal does not recognize `codex`, install the CLI first and reopen the terminal. Having the desktop app installed does not necessarily put the CLI on your terminal's PATH.
 
-In Codex CLI, start Codex and enter `/plugins`, select the **Personal** marketplace, install **Web Development AI Skills Toolkit**, and then start a new session.
+Run `codex` in your terminal, then enter `/plugins` inside the interactive session. Select **Personal**, install **Web Development AI Skills Toolkit**, and start a new session. Alternatively, install it through the desktop plugin browser after registering the marketplace. `/plugins` is a Codex command, not a PowerShell or Bash command.
+
+#### Do I need to install via the desktop app and ClI?
+
+Normally, no. The desktop app and CLI share local plugin configuration and cache when they use the same OS user and Codex home directory (normally `~/.codex`, or `%USERPROFILE%\.codex` on Windows). Install once, then refresh the other client and start a new chat/session. Confirm the toolkit appears as installed and its six skills are available.
+
+A different `CODEX_HOME`, OS user, WSL environment, remote host, or computer may have a separate installation. Project settings or organizational policies can also affect whether an installed plugin is enabled. This is shared local configuration, not automatic installation on every device signed into your account.
+
+See the [official local-marketplace documentation](https://developers.openai.com/plugins/build/plugins#how-local-marketplaces-work) and [plugin browser guidance](https://learn.chatgpt.com/docs/plugins).
 
 ### Bionic / general use
 
