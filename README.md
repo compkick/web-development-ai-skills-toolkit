@@ -331,6 +331,10 @@ Edit human guidance in `docs/` and run `npm run skills:refs` to refresh packaged
 
 When updating a locally installed development build, validate the plugin, refresh its Codex cachebuster, reinstall it from the **Personal** marketplace, and start a new task before retesting.
 
+### Testing
+
+**Fresh-PC test completed — 2026-09-21:** On a fresh Windows 11 PC, all six skills were discovered and successfully run through Codex in a projectless chat. First-use bootstrap and subsequent runtime reuse worked, and the owner verified the generated reports and folders. Tested plugin: `0.1.3+codex.20260921043328`. This confirms the installed candidate's workflow, not publication of the final release; see the [release progress](modernization-plan.md#phase-6-publish-the-core-library).
+
 ### Versioning
 
 The root `package.json` contains the toolkit's release version. The audit runtime uses the same version, and the plugin manifest uses that version as its base. Local plugin builds add `+codex.<timestamp>` as valid semantic-version build metadata so Codex recognizes a refreshed build without inventing another release number. Review profiles and evidence schemas keep independent contract versions because they change only when their procedure or data format changes.
