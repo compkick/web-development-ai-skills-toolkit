@@ -79,6 +79,8 @@ The plugin provides six focused review skills:
 
 The repository includes a local Codex marketplace containing the internally named `web-dev-checklists` plugin. Install **Web Development AI Skills Toolkit** once to use its six skills from other Codex tasks and project folders.
 
+Automated reports require Node.js **22.19.0 or newer** and npm. Install the complete plugin, including its shared runtime; the skill folders are not standalone packages.
+
 Clone or download this repository, install the current [Codex CLI](https://developers.openai.com/codex/cli/), and register the repository as a local marketplace:
 
 ```bash

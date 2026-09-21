@@ -6,7 +6,7 @@ Use this reference to understand which environments are directly exercised and w
 
 ## Runtime requirements
 
-- Node.js 22 or newer
+- Node.js 22.19.0 or newer
 - npm
 - Playwright Chromium downloaded by the approved runtime bootstrap, or a compatible installed Chrome or Edge browser
 - Network access to any authorized website being reviewed

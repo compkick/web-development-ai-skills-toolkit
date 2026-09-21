@@ -113,7 +113,7 @@ First-use approvals may cover downloads, browser execution, network access, and 
 ### Requirements
 
 - **Checklists only:** a browser or Markdown reader. No Codex, Node.js, or Python installation is needed.
-- **Automated reports:** Node.js 22 or newer, npm, an approved Chromium download or a compatible installed Chrome/Edge browser, and network access to the authorized target.
+- **Automated reports:** Node.js 22.19.0 or newer, npm, an approved Chromium download or a compatible installed Chrome/Edge browser, and network access to the authorized target.
 - **AI-assisted reviews:** a working Codex environment with plugin support and the toolkit installed. Codex usage is separate from the toolkit's MIT license.
 - **Platform status:** Windows 11 x64 is directly tested. Linux browser validation is pending confirmation; macOS is best effort. Check the [platform matrix](docs/supported-platforms-reference.md) before claiming broader support.
 - **Contributors:** repository validation dependencies are installed with `npm ci`. Python and PyYAML are for the official skill/plugin validators, not ordinary website reports.

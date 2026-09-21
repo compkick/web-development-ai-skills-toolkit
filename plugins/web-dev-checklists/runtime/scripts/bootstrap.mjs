@@ -5,6 +5,7 @@ import { spawnSync } from "node:child_process";
 import { getRuntimeLocation, runtimeSourceDirectory } from "../config/runtime-config.mjs";
 import { getRuntimeStatus } from "../config/runtime-status.mjs";
 import { stageRuntimeWorker } from "../config/runtime-worker.mjs";
+import { minimumNodeVersion, supportsNodeVersion } from "../config/node-version.mjs";
 
 const skipBrowserDownload = parseArguments(process.argv.slice(2));
 requireSupportedNode();
@@ -57,10 +58,8 @@ function parseArguments(argumentsToParse) {
 }
 
 function requireSupportedNode() {
-  const majorVersion = Number.parseInt(process.versions.node.split(".")[0], 10);
-
-  if (majorVersion < 22) {
-    console.error(`Node.js 22 or newer is required. Current version: ${process.versions.node}`);
+  if (!supportsNodeVersion(process.versions.node)) {
+    console.error(`Node.js ${minimumNodeVersion} or newer is required. Current version: ${process.versions.node}`);
     process.exit(1);
   }
 }

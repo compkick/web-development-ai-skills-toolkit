@@ -180,7 +180,7 @@ Security references last verified 2026-07-21 against OWASP Top 10:2025 and OWASP
 - [Web Vitals](https://web.dev/articles/vitals)
 - [Optimize Largest Contentful Paint](https://web.dev/articles/optimize-lcp)
 - [OWASP Top Ten](https://owasp.org/www-project-top-ten/)
-- [OWASP Application Security Verification Standard](https://owasp.org/www-project-application-security-verification-standard/)
+- [OWASP Application Security Verification Standard](https://owasp.org/projects/asvs)
 - [Google Search technical SEO guidance](https://developers.google.com/search/docs/fundamentals/get-started)
 - [Google canonical URL guidance](https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls)
 

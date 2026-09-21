@@ -71,7 +71,7 @@ Record HTTP/2 or HTTP/3 support when it is useful, but do not fail a security re
 ## References
 
 - [OWASP Top 10](https://owasp.org/Top10/)
-- [OWASP Application Security Verification Standard](https://owasp.org/www-project-application-security-verification-standard/)
+- [OWASP Application Security Verification Standard](https://owasp.org/projects/asvs)
 - [OWASP HTTP Security Response Headers Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html)
 - [OWASP Cross Site Scripting Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html)
 - [OWASP Web Security Testing Guide](https://owasp.org/www-project-web-security-testing-guide/)

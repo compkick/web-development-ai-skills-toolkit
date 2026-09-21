@@ -6,7 +6,7 @@ Use the plugin-owned audit runtime to collect repeatable browser, Lighthouse, sc
 
 ## Requirements
 
-- Node.js 22 or newer and npm must be available to Codex.
+- Node.js 22.19.0 or newer and npm must be available to Codex.
 - The approved bootstrap must be able to download Playwright Chromium, or Chrome or Edge must already be available.
 - Codex must be able to reach the target URL.
 - The user must authorize the target and any dependency or browser download.
