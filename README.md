@@ -6,6 +6,26 @@ Reusable standards, checklists, guides, runbooks, and cheatsheets for web develo
 
 Created by [Computerkick](https://computerkick.com).
 
+## Requirements
+
+To run automated reports, either from the command line or through an agent skill, install these prerequisites first:
+
+- **Node.js 22.19.0 or newer.** Use a supported LTS release that meets this minimum.
+- **npm.** Use the version bundled with your Node.js installation; the toolkit does not specify a separate npm minimum.
+- **For agent use:** Codex with the toolkit plugin installed. Command-line reports do not require Codex.
+- **Network access and permission** to download the audit dependencies/browser and access the website you are authorized to review.
+
+Follow the [Node.js and npm installation instructions](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm/). After installation, reopen your terminal and agent app so they can find both commands. Check:
+
+```bash
+node --version
+npm --version
+```
+
+**The toolkit bootstrap does not install Node.js or npm.** Once those are available, `npm run runtime:bootstrap` from this repository's root installs the pinned Playwright, axe, Lighthouse, and Chromium dependencies into the toolkit's user cache. An agent can run this setup after approval. See the [runtime setup guide](docs/website-audit-runtime-guide.md#install-the-runtime).
+
+Reading the human checklists requires no software installation. Python and PyYAML are only needed for contributor skill/plugin validation, not for running reports. See [tested platforms](docs/supported-platforms-reference.md).
+
 ## General web guidance
 
 - [Web development and CMS coding standards](docs/web-coding-standards.md)
@@ -82,7 +102,7 @@ The plugin provides six focused review skills:
 
 The repository includes a local Codex marketplace containing the internally named `web-dev-checklists` plugin. Install **Web Development AI Skills Toolkit** once to use its six skills from other Codex tasks and project folders.
 
-Automated reports require Node.js **22.19.0 or newer** and npm. Install the complete plugin, including its shared runtime; the skill folders are not standalone packages.
+Complete the [requirements](#requirements) first. Install the complete plugin, including its shared runtime; the skill folders are not standalone packages.
 
 Clone or download this repository, install the current [Codex CLI](https://developers.openai.com/codex/cli/), and register the repository as a local marketplace:
 
