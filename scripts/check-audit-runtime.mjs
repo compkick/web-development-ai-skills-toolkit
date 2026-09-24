@@ -3,6 +3,8 @@ import path from "node:path";
 import process from "node:process";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import assert from "node:assert/strict";
+import { minimumNodeVersion, supportsNodeVersion } from "../plugins/web-dev-checklists/runtime/config/node-version.mjs";
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const runtimeDirectory = path.join(repositoryRoot, "plugins", "web-dev-checklists", "runtime");
@@ -10,6 +12,18 @@ const packageJson = JSON.parse(await readFile(path.join(runtimeDirectory, "packa
 const packageLock = JSON.parse(await readFile(path.join(runtimeDirectory, "package-lock.json"), "utf8"));
 const lockedRoot = packageLock.packages?.[""];
 const errors = [];
+
+for (const version of ["20.19.0", "22.0.0", "22.18.9", "22.19.0-rc.1", "invalid"]) {
+  assert.equal(supportsNodeVersion(version), false, `Reject unsupported Node ${version}`);
+}
+for (const version of ["22.19.0", "22.19.1", "22.20.0", "24.0.0"]) {
+  assert.equal(supportsNodeVersion(version), true, `Accept supported Node ${version}`);
+}
+const rootPackage = JSON.parse(await readFile(path.join(repositoryRoot, "package.json"), "utf8"));
+const rootLock = JSON.parse(await readFile(path.join(repositoryRoot, "package-lock.json"), "utf8"));
+for (const manifest of [packageJson, lockedRoot, rootPackage, rootLock.packages?.[""]]) {
+  assert.equal(manifest?.engines?.node, `>=${minimumNodeVersion}`, "Node engine requirements must agree");
+}
 
 if (!lockedRoot) {
   errors.push("Runtime package-lock.json is missing its root package entry.");

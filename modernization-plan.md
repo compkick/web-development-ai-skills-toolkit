@@ -10,8 +10,8 @@ This file is the canonical implementation roadmap. Update it as work is complete
 
 - Plan status: In progress
 - Current phase: Phase 6 (Phases 1–5 complete)
-- Next work item: Prepare the public release and marketplace submission; clear the remaining release gates
-- Last reviewed: 2026-09-09
+- Next work item: Merge the reviewed `0.1.3` candidate from `develop` into `main`, confirm CI, then tag and publish the release
+- Last reviewed: 2026-09-24
 
 ## Guiding decisions
 
@@ -347,12 +347,12 @@ Phase 4 closed on 2026-09-05 following the developer's successful CLI and Codex 
 Testing reviewed on 2026-09-05:
 
 - The owner tested security, SEO, accessibility, and launch readiness on a fresh Windows 11 PC using a fresh Codex task and `computerkick.com` (WordPress/Elementor). The supplied command log confirms first-use dependency and Chromium bootstrap, bounded representative-page reviews, and recovery from a Codex sandbox startup restriction. The owner reviewed the saved artifacts. This establishes fresh-PC and fresh-context testing, not every operating system or every skill on that PC.
-- The owner exercised all six skills through CLI and Codex. The latest saved deterministic packages cover a variety of static websites, CMS and WordPress websites, a JavaScript application and a Next.JS / React app. Their evidence/coverage schemas, listed artifacts, and custom-report local links passed inspection. This is public-page coverage, not authenticated CMS testing or complete application-journey testing. The application capture records image/scroll limitations rather than a complete visual pass.
+- The owner exercised all six skills through CLI and Codex. The latest saved deterministic packages cover a variety of static websites, CMS and WordPress websites, a JavaScript application and a Next.js / React app. Their evidence/coverage schemas, listed artifacts, and custom-report local links passed inspection. This is public-page coverage, not authenticated CMS testing or complete application-journey testing. One application capture records image/scroll limitations rather than a complete visual pass.
 - Approved Windows tests passed `repo:check`, `runtime:test`, all six `reviews:test` suites, and official skill/plugin validation. Missing-cache fixtures and the saved mistyped-host run produce incomplete evidence instead of a website failure. Fresh-agent reports also identify backend and operational checks they cannot verify. Reference synchronization and packaged runtime checks pass.
 
 - On 2026-09-09, the owner supplied negative-trigger logs: a website-opinion request explicitly opting out of skills used direct browser/search tools without a toolkit invocation in the supplied log; a subsequent standalone headline-rewrite request received only rewritten copy. These establish representative opt-out and unrelated-request behavior, not exhaustive trigger coverage.
 
-Phase 5 closed on 2026-09-09 by agreement with the owner, with publication separated into Phase 6. GitHub Actions run `34392195263` for commit `fb046b5` passed the Ubuntu 22.04 browser-fixture job: fresh dependency/bootstrap setup, matching Chromium installation, runtime and screenshot tests, and all six review-profile suites. Windows and Ubuntu runtime testing are complete; macOS is untested and is not a release gate. The validation job passed Markdown linting and internal links, then stopped at two anonymous 404 responses for the private repository and Issues page. Later validation stages did not run in that job. Full release-candidate CI, final installed display-metadata inspection, and the release tag move to Phase 6 as unfinished gates, not completed tests.
+Phase 5 closed on 2026-09-09 by agreement with the owner, with publication separated into Phase 6. The original Ubuntu browser-fixture run passed, while its repository-validation job stopped at anonymous private-repository link failures. That blockage was resolved: repository validation and browser fixtures passed for commit `10f02be` (then tagged `v0.1.2`, Actions run `34416716606`) and Node-fix commit `bbad993` (run `35559645407`). The old tag was later deleted during privacy cleanup, and both commits were replaced in branch history. External links run separately as informational checks, not as proof that private URLs are publicly accessible. Windows and Ubuntu runtime testing are complete; macOS remains untested and is not a release gate.
 
 Publishing copy and the presentation-asset record live in [publishing-kit.md](publishing-kit.md). These are prepared materials, not evidence that a page, post, plugin listing, or release has been published. The draft's repository and Issues URLs currently fail anonymous link validation because the repository is private; the other local checks pass.
 
@@ -362,12 +362,30 @@ Keep release preparation separate from completed functional testing. A public Gi
 
 ### Release preparation
 
-- [ ] Confirm distribution channels and review tracked files and Git history for sensitive or non-redistributable material before public exposure.
-- [ ] Validate Markdown, links, manifests, and skills in CI for the release candidate, including official skill/plugin validation; resolve the private-link failures without silently disabling checks.
-- [ ] Confirm all six installed skills appear with correct display names and descriptions.
-- [ ] Build a clean release bundle with the six skills, generated references, shared runtime, and required assets; exclude evidence, caches, and installed dependencies.
-- [ ] Test installation and runtime resolution from the exact release bundle in fresh context.
+- [x] Align Node.js requirements, fix the ASVS link, and refresh platform and publishing records.
+- [x] Run and record official plugin and all six skill validators locally; see [the validator record](CONTRIBUTING.md#official-validator-record).
+- [x] Add private vulnerability-reporting guidance using the owner-confirmed Computerkick contact form; see [SECURITY.md](SECURITY.md).
+- [x] Align the package, runtime, lockfiles, and plugin base version at `0.1.3`; the old `v0.1.2` tag was deleted during privacy cleanup.
+- [x] Reorganize the README for users: prerequisites, installation, explicit and implicit chat usage, manual runs, human checklists, and support; separate contributor guidance and label unverified agent compatibility.
+- [x] Confirm distribution channels and review tracked files and Git history for sensitive or non-redistributable material before public exposure.
+- [x] Validate the final release candidate in CI and record official skill/plugin validation for that candidate. Official validators currently run locally, not in CI; external-link checks remain visible but informational.
+- [x] Confirm all six installed skills appear with correct display names and descriptions.
+- [x] Complete fresh Windows 11 PC acceptance testing of all six installed skills, including first-use bootstrap, projectless reviews, runtime reuse, and owner verification of reports and folders.
+- [x] Build a clean release bundle with the six skills, generated references, shared runtime, and required assets; exclude evidence, caches, and installed dependencies.
+- [x] Test installation and runtime resolution from the exact release bundle in fresh context.
 - [ ] Tag the reviewed version and publish reproducible installation instructions and release notes.
+
+### Release-preparation progress — 2026-09-21
+
+Version preparation and user-facing documentation are committed through `9901cca`. The README now separates installation from use, explains URL-only reviews without a website repository, and makes Node.js/npm prerequisites and first-use bootstrap explicit. The owner's checklist introduction and publishing-kit edits are retained.
+
+The owner completed the fresh Windows 11 PC walkthrough using installed plugin `0.1.3+codex.20260921043328`. The supplied Codex chat logs show all six skills discovered and successfully run in a projectless task: `review-web-security`, `review-web-accessibility`, `audit-web-project`, `review-technical-seo`, `review-web-performance`, and `review-website-launch`. First-use dependency/Chromium bootstrap succeeded, and later reviews reused the ready runtime. The owner verified the reports and folders for all six reviews; the artifacts were not independently inspected in this documentation update. Test-site hostnames and personal paths are intentionally omitted.
+
+The workflow recovered from npm not being on the app's PATH after Node installation without an app restart. Initial security/accessibility browser-startup failures also recovered on approved retries with Chromium sandboxing retained. Failed attempts and successful retries produced separate evidence folders. These recoveries do not invalidate the successful test; the website's launch recommendation is a review outcome, not a toolkit test failure.
+
+Fresh-PC six-skill acceptance is complete for this installed build. The tested plugin version was introduced in commit `16f995b`; later commits through `a854fa7` changed documentation only. Release tagging and GitHub publication remain open.
+
+On 2026-09-21, `develop` and `main` were rewritten to remove historical client-name references, and the old `v0.1.2` tag was deleted. The owner accepted one retained client-name reference in the diff of closed GitHub PR #2. An inspection of 58 Actions runs and 90 job logs found no matches for the targeted names or domains; those runs had no downloadable artifacts. GitHub's default branch is now `main`. Next: merge `develop` into `main`, validate that commit in CI, tag `v0.1.3`, and create the GitHub Release. GitHub publication and marketplace submission remain open. Claude Code and Bionic compatibility are still unverified.
 
 ### Public distribution and discovery
 

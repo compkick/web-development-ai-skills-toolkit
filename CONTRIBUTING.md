@@ -4,6 +4,8 @@
 
 Use this guide when adding, correcting, reorganizing, or reviewing repository documentation and Codex skills.
 
+For support, update inquiries, or security questions, use the [Computerkick contact form](https://computerkick.com/contact/). Report suspected vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
+
 ## Branch and review workflow
 
 The repository uses `develop` as its integration branch and `main` as its publishing branch.
@@ -105,6 +107,19 @@ python -m pip install -r requirements-dev.txt
 ```
 
 On Windows PowerShell, activate the environment with `.\.venv\Scripts\Activate.ps1`, then run `python -m pip install -r requirements-dev.txt`. Run the skill and plugin validators documented by their respective Codex creator skills from that environment.
+
+### Official validator record
+
+On 2026-09-20, the official validators bundled with the local Codex `plugin-creator` and `skill-creator` system skills passed against commit `bbad993` using Python 3.14.5 and PyYAML 6.0.3:
+
+- `validate_plugin.py plugins/web-dev-checklists`: passed.
+- `quick_validate.py` against each of `audit-web-project`, `review-technical-seo`, `review-web-accessibility`, `review-web-performance`, `review-web-security`, and `review-website-launch`: all passed.
+
+Validator SHA-256 fingerprints: `validate_plugin.py` = `1E6CB914505B458856C2CFAB7D18A224731C743EF47E0C9D78AFE64F35B67F7C`; `quick_validate.py` = `6068513D924ED3559E186DFCDEAD7439129828DCF402167FD925C06DFFBF2806`.
+
+To repeat the checks, use the installed creator skills' validator scripts with the repository's Python virtual environment. Pass the plugin root to the plugin validator and each folder under `plugins/web-dev-checklists/skills/` to the skill validator. Record the candidate commit, validator fingerprints, Python/PyYAML versions, and results before release.
+
+These are local structural-validation results, not CI jobs, installation tests, or proof of correct agent behavior. CI continues to run repository/schema checks and all browser-profile fixtures. Rerun the official validators for the final release candidate; do not treat this record as approval of later package changes.
 
 Before requesting review, also run:
 

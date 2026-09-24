@@ -4,8 +4,6 @@
 
 Copy-ready descriptions and artwork for the project's WordPress page, LinkedIn announcement, and future plugin listing. Keep technical setup details authoritative in the [README](README.md) and [runtime guide](docs/website-audit-runtime-guide.md).
 
-Publication status: draft materials for development version **0.1.2**. Phase 5 validation is closed; Phase 6 tracks release preparation and publishing. The last verified repository state was private with no published releases. Before posting, confirm public repository access, the release version/tag, and the final support destination. The public repository and Issues links below intentionally point at the future public destinations; anonymous link validation returns 404 until access is available.
-
 ## Name and positioning
 
 - Full project name: **Web Development AI Skills Toolkit**
@@ -49,7 +47,7 @@ It combines human-readable checklists with automated evidence collection and AI-
 
 The checklists remain the source of truth. Automation covers the checks it can actually perform, and the agent explains what still needs access, context, or a human decision.
 
-### Who it's for
+### Target audience
 
 Web developers, engineers, technical project leads, and small teams maintaining websites, inheriting projects, or preparing a release. General reviews work across frameworks and CMS platforms; the documentation also includes WordPress lifecycle checklists and Sitefinity maintenance guidance.
 
@@ -75,7 +73,7 @@ Web developers, engineers, technical project leads, and small teams maintaining 
 - The deterministic launch report is a bounded preflight, not final approval. The project owner remains responsible for the launch decision.
 - Live content, network conditions, scores, and agent judgments can vary even though the collection procedure is repeatable.
 
-### How to get it and install it
+### Start here
 
 Start with the [repository and setup instructions](https://github.com/compkick/web-development-ai-skills-toolkit). You can use the human checklists without installing anything.
 
@@ -94,13 +92,7 @@ npm run review:website -- --profile review-web-accessibility --url https://site.
 
 Replace `https://site.example` with a website you are authorized to review. Open `accessibility-report.html` in the resulting `.output` directory. Other profiles create their own report files.
 
-For Codex, install the Codex CLI and register your local repository as a marketplace:
-
-```bash
-codex plugin marketplace add "<absolute-path-to-this-repository>"
-```
-
-Open the plugin browser, select **Personal**, and install **Web Development AI Skills Toolkit**. In Codex CLI, enter `/plugins` to open that browser. Start a new task/session after installation. See the [repository installation guide](README.md#install-the-codex-plugin) and [official plugin documentation](https://learn.chatgpt.com/docs/plugins).
+For Codex, use the desktop app's **Plugins → Add plugin marketplace** dialog to add `compkick/web-development-ai-skills-toolkit` directly from GitHub. Select **Personal** and install **Web Development AI Skills Toolkit**, then start a new chat. No separate CLI installation or manual clone is required for this route. See the [repository installation guide](README.md#codex) for Git ref settings, prerequisites, and local-folder/CLI alternatives.
 
 Try a request such as:
 
@@ -113,16 +105,23 @@ First-use approvals may cover downloads, browser execution, network access, and 
 ### Requirements
 
 - **Checklists only:** a browser or Markdown reader. No Codex, Node.js, or Python installation is needed.
-- **Automated reports:** Node.js 22 or newer, npm, an approved Chromium download or a compatible installed Chrome/Edge browser, and network access to the authorized target.
+- **Automated reports:** Node.js 22.19.0 or newer, npm, an approved Chromium download or a compatible installed Chrome/Edge browser, and network access to the authorized target.
 - **AI-assisted reviews:** a working Codex environment with plugin support and the toolkit installed. Codex usage is separate from the toolkit's MIT license.
-- **Platform status:** Windows 11 x64 is directly tested. Linux browser validation is pending confirmation; macOS is best effort. Check the [platform matrix](docs/supported-platforms-reference.md) before claiming broader support.
+- **Platform status:** Windows 11 x64 and Ubuntu CI are tested, including all six browser-profile suites. macOS, Claude Code, and Bionic compatibility are unverified. See the [platform matrix](docs/supported-platforms-reference.md) for exact coverage and remaining release tests.
 - **Contributors:** repository validation dependencies are installed with `npm ci`. Python and PyYAML are for the official skill/plugin validators, not ordinary website reports.
 
 You do not need to install the audit dependencies into the website being reviewed. The standalone CLI profiles do not require an OpenAI API key.
 
 ### Changelog
 
-#### 0.1.2 — current development version
+#### 0.1.3 — unreleased
+
+- Corrected the minimum Node.js version to 22.19.0 across setup guidance, package engines, and bootstrap validation; added version-boundary tests.
+- Corrected the OWASP ASVS reference and regenerated packaged references.
+- Updated platform/CI evidence and recorded official plugin and skill validation.
+- Added private security reporting and standardized support on the Computerkick contact form.
+
+#### 0.1.2 — historical baseline
 
 - Fixed GitHub Actions runtime-cache setup and verified the Ubuntu browser-test suites.
 - Completed Phase 5 validation and separated publishing into Phase 6.
@@ -142,7 +141,7 @@ You do not need to install the audit dependencies into the website being reviewe
 - Added the plugin-owned browser runtime and HTML/JSON evidence reports.
 - Established the human checklist library, packaged references, and local plugin installation workflow.
 
-These notes describe repository development versions, not verified GitHub release tags. Replace this note with the tagged release record when the first public release is published.
+The old `v0.1.2` tag was deleted during the repository privacy cleanup. Add the `v0.1.3` release link and date after publishing.
 
 ### License
 
@@ -159,9 +158,11 @@ The [modernization plan](modernization-plan.md) is the source of truth. These ar
 
 ### Support and feedback
 
-For setup questions, start with the README and runtime guide. Report reproducible bugs and feature requests through [GitHub Issues](https://github.com/compkick/web-development-ai-skills-toolkit/issues) once the repository and issue tracker are publicly available.
+For setup questions, start with the README and runtime guide. For support, update inquiries, bug reports, feature requests, or security questions, use the [Computerkick contact form](https://computerkick.com/contact/).
 
 Include the toolkit version, operating system, Node.js version, profile, command, and a sanitized description of the problem. Share a minimal example rather than private screenshots, tokens, customer data, or a full evidence archive.
+
+Report suspected toolkit vulnerabilities privately through the same form, following [the security reporting guidance](SECURITY.md). Do not post vulnerability details in public Issues or pull requests.
 
 For information about the creator and web development work, visit [Computerkick](https://computerkick.com). No response-time guarantee or managed support service is included.
 
