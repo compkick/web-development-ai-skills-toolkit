@@ -121,7 +121,7 @@ You do not need to install the audit dependencies into the website being reviewe
 - Updated platform/CI evidence and recorded official plugin and skill validation.
 - Added private security reporting and standardized support on the Computerkick contact form.
 
-#### 0.1.2 — tagged baseline
+#### 0.1.2 — historical baseline
 
 - Fixed GitHub Actions runtime-cache setup and verified the Ubuntu browser-test suites.
 - Completed Phase 5 validation and separated publishing into Phase 6.
@@ -141,7 +141,7 @@ You do not need to install the audit dependencies into the website being reviewe
 - Added the plugin-owned browser runtime and HTML/JSON evidence reports.
 - Established the human checklist library, packaged references, and local plugin installation workflow.
 
-The `v0.1.2` tag identifies the tested baseline. Unreleased changes are not part of that tag. Add the final release link and date when publishing; do not move the existing tag to include later fixes.
+The old `v0.1.2` tag was deleted during the repository privacy cleanup. Add the `v0.1.3` release link and date after publishing.
 
 ### License
 

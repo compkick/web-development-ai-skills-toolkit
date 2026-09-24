@@ -10,8 +10,8 @@ This file is the canonical implementation roadmap. Update it as work is complete
 
 - Plan status: In progress
 - Current phase: Phase 6 (Phases 1–5 complete)
-- Next work item: Identify the source commit for the tested plugin build, validate the exact release package, and finish the pre-publication review
-- Last reviewed: 2026-09-21
+- Next work item: Merge the reviewed `0.1.3` candidate from `develop` into `main`, confirm CI, then tag and publish the release
+- Last reviewed: 2026-09-24
 
 ## Guiding decisions
 
@@ -352,7 +352,7 @@ Testing reviewed on 2026-09-05:
 
 - On 2026-09-09, the owner supplied negative-trigger logs: a website-opinion request explicitly opting out of skills used direct browser/search tools without a toolkit invocation in the supplied log; a subsequent standalone headline-rewrite request received only rewritten copy. These establish representative opt-out and unrelated-request behavior, not exhaustive trigger coverage.
 
-Phase 5 closed on 2026-09-09 by agreement with the owner, with publication separated into Phase 6. The original Ubuntu browser-fixture run passed, while its repository-validation job stopped at anonymous private-repository link failures. That blockage is now resolved: repository validation and browser fixtures passed for tagged commit `10f02be` (`v0.1.2`, Actions run `34416716606`) and Node-fix commit `bbad993` (run `35559645407`). External links run separately as informational checks, not as proof that private URLs are publicly accessible. Windows and Ubuntu runtime testing are complete; macOS remains untested and is not a release gate. The final release package still needs its own installation test and validation.
+Phase 5 closed on 2026-09-09 by agreement with the owner, with publication separated into Phase 6. The original Ubuntu browser-fixture run passed, while its repository-validation job stopped at anonymous private-repository link failures. That blockage was resolved: repository validation and browser fixtures passed for commit `10f02be` (then tagged `v0.1.2`, Actions run `34416716606`) and Node-fix commit `bbad993` (run `35559645407`). The old tag was later deleted during privacy cleanup, and both commits were replaced in branch history. External links run separately as informational checks, not as proof that private URLs are publicly accessible. Windows and Ubuntu runtime testing are complete; macOS remains untested and is not a release gate.
 
 Publishing copy and the presentation-asset record live in [publishing-kit.md](publishing-kit.md). These are prepared materials, not evidence that a page, post, plugin listing, or release has been published. The draft's repository and Issues URLs currently fail anonymous link validation because the repository is private; the other local checks pass.
 
@@ -365,7 +365,7 @@ Keep release preparation separate from completed functional testing. A public Gi
 - [x] Align Node.js requirements, fix the ASVS link, and refresh platform and publishing records.
 - [x] Run and record official plugin and all six skill validators locally; see [the validator record](CONTRIBUTING.md#official-validator-record).
 - [x] Add private vulnerability-reporting guidance using the owner-confirmed Computerkick contact form; see [SECURITY.md](SECURITY.md).
-- [x] Align the package, runtime, lockfiles, and plugin base version at `0.1.3`; keep the existing `v0.1.2` tag unchanged.
+- [x] Align the package, runtime, lockfiles, and plugin base version at `0.1.3`; the old `v0.1.2` tag was deleted during privacy cleanup.
 - [x] Reorganize the README for users: prerequisites, installation, explicit and implicit chat usage, manual runs, human checklists, and support; separate contributor guidance and label unverified agent compatibility.
 - [x] Confirm distribution channels and review tracked files and Git history for sensitive or non-redistributable material before public exposure.
 - [x] Validate the final release candidate in CI and record official skill/plugin validation for that candidate. Official validators currently run locally, not in CI; external-link checks remain visible but informational.
@@ -373,7 +373,7 @@ Keep release preparation separate from completed functional testing. A public Gi
 - [x] Complete fresh Windows 11 PC acceptance testing of all six installed skills, including first-use bootstrap, projectless reviews, runtime reuse, and owner verification of reports and folders.
 - [x] Build a clean release bundle with the six skills, generated references, shared runtime, and required assets; exclude evidence, caches, and installed dependencies.
 - [x] Test installation and runtime resolution from the exact release bundle in fresh context.
-- [x] Tag the reviewed version and publish reproducible installation instructions and release notes.
+- [ ] Tag the reviewed version and publish reproducible installation instructions and release notes.
 
 ### Release-preparation progress — 2026-09-21
 
@@ -383,9 +383,9 @@ The owner completed the fresh Windows 11 PC walkthrough using installed plugin `
 
 The workflow recovered from npm not being on the app's PATH after Node installation without an app restart. Initial security/accessibility browser-startup failures also recovered on approved retries with Chromium sandboxing retained. Failed attempts and successful retries produced separate evidence folders. These recoveries do not invalidate the successful test; the website's launch recommendation is a review outcome, not a toolkit test failure.
 
-Fresh-PC six-skill acceptance is complete for this installed build. Its exact source commit and equivalence to the final distributable still need recording; the installed version alone does not establish that the final release bundle is identical. Skill names/discovery are confirmed, but full display-description inspection remains open.
+Fresh-PC six-skill acceptance is complete for this installed build. The tested plugin version was introduced in commit `16f995b`; later commits through `a854fa7` changed documentation only. Release tagging and GitHub publication remain open.
 
-Next: define and validate the complete release package, tie it to the tested build, and complete the sensitive-material review before public exposure. Repeat installation testing if the final package differs materially. Final-candidate validation, tagging, GitHub publication, and marketplace submission remain open. Claude Code and Bionic compatibility are still unverified.
+On 2026-09-21, `develop` and `main` were rewritten to remove historical client-name references, and the old `v0.1.2` tag was deleted. The owner accepted one retained client-name reference in the diff of closed GitHub PR #2. An inspection of 58 Actions runs and 90 job logs found no matches for the targeted names or domains; those runs had no downloadable artifacts. GitHub's default branch is now `main`. Next: merge `develop` into `main`, validate that commit in CI, tag `v0.1.3`, and create the GitHub Release. GitHub publication and marketplace submission remain open. Claude Code and Bionic compatibility are still unverified.
 
 ### Public distribution and discovery
 
