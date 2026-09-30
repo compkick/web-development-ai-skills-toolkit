@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Use this reference to understand which environments are directly exercised and where additional testing is still needed before the first public release.
+Use this reference to understand which environments are directly exercised for the released toolkit and where additional testing is still needed.
 
 ## Runtime requirements
 
@@ -18,19 +18,21 @@ Contributors who run the official skill and plugin validators also need Python 3
 | Platform | Repository checks | Browser review runtime | Current status |
 | --- | --- | --- | --- |
 | Windows 11 x64 with PowerShell | Tested | Tested with Playwright Chromium against local fixtures and real websites | Primary supported development environment |
-| Ubuntu with Node.js 24 | Passed `repo:check` on the validation job's `ubuntu-latest` runner | Ubuntu 22.04 bootstrap, Chromium, runtime/screenshot tests, and all six review-profile suites passed | Tested in CI; rerun against the final release candidate |
+| Ubuntu with Node.js 24 | Passed `repo:check` on the validation job's `ubuntu-latest` runner | Ubuntu 22.04 bootstrap, Chromium, runtime/screenshot tests, and all six review-profile suites passed | Tested in CI for `v0.1.3` |
 | Current macOS | Not tested | Not tested | Unverified; not a release gate |
 
 The runtime prefers its matching Playwright Chromium build. Chrome and Edge are launch-tested fallbacks, not a promise that every browser version or managed-device policy will work.
 
 ## Recorded validation
 
+- Version `v0.1.3` identifies commit `ebfc786`, released September 24, 2026. GitHub Actions run `36071966393` passed repository validation and browser fixtures on that commit. The repository became public on September 30, 2026.
+- On September 21, 2026, the owner ran all six installed skills on a fresh Windows 11 PC in a projectless Codex task and verified the reports and folders. First-use bootstrap and runtime reuse succeeded with plugin `0.1.3+codex.20260921043328`.
 - GitHub Actions run `34416716606` passed repository validation and browser fixtures for commit `10f02be`, which was tagged `v0.1.2` at the time. That tag was later deleted during the privacy cleanup.
 - GitHub Actions run `35559645407` passed both jobs for commit `bbad993`, including the Node.js minimum correction. GitHub records this run on 2026-09-21 UTC (2026-09-20 in the maintainer's local timezone).
 - Windows 11 x64 with Node.js 24.19.0 passed `repo:check`, runtime/screenshot tests, and all six profile suites for the Node-minimum changes on 2026-09-20. This run used an isolated dependency cache and installed Google Chrome; earlier Windows testing also covered Playwright Chromium.
 - Official plugin and six skill validators passed locally on 2026-09-20. See [the validator record](../CONTRIBUTING.md#official-validator-record).
 
-External-link CI is informational: a green job does not prove that every public URL is reachable. Recheck anonymous repository and download access after publication. These results do not establish a fresh installation of the final distributable or Claude Code/Bionic compatibility.
+External-link CI is informational: a green job does not prove that every public URL is reachable. Anonymous repository, Issues, release-page, and source-ZIP access were verified on September 30, 2026. Claude Code and Bionic compatibility remain unverified.
 
 ## Release testing
 

@@ -4,6 +4,8 @@
 
 The Web Development AI Skills Toolkit (or Web Dev AI Skills Toolkit) is a set of practical checklists, automated audits, and agent skills for building better websites.
 
+[Version 0.1.3](https://github.com/compkick/web-development-ai-skills-toolkit/releases/tag/v0.1.3) was released on September 24, 2026. The repository became public on September 30, 2026. See the [Computerkick project page](https://computerkick.com/web-development-ai-skills-toolkit/) for an overview.
+
 Use the checklists yourself, run evidence reports from the command line, or ask an agent to review a website and prioritize findings. The library includes general web guidance, WordPress lifecycle checklists, and Sitefinity maintenance runbooks.
 
 The plugin provides six focused review skills:
@@ -61,12 +63,12 @@ Complete the [requirements](#requirements) first. Install the complete plugin, i
 Open **Plugins → Add plugin marketplace** and enter:
 
 - **Source:** `compkick/web-development-ai-skills-toolkit`
-- **Git ref:** `main`, or a published release tag to pin a specific version.
+- **Git ref:** `v0.1.3` for the released version, or `main` for the latest committed updates.
 - **Sparse paths:** leave empty. The marketplace and complete plugin, including the shared runtime, must be available.
 
 Choose **Add marketplace**, select **Personal**, open **Web Development AI Skills Toolkit**, and choose **Install** (the plus button in some versions). Start a new chat after installation. If the toolkit already appears in your plugin browser, skip adding the marketplace.
 
-While the repository is private, access requires GitHub authentication with permission to read it. For pre-release testing, use `develop` as the Git ref; use a published tag only after that release exists. Node.js and npm are still required to run automated reports.
+The repository is public, so reading or downloading it does not require GitHub authentication. For development testing, use `develop` as the Git ref. Node.js and npm are required to run automated reports.
 
 #### Alternative: Install from a local folder
 
@@ -333,7 +335,7 @@ When updating a locally installed development build, validate the plugin, refres
 
 ### Testing
 
-**Fresh-PC test completed — 2026-09-21:** On a fresh Windows 11 PC, all six skills were discovered and successfully run through Codex in a projectless chat. First-use bootstrap and subsequent runtime reuse worked, and the owner verified the generated reports and folders. Tested plugin: `0.1.3+codex.20260921043328`. This confirms the installed candidate's workflow, not publication of the final release; see the [release progress](modernization-plan.md#phase-6-publish-the-core-library).
+**Fresh-PC test completed — 2026-09-21:** On a fresh Windows 11 PC, all six skills were discovered and successfully run through Codex in a projectless chat. First-use bootstrap and subsequent runtime reuse worked, and the owner verified the generated reports and folders. Tested plugin: `0.1.3+codex.20260921043328`. Version `0.1.3` was subsequently released on September 24, 2026; see the [release progress](modernization-plan.md#phase-6-publish-the-core-library).
 
 ### Versioning
 
