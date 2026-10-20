@@ -41,6 +41,30 @@ try {
     }
   }
 
+  // The title always states the positive requirement; evidence explains an actual failure.
+  for (const [tls10, tls11, tls12, tls13, modernStatus, minimumStatus, acceptedLegacy] of [
+    ["rejected", "rejected", "accepted", "accepted", "pass", "pass", []],
+    ["rejected", "rejected", "rejected", "accepted", "pass", "pass", []],
+    ["rejected", "rejected", "accepted", "rejected", "pass", "pass", []],
+    ["accepted", "accepted", "accepted", "accepted", "pass", "fail", ["TLS 1.0", "TLS 1.1"]],
+    ["accepted", "not-tested", "accepted", "accepted", "pass", "fail", ["TLS 1.0"]],
+    ["rejected", "accepted", "accepted", "accepted", "pass", "fail", ["TLS 1.1"]],
+    ["not-tested", "rejected", "accepted", "accepted", "pass", "not-checked", []],
+    ["rejected", "rejected", "rejected", "rejected", "fail", "pass", []]
+  ]) {
+    const tlsBaseline = { attempted: true, versions: Object.fromEntries(Object.entries({ tls10, tls11, tls12, tls13 }).map(([version, outcome]) => [version, { outcome }])) };
+    const evidence = await buildSecurityEvidence(profiles[1], summary, { tlsBaseline }, directory);
+    const minimum = evidence.checks.find((check) => check.id === "tls-deprecated-versions");
+    assert.equal(minimum.title, "Site accepts only TLS 1.2 and newer");
+    assert.equal(minimum.status, minimumStatus);
+    assert.deepEqual(minimum.evidence.acceptedDeprecatedVersions, acceptedLegacy);
+    assert.equal(evidence.checks.find((check) => check.id === "tls-supported-versions").status, modernStatus);
+    if (minimumStatus === "fail") {
+      for (const version of acceptedLegacy) assert.ok(minimum.evidence.observation.includes(version));
+      assert.ok(minimum.evidence.observation.includes("requirement was not met"));
+    }
+  }
+
   for (const change of [
     (value) => { value.run.browser.unexpected = true; },
     (value) => { value.run.browser.viewport.width = 0; },

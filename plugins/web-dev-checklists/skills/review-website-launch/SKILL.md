@@ -53,9 +53,12 @@ The profile renders one supplied homepage and checks only launch-critical basics
 - Empty, placeholder, JavaScript, malformed, and missing-fragment link destinations
 - Up to 50 unique same-host HTTP(S) links, prioritizing navigation, header, footer, and then content
 - Homepage noindex directives and browser-error counts
+- Favicon head declarations, bounded same-origin image loading, actual dimensions, safe URLs, and conditional touch/app icons
 - A full-page screenshot and high-level title and heading summary
 
 It does not request external link destinations, submit forms, authenticate, run axe, run Lighthouse, repeat the security or technical SEO collectors, or crawl the site.
+
+For icon findings, use the [favicon setup guide](references/website-favicon-setup-guide.md). Review the local icon previews at tab size and enlarged; ask for brand confirmation only when it could change the recommendation. Missing, broken, low-resolution, or unverified icons are warnings, not automatic launch blockers. Touch and installed-app icons are conditional. Do not equate a working root fallback with an explicit head declaration or claim that an icon will appear in Google Search. Recheck the production domain after cutover.
 
 ## Reuse existing evidence
 
@@ -120,7 +123,7 @@ Write a durable Markdown launch report or client handoff only when the user asks
 
 ## Safety and stopping conditions
 
-Treat an explicit request to review a supplied URL as authorization for the documented homepage load, its normal third-party resources, the same-host plain-HTTP redirect probe, and up to 50 read-only same-host link requests. Otherwise confirm the target before loading it.
+Treat an explicit request to review a supplied URL as authorization for the documented homepage load, its normal third-party resources, the same-host plain-HTTP redirect probe, up to 50 read-only same-host link requests, and bounded same-origin icon/manifest reads. Otherwise confirm the target before loading it.
 
 The runner does not request external destinations or perform state-changing actions. Obtain separate approval before using credentials, accessing private systems, submitting forms, sending messages, changing content or infrastructure, installing dependencies, or executing any deployment or rollback step.
 

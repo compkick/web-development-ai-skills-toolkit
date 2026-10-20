@@ -13,6 +13,7 @@ const runtimeDirectory = path.resolve(scriptsDirectory, "..");
 const reviewScript = path.join(scriptsDirectory, "review.mjs");
 const passFixture = await readFile(path.join(runtimeDirectory, "fixtures", "launch-pass.html"), "utf8");
 const failFixture = await readFile(path.join(runtimeDirectory, "fixtures", "launch-fail.html"), "utf8");
+const fixtureIcon = Buffer.from(await readFile(path.join(runtimeDirectory, "fixtures", "favicon-png.base64"), "utf8"), "base64");
 const limitFixture = passFixture.replace(/<nav aria-label="Primary navigation">[\s\S]*?<\/nav>/, `<nav aria-label="Primary navigation">${Array.from({ length: 51 }, (_, index) => `<a href="/sample-${index}">Page ${index}</a>`).join(" ")}</nav>`);
 const testDirectory = await createFixtureDirectory("web-dev-checklists-launch-test-");
 const run = (command, args, cwd = testDirectory) => runCommand(command, args, cwd);
@@ -22,6 +23,10 @@ const limitOutputDirectory = path.join(testDirectory, "limit-output");
 const requests = new Map();
 const server = http.createServer((request, response) => {
   requests.set(request.url, (requests.get(request.url) ?? 0) + 1);
+  if (request.url === "/fixture-icon.png") {
+    response.writeHead(200, { "Content-Type": "image/png" });
+    return response.end(fixtureIcon);
+  }
   if (request.url === "/favicon.ico") {
     response.writeHead(204);
     return response.end();
@@ -81,6 +86,13 @@ try {
   assertCheckStatus(passEvidence, "homepage-footer-links", "pass");
   assertCheckStatus(passEvidence, "homepage-content-links", "pass");
   assertCheckStatus(passEvidence, "indexing-allowed", "pass");
+  for (const id of ["favicon-declaration", "favicon-load", "favicon-dimensions", "favicon-urls"]) assertCheckStatus(passEvidence, id, "pass");
+  assertCheckStatus(passEvidence, "favicon-app-icons", "informational");
+  assertCheckStatus(failEvidence, "favicon-declaration", "warning");
+  assertCheckStatus(failEvidence, "favicon-load", "warning");
+  assert.ok(failEvidence.checks.filter((check) => check.id.startsWith("favicon-")).every((check) => check.status !== "fail"));
+  assert.ok(passReport.includes('src="favicon-preview-1.png"') && passReport.includes('width="16"'));
+  await assertArtifacts(passOutputDirectory, ["favicon-preview-1.png"]);
   assertCheckStatus(failEvidence, "homepage-navigation-links", "fail");
   assertCheckStatus(failEvidence, "homepage-footer-links", "fail");
   assertCheckStatus(failEvidence, "homepage-content-links", "fail");
@@ -112,7 +124,7 @@ try {
     throw new Error("Launch review runner did not produce the expected safe human-readable report.");
   }
 
-  if (coverage.schemaVersion !== "1.0.0" || coverage.profile.id !== "review-website-launch" || coverage.profile.version !== "1.1.0" || coverage.items.length !== 34) {
+  if (coverage.schemaVersion !== "1.0.0" || coverage.profile.id !== "review-website-launch" || coverage.profile.version !== "1.2.0" || coverage.items.length !== 36) {
     throw new Error("Coverage output does not contain the complete website launch profile.");
   }
 
@@ -143,6 +155,8 @@ async function verifyReportStates(passEvidence, failEvidence, limitEvidence, cov
   }
   const warning = structuredClone(clear);
   warning.checks.find((check) => check.id === "browser-errors").status = "warning";
+  const iconWarning = structuredClone(clear);
+  for (const check of iconWarning.checks.filter((check) => check.id.startsWith("favicon-"))) check.status = "warning";
   const incomplete = structuredClone(clear);
   for (const check of incomplete.checks) {
     if (check.artifacts.includes("launch-results.json")) check.status = "not-checked";
@@ -156,6 +170,7 @@ async function verifyReportStates(passEvidence, failEvidence, limitEvidence, cov
   for (const [name, evidence, expected] of [
     ["clear", clear, "Clear"],
     ["warning", warning, "Attention"],
+    ["icon-warning", iconWarning, "Attention"],
     ["collector-error", incomplete, "Incomplete"],
     ["collector-missing", missingCollector, "Incomplete"],
     ["sample-limited", limited, "Incomplete"],

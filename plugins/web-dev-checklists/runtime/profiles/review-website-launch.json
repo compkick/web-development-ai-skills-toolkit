@@ -1,6 +1,6 @@
 {
   "id": "review-website-launch",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "checklistSource": "docs/website-launch-checklist.md",
   "standard": "Website launch readiness checklist",
   "runtime": {
@@ -72,6 +72,14 @@
       "automation": "partial",
       "evidenceCheckIds": ["page-http-status", "homepage-structure", "homepage-navigation-links", "homepage-footer-links", "homepage-content-links", "browser-errors"],
       "note": "The runner reviews one homepage and bounded same-host link destinations. Important pages, forms, search, downloads, and error behavior remain project-specific tests."
+    },
+    {
+      "id": "launch-readiness-favicon",
+      "section": "Confirm readiness",
+      "checklistItem": "Confirm the correct favicon is linked in the document head and appears in the browser tab. Follow the [favicon setup guide](website-favicon-setup-guide.md).",
+      "automation": "partial",
+      "evidenceCheckIds": ["favicon-declaration", "favicon-load", "favicon-dimensions", "favicon-urls", "favicon-app-icons"],
+      "note": "Bounded icon checks and local previews establish technical evidence. Brand approval and the actual browser-tab appearance require visual review; icon findings are warnings."
     },
     {
       "id": "launch-readiness-production-content",
@@ -216,6 +224,14 @@
       "automation": "partial",
       "evidenceCheckIds": ["page-http-status", "homepage-navigation-links", "homepage-footer-links", "homepage-content-links", "browser-errors"],
       "note": "The same bounded preflight can be rerun later, but project-specific critical workflows remain manual or project-owned tests."
+    },
+    {
+      "id": "launch-after-favicon",
+      "section": "After launch",
+      "checklistItem": "Confirm the favicon still loads and appears correctly on the production domain.",
+      "automation": "partial",
+      "evidenceCheckIds": ["favicon-declaration", "favicon-load", "favicon-dimensions", "favicon-urls"],
+      "note": "Rerun the preflight on the production hostname after cutover; confirm the browser-tab appearance manually after caches settle."
     },
     {
       "id": "launch-after-operations",

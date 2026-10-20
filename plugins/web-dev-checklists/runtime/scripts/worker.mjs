@@ -110,7 +110,7 @@ try {
 
   if (options.collectLaunch) {
     try {
-      const launchResult = await collectLaunchEvidence({ page, requestedUrl: options.url, response, timeoutMs: options.timeoutMs, sharedHttpRedirect });
+      const launchResult = await collectLaunchEvidence({ page, requestedUrl: options.url, response, timeoutMs: options.timeoutMs, sharedHttpRedirect, outputDirectory: options.outputDirectory });
       await writeJson(path.join(options.outputDirectory, "launch-results.json"), launchResult);
       launchSummary = { checkedLinks: launchResult.linkProbe.tested, status: "completed" };
     } catch (error) {

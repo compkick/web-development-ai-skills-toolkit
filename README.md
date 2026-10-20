@@ -257,6 +257,8 @@ npm run review:website -- --profile audit-web-project --url https://site.example
 
 Each command writes a timestamped package under `.output/<profile>/<host>/<run-id>/` by default. See the canonical [website audit runtime guide](docs/website-audit-runtime-guide.md) for profile scope, permissions, output artifacts, configuration, limitations, and plugin-local commands.
 
+The launch report includes favicon checks and small/enlarged icon previews. Icon issues are warnings, not automatic launch blockers; use the [favicon setup guide](docs/website-favicon-setup-guide.md) for the head declaration, image requirements, and visual review.
+
 ## Human-review checklists
 
 The Web Development AI Skills Toolkit is based on a set of practical checklists and guides originally written by developers, for developers to use directly, without an AI agent or any software installation.

@@ -59,6 +59,7 @@ Also use the [web coding standards](web-coding-standards.md), [website developme
 - [ ] Test the complete theme and plugin combination outside production.
 - [ ] Configure content types, taxonomies, templates, menus, patterns, and editor permissions.
 - [ ] Configure media sizes, upload types, storage, and image optimization.
+- [ ] Set the WordPress Site Icon and confirm its favicon links appear in the document head. Follow the [favicon setup guide](website-favicon-setup-guide.md).
 
 ## SEO and Accessibility
 

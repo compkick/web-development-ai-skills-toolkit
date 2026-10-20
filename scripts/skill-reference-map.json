@@ -27,6 +27,7 @@
     ],
     "review-website-launch": [
       "docs/website-launch-checklist.md",
+      "docs/website-favicon-setup-guide.md",
       "docs/website-development-checklist.md",
       "docs/wordpress-launch-checklist.md",
       "docs/wordpress-migration-checklist.md",

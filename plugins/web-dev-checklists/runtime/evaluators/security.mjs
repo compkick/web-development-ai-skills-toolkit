@@ -41,12 +41,19 @@ export async function buildSecurityEvidence(profileToUse, summary, securityResul
   const modernTlsRejected = modernVersions.every((result) => result?.outcome === "rejected");
   const acceptsDeprecatedTls = deprecatedVersions.some((result) => result?.outcome === "accepted");
   const rejectsDeprecatedTls = deprecatedVersions.every((result) => result?.outcome === "rejected");
+  const acceptedDeprecatedVersions = [["TLS 1.0", tlsBaseline?.versions?.tls10], ["TLS 1.1", tlsBaseline?.versions?.tls11]].filter(([, result]) => result?.outcome === "accepted").map(([version]) => version);
 
   addCheck("tls-cipher-suite", "Site negotiates a strong cipher suite", !tlsBaseline?.attempted || !negotiatedTlsAccepted ? "not-checked" : negotiatedTls.strongCipher ? "pass" : "fail", "tls", { cipher: negotiatedTls?.cipher ?? null, protocol: negotiatedTls?.protocol ?? null });
   addCheck("tls-forward-secrecy", "Site uses a forward-secret key exchange", !tlsBaseline?.attempted || !negotiatedTlsAccepted ? "not-checked" : negotiatedTls.forwardSecret ? "pass" : "fail", "tls", { cipher: negotiatedTls?.cipher ?? null, ephemeralKey: negotiatedTls?.ephemeralKey ?? null, protocol: negotiatedTls?.protocol ?? null });
   addCheck("tls-key-exchange-group", "Site negotiates an approved key-exchange group", !tlsBaseline?.attempted || !negotiatedTlsAccepted || negotiatedTls.approvedKeyExchangeGroup === null ? "not-checked" : negotiatedTls.approvedKeyExchangeGroup ? "pass" : "warning", "tls", { ephemeralKey: negotiatedTls?.ephemeralKey ?? null });
-  addCheck("tls-supported-versions", "Site supports TLS 1.3 or TLS 1.2", !tlsBaseline?.attempted ? "not-checked" : supportsModernTls ? "pass" : modernTlsRejected ? "fail" : "not-checked", "tls", { tls12: tlsBaseline?.versions?.tls12 ?? null, tls13: tlsBaseline?.versions?.tls13 ?? null });
-  addCheck("tls-deprecated-versions", "Site rejects TLS 1.0 and TLS 1.1", !tlsBaseline?.attempted ? "not-checked" : acceptsDeprecatedTls ? "fail" : rejectsDeprecatedTls ? "pass" : "not-checked", "tls", { tls10: tlsBaseline?.versions?.tls10 ?? null, tls11: tlsBaseline?.versions?.tls11 ?? null });
+  addCheck("tls-supported-versions", "Site supports TLS 1.2 or TLS 1.3", !tlsBaseline?.attempted ? "not-checked" : supportsModernTls ? "pass" : modernTlsRejected ? "fail" : "not-checked", "tls", { tls12: tlsBaseline?.versions?.tls12 ?? null, tls13: tlsBaseline?.versions?.tls13 ?? null });
+  addCheck("tls-deprecated-versions", "Site accepts only TLS 1.2 and newer", !tlsBaseline?.attempted ? "not-checked" : acceptsDeprecatedTls ? "fail" : rejectsDeprecatedTls ? "pass" : "not-checked", "tls", {
+    requirement: "Minimum TLS version: 1.2. Prefer TLS 1.3.",
+    observation: !tlsBaseline?.attempted ? "TLS version checks were not performed." : acceptsDeprecatedTls ? `Site accepted ${acceptedDeprecatedVersions.join(" and ")}; the minimum-version requirement was not met.` : rejectsDeprecatedTls ? "TLS 1.0 and TLS 1.1 test connections were rejected." : "The minimum-version requirement could not be verified.",
+    acceptedDeprecatedVersions,
+    tls10: tlsBaseline?.versions?.tls10 ?? null,
+    tls11: tlsBaseline?.versions?.tls11 ?? null
+  });
 
   const redirect = securityResult?.httpRedirect;
   const redirectAssessment = assessHttpRedirect(redirect);

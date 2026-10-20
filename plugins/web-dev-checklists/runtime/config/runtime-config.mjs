@@ -9,6 +9,7 @@ const configDirectory = path.dirname(fileURLToPath(import.meta.url));
 export const DEFAULT_EVIDENCE_ROOT_DIRECTORY = ".output";
 export const DEFAULT_AXE_ELEMENT_SCREENSHOT_LIMIT = 50;
 export const DEFAULT_LAUNCH_LINK_CHECK_LIMIT = 50;
+export const FAVICON_REVIEW = Object.freeze({ maximumIcons: 6, maximumBytes: 1048576, timeoutMs: 8000 });
 export const AUDIT_FORM_FACTOR = "desktop";
 export const AUDIT_VIEWPORT = Object.freeze({ height: 900, width: 1440 });
 export const AUDIT_USER_AGENT = "AI-Agent-Skills-Toolkit-for-Web-Development/0.1";
