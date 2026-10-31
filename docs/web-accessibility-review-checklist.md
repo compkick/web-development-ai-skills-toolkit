@@ -6,6 +6,8 @@ Use this checklist to review representative pages and complete user journeys. WC
 
 Automated tools help find problems, but they do not replace keyboard, screen-reader, zoom, and human review.
 
+The toolkit's axe scan explicitly selects WCAG 2.0/2.1 Level A/AA rules, WCAG 2.2 AA rules, and additional best-practice checks. See the report's rule coverage and [runtime guide](website-audit-runtime-guide.md#accessibility-rule-coverage) for the actual scope; a clean scan is not proof of WCAG conformance.
+
 ## Prepare
 
 - [ ] Record the accessibility target and choose representative pages, workflows, states, browsers, and assistive technologies.
@@ -18,6 +20,7 @@ Automated tools help find problems, but they do not replace keyboard, screen-rea
 - [ ] Check headings, landmarks, reading order, and the name and role of controls.
 - [ ] Write meaningful alternative text and mark decorative images appropriately.
 - [ ] Provide captions, transcripts, or audio description for media when required.
+- [ ] Keep help options in a consistent location across pages.
 
 ## Keyboard and interaction
 
@@ -31,7 +34,8 @@ Automated tools help find problems, but they do not replace keyboard, screen-rea
 - [ ] Check text, control, and focus-indicator contrast.
 - [ ] Test browser zoom to 200 percent and text spacing overrides.
 - [ ] Confirm content reflows without losing information or functionality at the WCAG zoom-equivalent width of 320 CSS pixels, which represents a 1280 CSS-pixel desktop viewport at 400 percent zoom; test current mobile viewports separately when they are in scope.
-- [ ] Respect reduced-motion preferences and make controls reasonably easy to target.
+- [ ] Respect reduced-motion preferences.
+- [ ] Check that pointer targets are at least 24 by 24 CSS pixels or meet the spacing or other exceptions in WCAG 2.5.8.
 
 ## Forms and messages
 
@@ -39,6 +43,7 @@ Automated tools help find problems, but they do not replace keyboard, screen-rea
 - [ ] Preserve valid input and announce important status changes when needed.
 - [ ] Let users review or correct submissions that create legal or financial commitments.
 - [ ] Do not block paste, password managers, or accessible authentication methods.
+- [ ] Let users reuse information already entered in the same process, unless re-entry is necessary.
 
 ## Finish the review
 
@@ -49,6 +54,7 @@ Automated tools help find problems, but they do not replace keyboard, screen-rea
 ## References
 
 - [Web Content Accessibility Guidelines (WCAG) 2.2](https://www.w3.org/TR/WCAG22/)
+- [W3C WCAG 2.2 quick reference](https://www.w3.org/WAI/WCAG22/quickref/)
 - [W3C Understanding Success Criterion 1.4.10: Reflow](https://www.w3.org/WAI/WCAG22/Understanding/reflow.html)
 - [W3C evaluating web accessibility](https://www.w3.org/WAI/test-evaluate/)
 - [W3C accessibility evaluation report template](https://www.w3.org/WAI/test-evaluate/report-template/)

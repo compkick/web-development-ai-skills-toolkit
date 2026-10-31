@@ -162,7 +162,7 @@ The toolkit is MIT licensed. See the [LICENSE](LICENSE) for its terms and warran
 - Add focused WordPress skills where repeated use shows a clear benefit, including migration workflows.
 - Consider dedicated Playwright setup and specialist Sitefinity workflows when there is enough demand to justify maintaining them.
 
-The [modernization plan](modernization-plan.md) is the source of truth. These are planned directions, not promised dates or features already included.
+The [project roadmap](roadmap.md) is the source of truth. These are planned directions, not promised dates or features already included.
 
 ### Support and feedback
 

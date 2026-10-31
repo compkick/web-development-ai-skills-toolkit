@@ -90,7 +90,9 @@ GitHub Actions runs the full validation workflow when a `v*` release tag is push
 
 ### Dependency maintenance
 
-Update package versions and the lockfile together, run `npm ci`, and rerun validation. Do not use `npm audit fix --force` blindly. The scoped `smol-toml` and KaTeX overrides supply patched versions until the Markdown linter's dependencies catch up.
+Update package versions and the lockfile together, run `npm ci`, and rerun validation. Do not use `npm audit fix --force` blindly. The scoped RE2JS and KaTeX overrides supply patched versions until the Markdown linter's dependencies catch up; remove them once upstream includes compatible fixes. The old `smol-toml` override is no longer needed.
+
+The October 30, 2026 update uses `markdownlint-cli2` 0.24.0 with `markdown-it` 15.0.3 and [RE2JS 2.8.7](https://github.com/advisories/GHSA-gg6h-894w-4m9c). The runtime lockfile updates Puppeteer within Lighthouse's supported range, resolving Chromium BiDi with Zod 4.6.7. Lighthouse, Playwright, axe, and the Node.js minimum are unchanged; no cross-major Zod override is used.
 
 `npm run deps:audit` checks both dependency trees and blocks unaccepted high/critical advisories or audit errors. Plain `npm audit` remains available for the unfiltered report.
 

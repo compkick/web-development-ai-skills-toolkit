@@ -47,6 +47,10 @@ try {
   const axe = await readFile(axePath, "utf8");
   assert.ok(axe.includes("Confirmed violations") && axe.includes("Needs manual review"));
   assert.ok(!axe.includes(unsafe) && !axe.includes('href="javascript:'));
+  assert.ok(axe.includes("Rule selection was not recorded"), "Older evidence must not acquire a claimed WCAG rule selection.");
+  await writeAxeHtmlReport({ url: "https://example.invalid", ruleSelection: { standard: unsafe, tags: [unsafe], rules: [] }, timestamp: "2026-09-05T00:00:00Z", violations: [], incomplete: [], passes: 0 }, axePath);
+  const scopedAxe = await readFile(axePath, "utf8");
+  assert.ok(scopedAxe.includes("Automated rule coverage") && !scopedAxe.includes(unsafe));
   console.log("Report layout tests passed: all six renderers, escaping, safe links, coverage, screenshots, and incomplete verdicts.");
 } finally {
   await closeFixture(null, directory);

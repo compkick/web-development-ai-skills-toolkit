@@ -1,17 +1,17 @@
-# Modernization plan for Web Development AI Skills Toolkit
+# Web Development AI Skills Toolkit roadmap
 
 ## Purpose
 
-Modernize this repository's web-development guidance, add missing core checklists, and turn the stable workflows into a publishable Codex skills library.
+Track the toolkit's implementation, maintenance, releases, and distribution.
 
 This file is the canonical implementation roadmap. Update it as work is completed or decisions change. Do not treat discussion notes or chat history as the authoritative plan when this file contains a newer decision.
 
 ## Status
 
 - Plan status: In progress
-- Current phase: Phase 6 (GitHub release public; marketplace publication pending)
-- Next work item: Publish the LinkedIn announcement, then prepare the optional plugin-directory submission
-- Last reviewed: 2026-09-30
+- Current phase: Phase 6 (v0.1.4 release preparation)
+- Next work item: Merge the workflow fix into main, then prepare the v0.1.4 release
+- Last reviewed: 2026-10-30
 
 ## Guiding decisions
 
@@ -354,59 +354,42 @@ Testing reviewed on 2026-09-05:
 
 Phase 5 closed on 2026-09-09 by agreement with the owner, with publication separated into Phase 6. The original Ubuntu browser-fixture run passed, while its repository-validation job stopped at anonymous private-repository link failures. That blockage was resolved: repository validation and browser fixtures passed for commit `10f02be` (then tagged `v0.1.2`, Actions run `34416716606`) and Node-fix commit `bbad993` (run `35559645407`). The old tag was later deleted during privacy cleanup, and both commits were replaced in branch history. External links run separately as informational checks, not as proof that private URLs are publicly accessible. Windows and Ubuntu runtime testing are complete; macOS remains untested and is not a release gate.
 
-Publishing copy and the presentation-asset record live in [publishing-kit.md](publishing-kit.md). Version `v0.1.3` and the Computerkick project page are published, and the repository is public. The LinkedIn announcement and an official plugin-directory listing remain pending.
+Publishing copy and the presentation-asset record live in [publishing-kit.md](publishing-kit.md). Version `v0.1.3`, the Computerkick project page, and the LinkedIn announcement are published, and the repository is public. An official plugin-directory listing remains pending.
 
-## Phase 6: Publish the core library
+## Phase 6: Release and distribution
 
-The core library is available through the public GitHub repository and release. An approved marketplace listing is a separate distribution channel and remains pending. Submit or publish externally only with the owner's authorization.
+Version v0.1.3 is public. The next release is v0.1.4.
 
-### Release preparation
+### Release v0.1.4
 
-- [x] Align Node.js requirements, fix the ASVS link, and refresh platform and publishing records.
-- [x] Run and record official plugin and all six skill validators locally; see [the validator record](CONTRIBUTING.md#official-validator-record).
-- [x] Add private vulnerability-reporting guidance using the owner-confirmed Computerkick contact form; see [SECURITY.md](SECURITY.md).
-- [x] Align the package, runtime, lockfiles, and plugin base version at `0.1.3`; the old `v0.1.2` tag was deleted during privacy cleanup.
-- [x] Reorganize the README for users: prerequisites, installation, explicit and implicit chat usage, manual runs, human checklists, and support; separate contributor guidance and label unverified agent compatibility.
-- [x] Confirm distribution channels and review tracked files and Git history for sensitive or non-redistributable material before public exposure.
-- [x] Validate the final release candidate in CI and record official skill/plugin validation for that candidate. Official validators currently run locally, not in CI; external-link checks remain visible but informational.
-- [x] Confirm all six installed skills appear with correct display names and descriptions.
-- [x] Complete fresh Windows 11 PC acceptance testing of all six installed skills, including first-use bootstrap, projectless reviews, runtime reuse, and owner verification of reports and folders.
-- [x] Build a clean release bundle with the six skills, generated references, shared runtime, and required assets; exclude evidence, caches, and installed dependencies.
-- [x] Test installation and runtime resolution from the exact release bundle in fresh context.
-- [x] Tag the reviewed version and publish reproducible installation instructions and release notes: [v0.1.3](https://github.com/compkick/web-development-ai-skills-toolkit/releases/tag/v0.1.3).
+- [ ] Merge the tag/manual-only workflow into `main` to stop the weekly job. This can happen before the release.
+- [x] Bump the package, runtime, lockfiles, and plugin base version to 0.1.4; refresh the plugin cachebuster.
+- [ ] Update release notes, installation references, and publishing copy for the new version.
+- [ ] Validate the final candidate with `repo:check`, `runtime:test`, `reviews:test`, and the [official plugin/skill validators](CONTRIBUTING.md#official-validator-record).
+- [ ] Test the complete release package in a fresh Codex chat: shared runtime, bootstrap, all six skills, and saved reports.
+- [ ] Merge the reviewed release changes into `main`.
+- [ ] Push the v0.1.4 tag, confirm release CI passes, and publish the GitHub Release.
 
-### Release-preparation progress — 2026-09-21
+### Optional Codex directory publishing
 
-Version preparation and user-facing documentation are committed through `9901cca`. The README now separates installation from use, explains URL-only reviews without a website repository, and makes Node.js/npm prerequisites and first-use bootstrap explicit. The owner's checklist introduction and publishing-kit edits are retained.
+This is separate from the GitHub release and does not block v0.1.4.
 
-The owner completed the fresh Windows 11 PC walkthrough using installed plugin `0.1.3+codex.20260921043328`. The supplied Codex chat logs show all six skills discovered and successfully run in a projectless task: `review-web-security`, `review-web-accessibility`, `audit-web-project`, `review-technical-seo`, `review-web-performance`, and `review-website-launch`. First-use dependency/Chromium bootstrap succeeded, and later reviews reused the ready runtime. The owner verified the reports and folders for all six reviews; the artifacts were not independently inspected in this documentation update. Test-site hostnames and personal paths are intentionally omitted.
+- [ ] Recheck the [submission requirements](https://developers.openai.com/plugins/deploy/submission) and confirm publisher access.
+- [ ] Prepare listing copy, assets, starter prompts, and at least five positive and three negative reproducible test cases.
+- [ ] Confirm public support, privacy, and terms pages accurately describe the toolkit.
+- [ ] Verify the submitted package includes all six skills, references, shared runtime, lockfile, license, and installation instructions.
+- [ ] Submit with the owner's approval and address review feedback.
+- [ ] Verify the approved listing and installation, then share a follow-up announcement.
 
-The workflow recovered from npm not being on the app's PATH after Node installation without an app restart. Initial security/accessibility browser-startup failures also recovered on approved retries with Chromium sandboxing retained. Failed attempts and successful retries produced separate evidence folders. These recoveries do not invalidate the successful test; the website's launch recommendation is a review outcome, not a toolkit test failure.
+Use [publishing-kit.md](publishing-kit.md) for reusable copy and assets.
 
-Fresh-PC six-skill acceptance is complete for this installed build. The tested plugin version was introduced in commit `16f995b`; later commits through `a854fa7` changed documentation only. PR #3 merged the release work into `main` at commit `ebfc786`, and all three GitHub Actions jobs passed in run `36071966393`.
+### Cross-harness compatibility — deferred
 
-On 2026-09-21, `develop` and `main` were rewritten to remove historical client-name references, and the old `v0.1.2` tag was deleted. The owner accepted one retained client-name reference in the diff of closed GitHub PR #2. An inspection of 58 Actions runs and 90 job logs found no matches for the targeted names or domains; those runs had no downloadable artifacts. GitHub's default branch is `main`.
+These are not v0.1.4 release requirements.
 
-Version [v0.1.3](https://github.com/compkick/web-development-ai-skills-toolkit/releases/tag/v0.1.3) was released on 2026-09-24, and the owner made the repository public on 2026-09-30. Anonymous repository, Issues, release-page, source-ZIP, and [Computerkick project-page](https://computerkick.com/web-development-ai-skills-toolkit/) access were verified on 2026-09-30. Next: publish the LinkedIn announcement and prepare the plugin-directory submission. Claude Code and Bionic compatibility remain unverified.
-
-### Public distribution and discovery
-
-- [x] Make GitHub public and verify anonymous repository, download, and Issues access.
-- [x] Publish the [Computerkick project page](https://computerkick.com/web-development-ai-skills-toolkit/).
-- [ ] Publish the LinkedIn announcement linking to the public project and release.
-- [ ] Provide public support, privacy, and terms pages that accurately describe the toolkit and data handling.
-- [ ] Prepare marketplace listing assets, starter prompts, release notes, and at least five positive and three negative reproducible test cases.
-- [ ] Confirm publisher identity and submission access, and verify that the portal bundle preserves the shared runtime layout.
-- [ ] Submit the skills-only plugin for review; address review feedback and publish after approval.
-- [ ] Verify the published listing and installation, then share to LinkedIn and Facebook and evaluate other useful discovery channels.
-
-Use [publishing-kit.md](publishing-kit.md) for reusable copy and assets. Marketplace requirements were checked against the [official submission guide](https://developers.openai.com/plugins/deploy/submission) on 2026-09-09; recheck them before submission. The marketplace submission test cases are reviewer-facing release materials, distinct from the representative Phase 5 trigger tests.
-
-### Phase 6 exit criteria
-
-- [x] Release-candidate CI is green and the tagged package is reproducible: `v0.1.3` at commit `ebfc786`.
-- [ ] Approved distribution channels are live and installation has been verified.
-- [ ] Listing, support, limitations, and release notes match the published version.
+- [ ] Fix Bionic shared-runtime packaging and test status, bootstrap, reviews, and evidence storage.
+- [ ] Package and test Claude Code installation using the existing skills and shared runtime.
+- [ ] Update installation instructions and the compatibility matrix with verified results.
 
 ## Phase 7: Optional specialized skills
 
@@ -474,6 +457,7 @@ Publication tasks and discovery work are tracked in Phase 6 above.
 
 | Date | Decision | Reason |
 | --- | --- | --- |
+| 2026-10-23 | Plan v0.1.4 for committed post-launch improvements and defer cross-harness execution testing. | The public launch is complete; Bionic manual import exposed a missing shared runtime, so discovery alone is not compatibility. |
 | 2026-09-09 | Close Phase 5 functional validation, make Phase 6 publication, and move optional specialized skills to Phase 7. | Windows and Linux runtime tests and representative agent tests are complete; unfinished release CI, metadata inspection, packaging, and public distribution remain explicit Phase 6 gates. |
 | 2026-07-21 | Modernize and normalize documentation before building skills. | Skills should encode reviewed guidance, not preserve stale advice. |
 | 2026-07-21 | Make WordPress the primary CMS documentation track. | Expected future work is more WordPress-focused. |

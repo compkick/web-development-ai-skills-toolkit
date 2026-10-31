@@ -124,6 +124,16 @@ The summary records console-error and page-error counts without their message te
 
 Screenshots, including axe element screenshots, Lighthouse reports, URLs, and optional browser-error details can contain rendered content, personal data, query strings, private endpoints, or secrets exposed by the page. Store and share audit artifacts accordingly.
 
+## Accessibility rule coverage
+
+The shared axe configuration in `runtime/config/runtime-config.mjs` selects `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`, and `best-practice`. This includes earlier Level A/AA requirements, not just rules added in WCAG 2.2. Experimental, deprecated, and AAA-only rules are not selected. Best-practice findings are additional guidance, not automatically WCAG failures. Lighthouse keeps its own rule selection.
+
+Verified with pinned axe-core 4.13.0 on 2026-10-30: its `target-size` rule (`wcag22aa`, WCAG 2.5.8) is disabled by default but runs with this explicit tag selection. Regression fixtures check valid and undersized adjacent targets and compare the recorded rule inventory with the pinned engine's supported rules.
+
+`axe-results.json` records the target, selected tags, and each returned rule's ID, tags, and outcomes under `ruleSelection`. A rule can pass for some elements and fail for others; the inventory counts it once. The HTML report shows the target, tags, and rule count, including inapplicable rules. Counts describe axe rules, not WCAG success criteria. Older evidence without this metadata has an unknown selection; do not infer it from a profile label.
+
+The desktop scan does not establish full WCAG 2.2 AA conformance. Review keyboard and screen-reader behavior, zoom/reflow, focus obstruction, dragging alternatives, consistent help, repeated form entry, and accessible authentication separately. The accessibility checklist and profile coverage distinguish automated evidence from manual work.
+
 ## Outputs
 
 Treat each run directory as one evidence package. When a user requests `.output` or another durable destination, preserve the complete directory and verify the expected files before reporting success; do not keep only the normalized JSON files or delete the raw axe, Lighthouse, screenshot, or element evidence during the task. If a collector did not complete, retain the partial package and use `summary.json` and `evidence.json` to report its status and error.
@@ -131,7 +141,7 @@ Treat each run directory as one evidence package. When a user requests `.output`
 - `summary.json` contains the page result, browser used, desktop form factor and viewport, Lighthouse scores, and automated accessibility counts.
 - `run-failure.json` records the stage when the runner cannot complete startup, navigation, or capture. Raw error text is included only with `--include-error-details`. The command still exits unsuccessfully; a profile run also writes incomplete `evidence.json`, `coverage.json`, and its applicable summary HTML report. Earlier partial artifacts are retained, and non-empty output directories are never overwritten.
 - `page.png` is a full-page screenshot of the rendered page.
-- `axe-results.json` contains reduced axe findings without copied HTML snippets.
+- `axe-results.json` contains reduced axe findings and the explicit rule-selection inventory without copied HTML snippets.
 - `accessibility-report.html` presents confirmed violations and incomplete checks in a human-readable format and links to bounded screenshots under `axe-elements/`.
 - `lighthouse-report.json` and `lighthouse-report.html` contain the Lighthouse results.
 - `browser-errors.json` is created only when `--include-error-details` is explicitly requested.

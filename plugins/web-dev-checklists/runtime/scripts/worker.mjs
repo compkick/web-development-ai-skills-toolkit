@@ -6,9 +6,8 @@ import { runLighthouse } from "../browser/lighthouse.mjs";
 import { collectLaunchEvidence } from "../collectors/launch.mjs";
 import { collectSecurityEvidence } from "../collectors/security.mjs";
 import { collectSeoEvidence } from "../collectors/technical-seo.mjs";
-import { summarizeAxe } from "../collectors/accessibility.mjs";
+import { collectAccessibility } from "../collectors/accessibility.mjs";
 import { parseArguments } from "../config/audit-options.mjs";
-import AxeBuilder from "@axe-core/playwright";
 import path from "node:path";
 import process from "node:process";
 import { probeHttpRedirect } from "../collectors/http-redirect.mjs";
@@ -140,8 +139,7 @@ try {
 
   if (!options.skipAccessibility) {
     try {
-      const rawAxeResult = await new AxeBuilder({ page }).analyze();
-      const axeResult = summarizeAxe(rawAxeResult);
+      const axeResult = await collectAccessibility(page);
       axeResult.auditEnvironment = { formFactor: AUDIT_FORM_FACTOR, viewport: { ...AUDIT_VIEWPORT } };
       let elementScreenshots;
 

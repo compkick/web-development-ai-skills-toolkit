@@ -11,6 +11,10 @@ export const DEFAULT_AXE_ELEMENT_SCREENSHOT_LIMIT = 50;
 export const DEFAULT_LAUNCH_LINK_CHECK_LIMIT = 50;
 export const FAVICON_REVIEW = Object.freeze({ maximumIcons: 6, maximumBytes: 1048576, timeoutMs: 8000 });
 export const AUDIT_FORM_FACTOR = "desktop";
+export const AXE_REVIEW = Object.freeze({
+  standard: "WCAG 2.2 Level AA",
+  tags: Object.freeze(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice"])
+});
 export const AUDIT_VIEWPORT = Object.freeze({ height: 900, width: 1440 });
 export const AUDIT_USER_AGENT = "AI-Agent-Skills-Toolkit-for-Web-Development/0.1";
 export const SCREENSHOT_READINESS = Object.freeze({ timeoutMs: 8000, loadTimeoutMs: 5000, maxScrollSteps: 40, scrollPauseMs: 150, settleMs: 300 });

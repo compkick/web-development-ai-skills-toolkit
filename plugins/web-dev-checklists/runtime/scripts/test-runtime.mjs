@@ -32,6 +32,10 @@ try {
   const axeReport = await readFile(path.join(outputDirectory, "accessibility-report.html"), "utf8");
   const lighthouseReport = JSON.parse(await readFile(path.join(outputDirectory, "lighthouse-report.json"), "utf8"));
 
+  if (!axeResult.ruleSelection?.tags.includes("wcag22aa") || !axeResult.ruleSelection.rules.some((rule) => rule.id === "target-size") || !axeReport.includes("Automated rule coverage")) {
+    throw new Error("Raw runtime audits must use and report the same explicit WCAG 2.2 AA rule selection as skill profiles.");
+  }
+
   if (summary.page.screenshotReadiness?.status !== "ready" || summary.page.screenshotReadiness.images.loaded !== 1) {
     throw new Error("The shared worker must prepare page.png and record image readiness.");
   }

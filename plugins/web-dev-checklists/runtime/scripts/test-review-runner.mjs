@@ -4,7 +4,9 @@ import http from "node:http";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
-import { DEFAULT_EVIDENCE_ROOT_DIRECTORY } from "../config/runtime-config.mjs";
+import { AXE_REVIEW, DEFAULT_EVIDENCE_ROOT_DIRECTORY, getRuntimeLocation } from "../config/runtime-config.mjs";
+import assert from "node:assert/strict";
+import { createRequire } from "node:module";
 
 const scriptsDirectory = path.dirname(fileURLToPath(import.meta.url));
 const runtimeDirectory = path.resolve(scriptsDirectory, "..");
@@ -39,10 +41,36 @@ try {
   const passEvidence = await readJson(path.join(passOutputDirectory, "evidence.json"));
   const failEvidence = await readJson(path.join(failOutputDirectory, "evidence.json"));
   const failAxeResult = await readJson(path.join(failOutputDirectory, "axe-results.json"));
+  const passAxeResult = await readJson(path.join(passOutputDirectory, "axe-results.json"));
   const coverage = await readJson(path.join(failOutputDirectory, "coverage.json"));
 
   assertEvidence(passEvidence, "review-web-accessibility");
   assertEvidence(failEvidence, "review-web-accessibility");
+
+  // Compare the actual scan results with this exact pinned engine's supported rules,
+  // not just the standard label or a mocked configuration object.
+  const { runtimeDirectory: installedRuntime } = await getRuntimeLocation();
+  const requireRuntime = createRequire(path.join(installedRuntime, "package.json"));
+  const axe = requireRuntime("axe-core");
+  const expectedRules = axe.getRules([...AXE_REVIEW.tags]).filter((rule) => !rule.tags.some((tag) => ["experimental", "deprecated"].includes(tag))).map((rule) => rule.ruleId).sort();
+  for (const result of [passAxeResult, failAxeResult]) {
+    assert.equal(result.testEngine.version, axe.version);
+    assert.equal(result.ruleSelection.standard, AXE_REVIEW.standard);
+    assert.deepEqual(result.ruleSelection.tags, [...AXE_REVIEW.tags]);
+    assert.deepEqual(result.ruleSelection.rules.map((rule) => rule.id).sort(), expectedRules);
+    for (const tag of AXE_REVIEW.tags) {
+      const supported = axe.getRules([tag]).filter((rule) => !rule.tags.some((value) => ["experimental", "deprecated"].includes(value)));
+      assert.equal(result.ruleSelection.rules.filter((rule) => rule.tags.includes(tag)).length, supported.length, `Incorrect ${tag} coverage`);
+    }
+    assert.ok(result.ruleSelection.rules.every((rule) => !rule.tags.some((tag) => ["experimental", "deprecated", "wcag2aaa", "wcag21aaa", "wcag22aaa"].includes(tag))));
+  }
+  assert.ok(passAxeResult.ruleSelection.rules.find((rule) => rule.id === "target-size")?.outcomes.includes("passes"));
+  assert.ok(failAxeResult.ruleSelection.rules.find((rule) => rule.id === "target-size")?.outcomes.includes("violations"));
+  assertCheckStatus(failEvidence, "axe-target-size", "fail");
+  const recordedSelection = failEvidence.checks.find((check) => check.id === "automated-axe-scan").evidence.ruleSelection;
+  assert.deepEqual(recordedSelection, { standard: AXE_REVIEW.standard, tags: [...AXE_REVIEW.tags], ruleCount: expectedRules.length });
+  const html = await readFile(path.join(failOutputDirectory, "accessibility-report.html"), "utf8");
+  assert.ok(html.includes("Automated rule coverage") && html.includes("wcag22aa") && html.includes("wcag258") && html.includes("does not establish WCAG conformance"));
 
   assertCheckStatus(passEvidence, "page-http-status", "pass");
   assertCheckStatus(passEvidence, "document-title", "pass");
@@ -64,12 +92,16 @@ try {
     }
   }
 
-  if (coverage.schemaVersion !== "1.0.0" || coverage.profile.id !== "review-web-accessibility" || coverage.items.length !== 22) {
+  if (coverage.schemaVersion !== "1.0.0" || coverage.profile.id !== "review-web-accessibility" || coverage.profile.version !== "1.2.0" || coverage.items.length !== 25) {
     throw new Error("Coverage output does not contain the complete accessibility profile.");
   }
 
   if (!coverage.items.some((item) => item.automation === "partial") || !coverage.items.some((item) => item.automation === "manual")) {
     throw new Error("Coverage output must distinguish partial and manual review requirements.");
+  }
+  assert.equal(coverage.items.find((item) => item.id === "a11y-motion-target-size").automation, "partial");
+  for (const id of ["a11y-consistent-help", "a11y-redundant-entry", "a11y-focus", "a11y-accessible-authentication"]) {
+    assert.equal(coverage.items.find((item) => item.id === id).automation, "manual");
   }
 
   for (const outputDirectory of [passOutputDirectory, failOutputDirectory]) {
@@ -82,7 +114,7 @@ try {
     throw new Error("Accessibility fail fixture did not produce a referenced axe element screenshot.");
   }
 
-  console.log("Deterministic review runner self-test passed for accessibility pass and fail fixtures.");
+  console.log(`Accessibility fixtures passed: axe ${axe.version}, ${expectedRules.length} explicit A/AA and best-practice rules, WCAG 2.2 target-size pass/fail, and manual boundaries.`);
 } finally {
   await closeFixture(server, testDirectory);
 }

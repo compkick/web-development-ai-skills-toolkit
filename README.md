@@ -100,13 +100,13 @@ Clone or download the complete repository and meet the requirements above. You c
 
 Bionic supports skills and can discover compatible skills from other apps through **Settings → Skills → Use skills found in other apps**. Select a discovered skill with `@`. See [Bionic's skill documentation](https://lmstudio.ai/docs/bionic/agent/skills).
 
-**Toolkit compatibility is not yet verified in Bionic.** Discovery alone does not prove that Bionic can resolve the shared runtime. Do not import only a `SKILL.md` file or copy individual skill folders away from the plugin. For an experimental checkout-based review, give your file/command-capable agent the following request, replacing the paths and URL:
+**Toolkit execution is not yet verified in Bionic.** I tried to install the Toolkit in LM Studio Bionic (October 19, 2026 test) for use with a on-GPU LLM, but Bionic only picked up three skills and did not correctly import the toolkit runtime.
+
+For an experimental checkout-based review, give your file/command-capable agent the following request, replacing the paths and URL:
 
 ```text
 Read <toolkit-repository>/plugins/web-dev-checklists/skills/review-web-accessibility/SKILL.md and its required references. Review https://site.example with my authorization. Keep the shared runtime in the toolkit checkout, ask before installing missing prerequisites or dependencies, and save evidence under <target-project>/.output using the documented profile/host/run structure. Report any unavailable tools or checks you cannot perform.
 ```
-
-This is direct use of the local instructions, not a verified native skill installation. Keep the repository available and grant only the file, command, and network access needed for the review.
 
 ### Claude Code
 
@@ -204,7 +204,7 @@ npm run reviews:check
 npm run deps:audit
 ```
 
-Repository validation and browser fixtures run in GitHub Actions. External links are checked separately as informational warnings. See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and official skill/plugin validators; only those contributor validators require Python and PyYAML.
+Repository validation and browser fixtures run in GitHub Actions when a `v*` tag is pushed or the workflow is started manually, not on a schedule. External links are checked separately as informational warnings. See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and official skill/plugin validators; only those contributor validators require Python and PyYAML.
 
 ### Test the checklist runners
 
@@ -273,6 +273,7 @@ Open the document that fits your task, work through the relevant items, and reco
 - [Website development checklist](docs/website-development-checklist.md)
 - [Web project audit checklist](docs/web-project-audit-checklist.md)
 - [Website release and launch checklist](docs/website-launch-checklist.md)
+- [Website favicon setup guide](docs/website-favicon-setup-guide.md)
 - [Web review findings reference](docs/web-review-findings-reference.md)
 
 ### Specialist web reviews
@@ -328,16 +329,22 @@ Maintainer and agent-authoring references:
 
 - [Contributing and official validator records](CONTRIBUTING.md)
 - [Agent authoring instructions](AGENTS.md)
-- [Modernization plan and release gates](modernization-plan.md)
+- [Project roadmap and release gates](roadmap.md)
 - [Publishing copy and artwork](publishing-kit.md)
 
 Edit human guidance in `docs/` and run `npm run skills:refs` to refresh packaged references. Do not maintain separate hand-edited copies in each skill.
 
 When updating a locally installed development build, validate the plugin, refresh its Codex cachebuster, reinstall it from the **Personal** marketplace, and start a new task before retesting.
 
+### Development status
+
+Version `0.1.3` is the published release; the GitHub, project-page, and LinkedIn launch is complete. Commit `61d15bd` on `develop` adds favicon launch checks and previews, clearer TLS results, dependency maintenance, and tag/manual-only CI. These improvements are not part of the `v0.1.3` release. The working checkout is now version `0.1.4` for release preparation; it has not been tagged or published. Official Codex directory publication remains pending, and Bionic execution and Claude Code compatibility remain unverified.
+
+The unreleased accessibility update explicitly selects WCAG 2.2 A/AA and best-practice rules, records the rule inventory, and adds target-size regression tests. See [accessibility rule coverage](docs/website-audit-runtime-guide.md#accessibility-rule-coverage) for automation limits. The dependency refresh now passes both audits with zero advisories; remaining release work is tracked in the [roadmap](roadmap.md#phase-6-release-and-distribution).
+
 ### Testing
 
-**Fresh-PC test completed — 2026-09-21:** On a fresh Windows 11 PC, all six skills were discovered and successfully run through Codex in a projectless chat. First-use bootstrap and subsequent runtime reuse worked, and the owner verified the generated reports and folders. Tested plugin: `0.1.3+codex.20260921043328`. Version `0.1.3` was subsequently released on September 24, 2026; see the [release progress](modernization-plan.md#phase-6-publish-the-core-library).
+**Fresh-PC test completed — 2026-09-21:** On a fresh Windows 11 PC, all six skills were discovered and successfully run through Codex in a projectless chat. First-use bootstrap and subsequent runtime reuse worked, and the owner verified the generated reports and folders. Tested plugin: `0.1.3+codex.20260921043328`. Version `0.1.3` was subsequently released on September 24, 2026; see the [release roadmap](roadmap.md#phase-6-release-and-distribution).
 
 ### Versioning
 
