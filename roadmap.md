@@ -9,8 +9,8 @@ This file is the canonical implementation roadmap. Update it as work is complete
 ## Status
 
 - Plan status: In progress
-- Current phase: Phase 6 (v0.1.4 release preparation)
-- Next work item: Merge the workflow fix into main, then prepare the v0.1.4 release
+- Current phase: Phase 6 (release verification and optional distribution)
+- Next work item: Confirm the v0.1.4 tag, GitHub Release, and release CI
 - Last reviewed: 2026-10-30
 
 ## Guiding decisions
@@ -358,17 +358,19 @@ Publishing copy and the presentation-asset record live in [publishing-kit.md](pu
 
 ## Phase 6: Release and distribution
 
-Version v0.1.3 is public. The next release is v0.1.4.
+[Version v0.1.4](https://github.com/compkick/web-development-ai-skills-toolkit/releases/tag/v0.1.4) is the current release. The remaining release checkboxes track publication and validation confirmation.
+
+The update adds favicon checks and previews, explicit WCAG 2.2 A/AA rule coverage, clearer TLS results, patched dependencies, and tag/manual-only CI. See the [README release notes](README.md#whats-new-in-v014) and [publishing copy](publishing-kit.md#014).
 
 ### Release v0.1.4
 
-- [ ] Merge the tag/manual-only workflow into `main` to stop the weekly job. This can happen before the release.
 - [x] Bump the package, runtime, lockfiles, and plugin base version to 0.1.4; refresh the plugin cachebuster.
-- [ ] Update release notes, installation references, and publishing copy for the new version.
+- [x] Prepare v0.1.4 notes in the README and publishing kit.
+- [x] Update the current-release links, published-version wording, and installation Git ref to v0.1.4.
 - [ ] Validate the final candidate with `repo:check`, `runtime:test`, `reviews:test`, and the [official plugin/skill validators](CONTRIBUTING.md#official-validator-record).
 - [ ] Test the complete release package in a fresh Codex chat: shared runtime, bootstrap, all six skills, and saved reports.
-- [ ] Merge the reviewed release changes into `main`.
-- [ ] Push the v0.1.4 tag, confirm release CI passes, and publish the GitHub Release.
+- [ ] Confirm the reviewed release changes, including the tag/manual-only workflow, are merged into `main`.
+- [ ] Confirm the v0.1.4 tag and GitHub Release are published and release CI passes.
 
 ### Optional Codex directory publishing
 

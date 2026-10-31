@@ -4,7 +4,7 @@
 
 The Web Development AI Skills Toolkit (or Web Dev AI Skills Toolkit) is a set of practical checklists, automated audits, and agent skills for building better websites.
 
-[Version 0.1.3](https://github.com/compkick/web-development-ai-skills-toolkit/releases/tag/v0.1.3) was released on September 24, 2026. The repository became public on September 30, 2026. See the [Computerkick project page](https://computerkick.com/web-development-ai-skills-toolkit/) for an overview.
+[Version 0.1.4](https://github.com/compkick/web-development-ai-skills-toolkit/releases/tag/v0.1.4) is the current release. See [what's new](#whats-new-in-v014) below or visit the [Computerkick project page](https://computerkick.com/web-development-ai-skills-toolkit/) for an overview.
 
 Use the checklists yourself, run evidence reports from the command line, or ask an agent to review a website and prioritize findings. The library includes general web guidance, WordPress lifecycle checklists, and Sitefinity maintenance runbooks.
 
@@ -16,6 +16,16 @@ The plugin provides six focused review skills:
 - [`review-web-performance`](plugins/web-dev-checklists/skills/review-web-performance/SKILL.md) — Identify what slows a website down and recommend improvements to loading speed and responsiveness.
 - [`review-technical-seo`](plugins/web-dev-checklists/skills/review-technical-seo/SKILL.md) — Find technical issues that could prevent search engines from crawling, indexing, or understanding a website.
 - [`review-website-launch`](plugins/web-dev-checklists/skills/review-website-launch/SKILL.md) — Assess launch readiness and recommend go or no-go, with a checklist of what still needs fixing or confirmation.
+
+### What's new in v0.1.4
+
+- **Favicon reviews:** launch and project-audit reports check favicon declarations and images, with icon previews. Favicon issues are warnings, not automatic launch blockers.
+- **Explicit accessibility rules:** axe now selects supported WCAG 2.2 Level A/AA and best-practice rules, including target-size checks. Reports show the actual rule selection and what still needs manual review.
+- **Clearer TLS results:** security checks use positive wording, such as “Site accepts only TLS 1.2 and newer,” with details when older versions are accepted.
+- **Dependency fixes:** updated Markdown tooling and browser dependencies to resolve the reported advisories. Node.js requirements are unchanged.
+- **Release-only CI:** validation runs on `v*` tag pushes or manual requests, not on a weekly schedule.
+
+These are updates to the existing six skills and runners, not additional skills. See the [accessibility coverage details](docs/website-audit-runtime-guide.md#accessibility-rule-coverage) and [favicon setup guide](docs/website-favicon-setup-guide.md).
 
 ## Created By
 
@@ -63,7 +73,7 @@ Complete the [requirements](#requirements) first. Install the complete plugin, i
 Open **Plugins → Add plugin marketplace** and enter:
 
 - **Source:** `compkick/web-development-ai-skills-toolkit`
-- **Git ref:** `v0.1.3` for the released version, or `main` for the latest committed updates.
+- **Git ref:** `v0.1.4` for the released version, or `main` for the latest committed updates.
 - **Sparse paths:** leave empty. The marketplace and complete plugin, including the shared runtime, must be available.
 
 Choose **Add marketplace**, select **Personal**, open **Web Development AI Skills Toolkit**, and choose **Install** (the plus button in some versions). Start a new chat after installation. If the toolkit already appears in your plugin browser, skip adding the marketplace.
@@ -338,9 +348,11 @@ When updating a locally installed development build, validate the plugin, refres
 
 ### Development status
 
-Version `0.1.3` is the published release; the GitHub, project-page, and LinkedIn launch is complete. Commit `61d15bd` on `develop` adds favicon launch checks and previews, clearer TLS results, dependency maintenance, and tag/manual-only CI. These improvements are not part of the `v0.1.3` release. The working checkout is now version `0.1.4` for release preparation; it has not been tagged or published. Official Codex directory publication remains pending, and Bionic execution and Claude Code compatibility remain unverified.
+The current release is `0.1.4`; see [what's new](#whats-new-in-v014). Local repository checks, runtime tests, and all six review suites passed, and both dependency audits reported zero advisories during the October 30, 2026 validation. Release verification and future distribution work are tracked in the [roadmap](roadmap.md#phase-6-release-and-distribution).
 
-The unreleased accessibility update explicitly selects WCAG 2.2 A/AA and best-practice rules, records the rule inventory, and adds target-size regression tests. See [accessibility rule coverage](docs/website-audit-runtime-guide.md#accessibility-rule-coverage) for automation limits. The dependency refresh now passes both audits with zero advisories; remaining release work is tracked in the [roadmap](roadmap.md#phase-6-release-and-distribution).
+The updated dependency lockfile needs a matching runtime cache. Before testing an updated checkout, run `npm run runtime:bootstrap`; installed-plugin users can approve the agent's bootstrap when prompted. The version bump alone does not invalidate the cache.
+
+Official Codex directory publication remains optional and pending. Bionic execution and Claude Code compatibility remain unverified.
 
 ### Testing
 
