@@ -6,7 +6,7 @@ export function buildAxeReviewChecks(runtimeStatus, axeResult, artifacts) {
     status: completed ? "pass" : "not-checked",
     method: "axe",
     evidence: completed
-      ? { incomplete: axeResult.incomplete.length, passes: axeResult.passes, violations: axeResult.violations.length }
+      ? { incomplete: axeResult.incomplete.length, passes: axeResult.passes, violations: axeResult.violations.length, ruleSelection: axeResult.ruleSelection ? { standard: axeResult.ruleSelection.standard, tags: axeResult.ruleSelection.tags, ruleCount: axeResult.ruleSelection.rules.length } : null }
       : { error: runtimeStatus.error ?? null, runtimeStatus: runtimeStatus.status },
     artifacts: completed ? artifacts : ["summary.json"]
   }];

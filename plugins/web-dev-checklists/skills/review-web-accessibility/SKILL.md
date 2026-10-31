@@ -44,6 +44,8 @@ Use the least intrusive combination that answers the request:
 
 Treat axe and Lighthouse as overlapping automated evidence. Do not double-count the same underlying problem, use a score as proof of accessibility, or convert a clean automated scan into a pass for manual checks.
 
+Read `ruleSelection` in `axe-results.json` for the actual axe scope. The shared runner selects earlier WCAG A/AA rules, WCAG 2.2 AA rules, and best practices; Lighthouse has its own selection. Do not call best-practice findings WCAG failures without a verified criterion mapping. Check focus obstruction, dragging alternatives, consistent help, repeated form entry, and authentication through appropriate manual evidence rather than inferring passes from the scan.
+
 Read the profile's `evidence.json` for normalized observations and `coverage.json` for the automation boundary. A machine `pass` applies only to its named automated check. Apply the canonical checklist separately and keep partial or manual items `Not checked` until sufficient evidence exists.
 
 ## Run the review

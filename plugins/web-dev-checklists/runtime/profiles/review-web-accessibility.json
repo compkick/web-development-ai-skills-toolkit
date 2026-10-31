@@ -1,6 +1,6 @@
 {
   "id": "review-web-accessibility",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "checklistSource": "docs/web-accessibility-review-checklist.md",
   "standard": "WCAG 2.2 Level AA",
   "coverage": [
@@ -10,7 +10,7 @@
       "checklistItem": "Record the accessibility target and choose representative pages, workflows, states, browsers, and assistive technologies.",
       "automation": "manual",
       "evidenceCheckIds": [],
-      "note": "The runner records one target URL but cannot decide whether the review sample is representative."
+      "note": "The runner records WCAG 2.2 AA rule tags and a single desktop URL; the reviewer confirms the target and representative sample."
     },
     {
       "id": "a11y-prepare-limitations",
@@ -59,6 +59,14 @@
       "automation": "partial",
       "evidenceCheckIds": ["automated-axe-scan"],
       "note": "Automation may detect some missing tracks but cannot assess completeness or accuracy."
+    },
+    {
+      "id": "a11y-consistent-help",
+      "section": "Page structure and content",
+      "checklistItem": "Keep help options in a consistent location across pages.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "WCAG 3.2.6 requires comparison across pages; one URL cannot establish consistency."
     },
     {
       "id": "a11y-keyboard-tasks",
@@ -117,12 +125,20 @@
       "note": "The 320 CSS-pixel reflow check represents desktop zoom, not a mobile-device simulation. A reviewer must inspect current mobile responsive states and interactions separately when they are in scope."
     },
     {
-      "id": "a11y-motion-target-size",
+      "id": "a11y-reduced-motion",
       "section": "Visual presentation",
-      "checklistItem": "Respect reduced-motion preferences and make controls reasonably easy to target.",
+      "checklistItem": "Respect reduced-motion preferences.",
       "automation": "manual",
       "evidenceCheckIds": [],
-      "note": "The baseline profile does not judge motion alternatives or target usability."
+      "note": "The desktop baseline does not test reduced-motion behavior."
+    },
+    {
+      "id": "a11y-motion-target-size",
+      "section": "Visual presentation",
+      "checklistItem": "Check that pointer targets are at least 24 by 24 CSS pixels or meet the spacing or other exceptions in WCAG 2.5.8.",
+      "automation": "partial",
+      "evidenceCheckIds": ["automated-axe-scan"],
+      "note": "The selected wcag22aa group includes target-size. Review exceptions, other states, and touch usability manually."
     },
     {
       "id": "a11y-form-labels-errors",
@@ -155,6 +171,14 @@
       "automation": "manual",
       "evidenceCheckIds": [],
       "note": "Authentication behavior requires authorized interaction and appropriate test accounts."
+    },
+    {
+      "id": "a11y-redundant-entry",
+      "section": "Forms and messages",
+      "checklistItem": "Let users reuse information already entered in the same process, unless re-entry is necessary.",
+      "automation": "manual",
+      "evidenceCheckIds": [],
+      "note": "WCAG 3.3.7 requires workflow testing and review of applicable exceptions."
     },
     {
       "id": "a11y-automated-screen-reader",

@@ -4,6 +4,8 @@
 
 The Web Development AI Skills Toolkit (or Web Dev AI Skills Toolkit) is a set of practical checklists, automated audits, and agent skills for building better websites.
 
+[Version 0.1.4](https://github.com/compkick/web-development-ai-skills-toolkit/releases/tag/v0.1.4) is the current release. See [what's new](#whats-new-in-v014) below or visit the [Computerkick project page](https://computerkick.com/web-development-ai-skills-toolkit/) for an overview.
+
 Use the checklists yourself, run evidence reports from the command line, or ask an agent to review a website and prioritize findings. The library includes general web guidance, WordPress lifecycle checklists, and Sitefinity maintenance runbooks.
 
 The plugin provides six focused review skills:
@@ -14,6 +16,16 @@ The plugin provides six focused review skills:
 - [`review-web-performance`](plugins/web-dev-checklists/skills/review-web-performance/SKILL.md) — Identify what slows a website down and recommend improvements to loading speed and responsiveness.
 - [`review-technical-seo`](plugins/web-dev-checklists/skills/review-technical-seo/SKILL.md) — Find technical issues that could prevent search engines from crawling, indexing, or understanding a website.
 - [`review-website-launch`](plugins/web-dev-checklists/skills/review-website-launch/SKILL.md) — Assess launch readiness and recommend go or no-go, with a checklist of what still needs fixing or confirmation.
+
+### What's new in v0.1.4
+
+- **Favicon reviews:** launch and project-audit reports check favicon declarations and images, with icon previews. Favicon issues are warnings, not automatic launch blockers.
+- **Explicit accessibility rules:** axe now selects supported WCAG 2.2 Level A/AA and best-practice rules, including target-size checks. Reports show the actual rule selection and what still needs manual review.
+- **Clearer TLS results:** security checks use positive wording, such as “Site accepts only TLS 1.2 and newer,” with details when older versions are accepted.
+- **Dependency fixes:** updated Markdown tooling and browser dependencies to resolve the reported advisories. Node.js requirements are unchanged.
+- **Release-only CI:** validation runs on `v*` tag pushes or manual requests, not on a weekly schedule.
+
+These are updates to the existing six skills and runners, not additional skills. See the [accessibility coverage details](docs/website-audit-runtime-guide.md#accessibility-rule-coverage) and [favicon setup guide](docs/website-favicon-setup-guide.md).
 
 ## Created By
 
@@ -61,12 +73,12 @@ Complete the [requirements](#requirements) first. Install the complete plugin, i
 Open **Plugins → Add plugin marketplace** and enter:
 
 - **Source:** `compkick/web-development-ai-skills-toolkit`
-- **Git ref:** `main`, or a published release tag to pin a specific version.
+- **Git ref:** `v0.1.4` for the released version, or `main` for the latest committed updates.
 - **Sparse paths:** leave empty. The marketplace and complete plugin, including the shared runtime, must be available.
 
 Choose **Add marketplace**, select **Personal**, open **Web Development AI Skills Toolkit**, and choose **Install** (the plus button in some versions). Start a new chat after installation. If the toolkit already appears in your plugin browser, skip adding the marketplace.
 
-While the repository is private, access requires GitHub authentication with permission to read it. For pre-release testing, use `develop` as the Git ref; use a published tag only after that release exists. Node.js and npm are still required to run automated reports.
+The repository is public, so reading or downloading it does not require GitHub authentication. For development testing, use `develop` as the Git ref. Node.js and npm are required to run automated reports.
 
 #### Alternative: Install from a local folder
 
@@ -98,13 +110,13 @@ Clone or download the complete repository and meet the requirements above. You c
 
 Bionic supports skills and can discover compatible skills from other apps through **Settings → Skills → Use skills found in other apps**. Select a discovered skill with `@`. See [Bionic's skill documentation](https://lmstudio.ai/docs/bionic/agent/skills).
 
-**Toolkit compatibility is not yet verified in Bionic.** Discovery alone does not prove that Bionic can resolve the shared runtime. Do not import only a `SKILL.md` file or copy individual skill folders away from the plugin. For an experimental checkout-based review, give your file/command-capable agent the following request, replacing the paths and URL:
+**Toolkit execution is not yet verified in Bionic.** I tried to install the Toolkit in LM Studio Bionic (October 19, 2026 test) for use with a on-GPU LLM, but Bionic only picked up three skills and did not correctly import the toolkit runtime.
+
+For an experimental checkout-based review, give your file/command-capable agent the following request, replacing the paths and URL:
 
 ```text
 Read <toolkit-repository>/plugins/web-dev-checklists/skills/review-web-accessibility/SKILL.md and its required references. Review https://site.example with my authorization. Keep the shared runtime in the toolkit checkout, ask before installing missing prerequisites or dependencies, and save evidence under <target-project>/.output using the documented profile/host/run structure. Report any unavailable tools or checks you cannot perform.
 ```
-
-This is direct use of the local instructions, not a verified native skill installation. Keep the repository available and grant only the file, command, and network access needed for the review.
 
 ### Claude Code
 
@@ -202,7 +214,7 @@ npm run reviews:check
 npm run deps:audit
 ```
 
-Repository validation and browser fixtures run in GitHub Actions. External links are checked separately as informational warnings. See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and official skill/plugin validators; only those contributor validators require Python and PyYAML.
+Repository validation and browser fixtures run in GitHub Actions when a `v*` tag is pushed or the workflow is started manually, not on a schedule. External links are checked separately as informational warnings. See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and official skill/plugin validators; only those contributor validators require Python and PyYAML.
 
 ### Test the checklist runners
 
@@ -255,6 +267,8 @@ npm run review:website -- --profile audit-web-project --url https://site.example
 
 Each command writes a timestamped package under `.output/<profile>/<host>/<run-id>/` by default. See the canonical [website audit runtime guide](docs/website-audit-runtime-guide.md) for profile scope, permissions, output artifacts, configuration, limitations, and plugin-local commands.
 
+The launch report includes favicon checks and small/enlarged icon previews. Icon issues are warnings, not automatic launch blockers; use the [favicon setup guide](docs/website-favicon-setup-guide.md) for the head declaration, image requirements, and visual review.
+
 ## Human-review checklists
 
 The Web Development AI Skills Toolkit is based on a set of practical checklists and guides originally written by developers, for developers to use directly, without an AI agent or any software installation.
@@ -269,6 +283,7 @@ Open the document that fits your task, work through the relevant items, and reco
 - [Website development checklist](docs/website-development-checklist.md)
 - [Web project audit checklist](docs/web-project-audit-checklist.md)
 - [Website release and launch checklist](docs/website-launch-checklist.md)
+- [Website favicon setup guide](docs/website-favicon-setup-guide.md)
 - [Web review findings reference](docs/web-review-findings-reference.md)
 
 ### Specialist web reviews
@@ -324,16 +339,24 @@ Maintainer and agent-authoring references:
 
 - [Contributing and official validator records](CONTRIBUTING.md)
 - [Agent authoring instructions](AGENTS.md)
-- [Modernization plan and release gates](modernization-plan.md)
+- [Project roadmap and release gates](roadmap.md)
 - [Publishing copy and artwork](publishing-kit.md)
 
 Edit human guidance in `docs/` and run `npm run skills:refs` to refresh packaged references. Do not maintain separate hand-edited copies in each skill.
 
 When updating a locally installed development build, validate the plugin, refresh its Codex cachebuster, reinstall it from the **Personal** marketplace, and start a new task before retesting.
 
+### Development status
+
+The current release is `0.1.4`; see [what's new](#whats-new-in-v014). Local repository checks, runtime tests, and all six review suites passed, and both dependency audits reported zero advisories during the October 30, 2026 validation. Release verification and future distribution work are tracked in the [roadmap](roadmap.md#phase-6-release-and-distribution).
+
+The updated dependency lockfile needs a matching runtime cache. Before testing an updated checkout, run `npm run runtime:bootstrap`; installed-plugin users can approve the agent's bootstrap when prompted. The version bump alone does not invalidate the cache.
+
+Official Codex directory publication remains optional and pending. Bionic execution and Claude Code compatibility remain unverified.
+
 ### Testing
 
-**Fresh-PC test completed — 2026-09-21:** On a fresh Windows 11 PC, all six skills were discovered and successfully run through Codex in a projectless chat. First-use bootstrap and subsequent runtime reuse worked, and the owner verified the generated reports and folders. Tested plugin: `0.1.3+codex.20260921043328`. This confirms the installed candidate's workflow, not publication of the final release; see the [release progress](modernization-plan.md#phase-6-publish-the-core-library).
+**Fresh-PC test completed — 2026-09-21:** On a fresh Windows 11 PC, all six skills were discovered and successfully run through Codex in a projectless chat. First-use bootstrap and subsequent runtime reuse worked, and the owner verified the generated reports and folders. Tested plugin: `0.1.3+codex.20260921043328`. Version `0.1.3` was subsequently released on September 24, 2026; see the [release roadmap](roadmap.md#phase-6-release-and-distribution).
 
 ### Versioning
 

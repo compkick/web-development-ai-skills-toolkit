@@ -1,4 +1,4 @@
-import { escapeHtml, safeExternalUrl, formatDate } from "./html-common.mjs";
+import { escapeHtml, safeExternalUrl, safeRelativePath, formatDate } from "./html-common.mjs";
 import { renderDocument, renderMetric, renderPageScreenshot, renderCheckSection, renderArtifacts, renderLimitations, renderGroupedCoverage } from "./report-layout.mjs";
 import { writeFile } from "node:fs/promises";
 
@@ -26,6 +26,7 @@ export async function writeLaunchHtmlReport(evidence, coverage, outputPath) {
       ${renderMetric("Needs attention", counts.fail + counts.warning + counts["not-checked"])}
     </section>
     ${renderPageScreenshot(evidence.artifacts, "Full-page screenshot from the website launch preflight", "Reviewed homepage")}
+    ${renderFaviconReview(evidence)}
     ${renderCheckSection("Automated blockers", evidence.checks.filter((check) => check.status === "fail"), "No automated blockers were recorded.", true)}
     ${renderCheckSection("Checks requiring review", evidence.checks.filter((check) => check.status === "warning"), "No automated warnings were recorded.", true)}
     ${renderCheckSection("Not checked", evidence.checks.filter((check) => check.status === "not-checked"), "All defined machine checks produced evidence.", incomplete)}
@@ -34,9 +35,19 @@ export async function writeLaunchHtmlReport(evidence, coverage, outputPath) {
     ${renderGroupedCoverage(coverage, "Canonical launch checklist coverage", "Coverage describes what the runner can assess. The launch skill uses project context, prior specialist reviews, and human confirmation to produce the final tailored checklist and go/no-go recommendation.")}
     ${renderLimitations(evidence.limitations)}
     ${renderArtifacts(evidence.artifacts, "launch-readiness-report.html")}
-`);
+`, `.icon-previews { display: flex; flex-wrap: wrap; gap: 1rem; } .icon-preview { box-sizing: border-box; margin: 0; padding: 1rem; border: 1px solid #94a3b8; border-radius: .5rem; max-width: 100%; overflow-wrap: anywhere; } .icon-swatches { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; } .icon-swatch { display: inline-flex; align-items: center; justify-content: center; gap: .75rem; padding: .75rem; background: #fff; } .icon-swatch.dark { background: #172033; }`);
 
   await writeFile(outputPath, html, "utf8");
+}
+
+function renderFaviconReview(evidence) {
+  const checks = evidence.checks.filter((check) => check.id.startsWith("favicon-"));
+  if (!checks.length) return "";
+  const icons = [findCheck(evidence, "favicon-load"), findCheck(evidence, "favicon-app-icons")].flatMap((check) => check?.evidence?.icons ?? []);
+  const previews = icons.filter((icon) => /^favicon-preview-\d+\.png$/.test(icon.preview ?? "") && evidence.artifacts.some((artifact) => artifact.path === icon.preview));
+  return `<section><h2>Favicon and app icons</h2><p>Confirm this is the approved site icon and remains recognizable at browser-tab size. Previews show 16-pixel and enlarged views on light and dark backgrounds. These are file previews, not proof of which icon every browser selects.</p>
+    <div class="icon-previews">${previews.map((icon) => `<figure class="icon-preview"><div class="icon-swatches">${["", " dark"].map((theme) => `<span class="icon-swatch${theme}"><img src="${safeRelativePath(icon.preview)}" width="16" height="16" alt="${escapeHtml(icon.kind)} icon at 16 pixels"><img src="${safeRelativePath(icon.preview)}" width="96" height="96" alt="Enlarged ${escapeHtml(icon.kind)} icon"></span>`).join("")}</div><figcaption>${escapeHtml(icon.kind)} · ${escapeHtml(icon.width)} × ${escapeHtml(icon.height)}<br><code>${escapeHtml(icon.url)}</code></figcaption></figure>`).join("") || "<p>No safe local icon preview was available. Review the icon manually.</p>"}</div>
+    <p class="note">Icon findings are warnings, not automatic launch blockers. Touch and installed-app icons apply only when the project needs those experiences.</p></section>`;
 }
 
 function preflightMessage(preflight) {

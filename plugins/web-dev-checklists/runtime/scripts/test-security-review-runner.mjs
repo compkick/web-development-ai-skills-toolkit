@@ -131,8 +131,8 @@ try {
   assertCheckTitle(failEvidence, "tls-cipher-suite", "Site negotiates a strong cipher suite");
   assertCheckTitle(failEvidence, "tls-forward-secrecy", "Site uses a forward-secret key exchange");
   assertCheckTitle(failEvidence, "tls-key-exchange-group", "Site negotiates an approved key-exchange group");
-  assertCheckTitle(failEvidence, "tls-supported-versions", "Site supports TLS 1.3 or TLS 1.2");
-  assertCheckTitle(failEvidence, "tls-deprecated-versions", "Site rejects TLS 1.0 and TLS 1.1");
+  assertCheckTitle(failEvidence, "tls-supported-versions", "Site supports TLS 1.2 or TLS 1.3");
+  assertCheckTitle(failEvidence, "tls-deprecated-versions", "Site accepts only TLS 1.2 and newer");
 
   for (const check of [...passEvidence.checks, ...failEvidence.checks]) {
     if (!/^(Site|Runner) /.test(check.title)) throw new Error(`Security check title is not declarative: ${check.title}`);
@@ -146,7 +146,7 @@ try {
     throw new Error("Security evidence does not reference the human-readable report.");
   }
 
-  if (coverage.schemaVersion !== "1.0.0" || coverage.profile.id !== "review-web-security" || coverage.profile.version !== "1.1.1" || coverage.items.length !== 40) {
+  if (coverage.schemaVersion !== "1.0.0" || coverage.profile.id !== "review-web-security" || coverage.profile.version !== "1.1.2" || coverage.items.length !== 40) {
     throw new Error("Coverage output does not contain the complete security profile.");
   }
 

@@ -59,6 +59,7 @@ Use this checklist to start a new Sitefinity project with enough structure to de
 - [ ] Create the base page template or layout and the approved grid/container system.
 - [ ] Add the project resource package and only the CSS framework or design system chosen for the project.
 - [ ] Add the site styles, responsive CSS, and custom JavaScript.
+- [ ] Add the site favicon to the shared layout's document head. Follow the [favicon setup guide](website-favicon-setup-guide.md).
 - [ ] Set up the required default widgets and create the first custom widget.
 - [ ] Create a style-guide page and a widget-guide page that editors and testers can use.
 - [ ] Test the base layout, header, footer, navigation, content, and responsive behavior.

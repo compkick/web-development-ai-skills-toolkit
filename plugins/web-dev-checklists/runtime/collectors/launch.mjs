@@ -1,6 +1,7 @@
 import { probeHomepageLinks } from "./homepage-links.mjs";
+import { collectFaviconEvidence } from "./favicon.mjs";
 
-export async function collectLaunchEvidence({ page, requestedUrl, response, timeoutMs, sharedHttpRedirect }) {
+export async function collectLaunchEvidence({ page, requestedUrl, response, timeoutMs, sharedHttpRedirect, outputDirectory }) {
   const finalUrl = new URL(page.url());
   const browserUserAgent = await page.evaluate(() => navigator.userAgent);
   const responseHeaders = response ? await response.allHeaders() : {};
@@ -114,13 +115,15 @@ export async function collectLaunchEvidence({ page, requestedUrl, response, time
   const { testCandidates, ...documentEvidence } = documentLaunch;
   const xRobotsTag = responseHeaders["x-robots-tag"] ?? null;
   const robotsValues = [...documentLaunch.metaRobots, xRobotsTag].filter(Boolean).join(",").toLowerCase().split(/[\s,]+/).filter(Boolean);
-  const [httpRedirect, linkProbe] = await Promise.all([
+  const [httpRedirect, linkProbe, favicon] = await Promise.all([
     sharedHttpRedirect(),
-    probeHomepageLinks(testCandidates, finalUrl, timeoutMs, browserUserAgent)
+    probeHomepageLinks(testCandidates, finalUrl, timeoutMs, browserUserAgent),
+    collectFaviconEvidence({ page, outputDirectory, timeoutMs }).catch(() => ({ error: "Favicon collection could not complete; review manually.", icons: [] }))
   ]);
 
   return {
     document: documentEvidence,
+    favicon,
     finalUrl: finalUrl.href,
     httpRedirect,
     indexing: { noindex: robotsValues.includes("noindex") || robotsValues.includes("none"), xRobotsTag },

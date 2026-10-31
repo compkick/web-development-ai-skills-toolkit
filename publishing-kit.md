@@ -11,6 +11,8 @@ Copy-ready descriptions and artwork for the project's WordPress page, LinkedIn a
 - Tagline: **Practical checklists, automated audits, and agent skills for building better websites.**
 - Author: [Computerkick](https://computerkick.com)
 - Repository: [Web Development AI Skills Toolkit on GitHub](https://github.com/compkick/web-development-ai-skills-toolkit)
+- Current release: [v0.1.4](https://github.com/compkick/web-development-ai-skills-toolkit/releases/tag/v0.1.4).
+- Project page: [Web Development AI Skills Toolkit on Computerkick](https://computerkick.com/web-development-ai-skills-toolkit/)
 - Suggested WordPress slug: `web-development-ai-skills-toolkit`
 - Suggested SEO title: `Web Dev AI Skills Toolkit | Computerkick`
 - Suggested meta description: `Practical web development checklists, automated website audits, and six Codex agent skills for accessibility, security, performance, SEO, and launch reviews.`
@@ -20,6 +22,8 @@ Use the full project name in page copy. The shorter title on the artwork does no
 ## LinkedIn project description
 
 I built Web Development AI Skills Toolkit to make website reviews more useful—and less of a slog.
+
+The toolkit is available publicly on GitHub.
 
 It brings together practical developer checklists, automated website audits, and six AI agent skills for Codex. Use the checklists yourself, run a report from the command line, or ask Codex to review a site and help prioritize what needs attention.
 
@@ -32,6 +36,18 @@ There's also practical guidance for WordPress, Sitefinity, Git, testing, and rel
 Built by Computerkick. MIT licensed. Feedback from developers using it on real projects is welcome.
 
 Explore the code and setup instructions: [Web Development AI Skills Toolkit on GitHub](https://github.com/compkick/web-development-ai-skills-toolkit).
+
+Project overview: [Web Development AI Skills Toolkit on Computerkick](https://computerkick.com/web-development-ai-skills-toolkit/).
+
+## LinkedIn v0.1.4 update
+
+Web Development AI Skills Toolkit v0.1.4 is here!
+
+This update adds favicon checks and icon previews to launch and project-audit reports, makes WCAG 2.2 AA rule selection explicit, and makes TLS security results easier to understand. It also updates dependencies to resolve the reported security advisories.
+
+Same six review skills, better evidence. Use the human checklists, run the reports from the command line, or ask OpenAI Codex to review a site and prioritize the fixes. Automated results still leave the human checks clearly identified.
+
+Get the toolkit and setup instructions: [Web Development AI Skills Toolkit](https://computerkick.com/web-development-ai-skills-toolkit/).
 
 ## WordPress excerpt
 
@@ -114,7 +130,23 @@ You do not need to install the audit dependencies into the website being reviewe
 
 ### Changelog
 
-#### 0.1.3 — unreleased
+#### 0.1.4
+
+[Release notes and source download](https://github.com/compkick/web-development-ai-skills-toolkit/releases/tag/v0.1.4).
+
+- Added favicon checks and safe icon previews to launch and project-audit reports. Favicon problems are warnings, not automatic launch blockers.
+- Added favicon setup guidance and reminders to development, CMS setup, launch, and post-launch checklists.
+- Explicitly selected axe's supported WCAG 2.2 A/AA and best-practice rules, including target-size checks. Reports record the actual rule inventory and preserve manual-testing limits.
+- Clarified TLS results with positive minimum-version wording and evidence of any accepted older protocols.
+- Updated Markdown tooling and the runtime's browser dependency chain to resolve the reported advisories; removed an obsolete dependency override.
+- Changed CI to run on release tags or manual requests instead of a schedule.
+- Renamed the implementation plan to `roadmap.md` and reduced Phase 6 to release and distribution tasks.
+
+Local repository validation, runtime tests, and all six review suites passed. The six skills, Node.js minimum, and direct browser-tool versions are unchanged; Bionic and Claude Code execution remain unverified.
+
+#### 0.1.3 — released September 24, 2026
+
+[Release notes and source download](https://github.com/compkick/web-development-ai-skills-toolkit/releases/tag/v0.1.3). The repository became public on September 30, 2026.
 
 - Corrected the minimum Node.js version to 22.19.0 across setup guidance, package engines, and bootstrap validation; added version-boundary tests.
 - Corrected the OWASP ASVS reference and regenerated packaged references.
@@ -141,7 +173,7 @@ You do not need to install the audit dependencies into the website being reviewe
 - Added the plugin-owned browser runtime and HTML/JSON evidence reports.
 - Established the human checklist library, packaged references, and local plugin installation workflow.
 
-The old `v0.1.2` tag was deleted during the repository privacy cleanup. Add the `v0.1.3` release link and date after publishing.
+The old `v0.1.2` tag was deleted during the repository privacy cleanup. Use `v0.1.4` for the current release.
 
 ### License
 
@@ -149,12 +181,12 @@ The toolkit is MIT licensed. See the [LICENSE](LICENSE) for its terms and warran
 
 ### Future roadmap
 
-- Finish core distribution checks and publish a tagged release.
+- Prepare submission to the OpenAI plugin directory; the GitHub release is already available.
 - Improve the existing reports based on real-world developer feedback.
 - Add focused WordPress skills where repeated use shows a clear benefit, including migration workflows.
 - Consider dedicated Playwright setup and specialist Sitefinity workflows when there is enough demand to justify maintaining them.
 
-The [modernization plan](modernization-plan.md) is the source of truth. These are planned directions, not promised dates or features already included.
+The [project roadmap](roadmap.md) is the source of truth. These are planned directions, not promised dates or features already included.
 
 ### Support and feedback
 
@@ -199,7 +231,9 @@ Use case: text-localization / precise-object-edit. Input image is the EDIT TARGE
 
 ## Before publishing
 
-Confirm public repository/Issues access, the tagged version, and the final page URL. Review the copy and artwork, then publish the WordPress page and social post yourself. This kit does not publish anything or imply endorsement by OpenAI, Roblox, or the websites used for testing.
+Version v0.1.4 is the current GitHub release; an official plugin-directory listing remains optional and pending. Review the copy and artwork before posting. This kit does not publish anything or imply endorsement by OpenAI, Roblox, or the websites used for testing.
+
+Keep historical testing records labeled with the versions actually tested; a version bump is not a fresh-platform test.
 
 Replace relative repository-document links with their public GitHub equivalents when copying this page to WordPress. Keep the README as the current installation reference, and update the changelog and platform claims when a release is cut.
 

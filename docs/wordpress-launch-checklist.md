@@ -18,6 +18,7 @@ Use this checklist when launching a new or materially changed WordPress site. Us
 - [ ] Set the required code, database, media, and content freeze.
 - [ ] Complete the final approved content synchronization.
 - [ ] Review the homepage, navigation, shared layout, forms, legal content, contact details, media, and downloads.
+- [ ] Confirm the correct Site Icon is linked in the document head and appears in the browser tab. Follow the [favicon setup guide](website-favicon-setup-guide.md).
 - [ ] Remove placeholder, expired, test, duplicate, and draft-only content.
 - [ ] Back up the production database, uploads, custom code, and configuration.
 - [ ] Confirm the backup is available for rollback.
@@ -80,6 +81,7 @@ Use this checklist when launching a new or materially changed WordPress site. Us
 ## After launch
 
 - [ ] Repeat important tests after DNS, caches, scheduled tasks, and search indexes settle.
+- [ ] Confirm the favicon still loads and appears correctly on the production domain.
 - [ ] Review logs, monitoring, Site Health, forms, email, analytics, backups, and scheduled tasks.
 - [ ] Crawl production for broken links, redirects, missing pages, and indexing problems.
 - [ ] Submit or refresh XML sitemaps in the applicable search tools.

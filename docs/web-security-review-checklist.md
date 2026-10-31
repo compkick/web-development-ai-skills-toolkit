@@ -19,8 +19,8 @@ Use the current OWASP Top 10 for awareness and a risk-appropriate version of OWA
 - [ ] Confirm the site negotiates a strong cipher suite.
 - [ ] Confirm the site uses a forward-secret key exchange.
 - [ ] Confirm the site negotiates an approved key-exchange group.
-- [ ] Confirm the site supports TLS 1.3 or TLS 1.2.
-- [ ] Confirm the site rejects TLS 1.0 and TLS 1.1.
+- [ ] Confirm the site supports TLS 1.2 or TLS 1.3.
+- [ ] Confirm the site accepts only TLS 1.2 and newer.
 - [ ] Confirm pages, subresources, and form actions do not use insecure HTTP where HTTPS is required.
 - [ ] Confirm production HTTPS responses send an HSTS policy with the project-approved duration and domain scope.
 - [ ] Review the enforced Content Security Policy and record missing, invalid, or unnecessarily broad directives.
@@ -74,6 +74,7 @@ Record HTTP/2 or HTTP/3 support when it is useful, but do not fail a security re
 - [OWASP Cross Site Scripting Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html)
 - [OWASP Web Security Testing Guide](https://owasp.org/www-project-web-security-testing-guide/)
 - [OWASP Transport Layer Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Security_Cheat_Sheet.html)
+- [RFC 8996: TLS 1.0 and TLS 1.1 deprecation](https://www.rfc-editor.org/rfc/rfc8996.html)
 - [MDN Transport Layer Security](https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Transport_Layer_Security)
 - [RFC 9325 Recommendations for Secure Use of TLS](https://www.rfc-editor.org/rfc/rfc9325.html)
 - [RFC 9116 security.txt specification](https://www.rfc-editor.org/rfc/rfc9116.html)

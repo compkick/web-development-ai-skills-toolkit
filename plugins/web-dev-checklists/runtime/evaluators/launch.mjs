@@ -1,6 +1,7 @@
 import { createEvidence, collectArtifacts } from "../evidence/package.mjs";
 import { browserErrorsCheck } from "./browser.mjs";
 import { assessHttpRedirect } from "../collectors/http-redirect.mjs";
+import { faviconChecks } from "./favicon.mjs";
 
 export async function buildLaunchEvidence(profileToUse, summary, launchResult, outputDirectory) {
   const checks = [];
@@ -83,11 +84,13 @@ export async function buildLaunchEvidence(profileToUse, summary, launchResult, o
   addCheck("indexing-allowed", "Homepage does not declare a noindex directive", !launchResult ? "not-checked" : launchResult.indexing.noindex ? "fail" : "pass", "browser", { metaRobots: launchResult?.document?.metaRobots ?? [], noindex: launchResult?.indexing?.noindex ?? null, xRobotsTag: launchResult?.indexing?.xRobotsTag ?? null });
 
   checks.push(browserErrorsCheck(summary, "Homepage renders without browser console or page errors"));
+  checks.push(...faviconChecks(launchResult?.favicon));
 
   const artifactDefinitions = [
     ["summary.json", "Low-level browser and collector summary"],
     ["page.png", "Full-page rendered homepage screenshot"],
-    ["launch-results.json", "Homepage structure, link, indexing, and redirect observations"],
+    ["launch-results.json", "Homepage structure, link, indexing, redirect, and favicon observations"],
+    ...(launchResult?.favicon?.icons ?? []).filter((icon) => icon.preview).map((icon) => [icon.preview, "Rasterized icon preview for visual brand review"]),
     ["browser-errors.json", "Opt-in truncated browser error details"]
   ];
   const artifacts = await collectArtifacts(outputDirectory, artifactDefinitions);
@@ -96,6 +99,7 @@ export async function buildLaunchEvidence(profileToUse, summary, launchResult, o
     "This is a high-level pre-launch review of one supplied homepage, not a whole-site audit or replacement for specialist accessibility, security, performance, SEO, privacy, or application testing.",
     "The runner checks at most 50 unique same-host HTTP(S) links found on the rendered homepage, prioritizing navigation, header, footer, and then content links; it does not request external destinations.",
     "Unset or JavaScript link destinations can represent intentional controls and require human review before being treated as broken.",
+    "Favicon checks read at most six icons and one declared manifest from the same origin, with a shared 8-second collection budget and 1 MiB per response. External assets are not fetched. Icon warnings do not independently block launch; brand approval, browser selection, device behavior, robots access, and search appearance need human review.",
     "The runner does not submit forms, send email, authenticate, change content, deploy releases, inspect backups, access monitoring, or perform DNS, cache, search-index, analytics, consent, or rollback operations.",
     "The final go/no-go recommendation requires the exact release scope, current specialist-review status, known issues, owners, rollback readiness, and applicable human confirmations."
   ];

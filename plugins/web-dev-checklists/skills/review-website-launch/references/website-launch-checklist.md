@@ -23,6 +23,7 @@ Use the [website development checklist](website-development-checklist.md) for th
 - [ ] Confirm there are no unresolved launch-blocking findings.
 - [ ] Test the release candidate in a production-like environment.
 - [ ] Review the homepage, navigation, important pages, forms, search, downloads, and error pages.
+- [ ] Confirm the correct favicon is linked in the document head and appears in the browser tab. Follow the [favicon setup guide](website-favicon-setup-guide.md).
 - [ ] Remove test content, placeholder text, draft material, and environment-specific values.
 - [ ] Set up and verify that the site can send emails.
 - [ ] Confirm analytics, consent tools, important integrations, and production content are ready.
@@ -53,6 +54,7 @@ Use the [website development checklist](website-development-checklist.md) for th
 ## After launch
 
 - [ ] Repeat critical tests after DNS, caches, search, and scheduled work have settled.
+- [ ] Confirm the favicon still loads and appears correctly on the production domain.
 - [ ] Check logs, monitoring, backups, forms, email, analytics, and scheduled jobs.
 - [ ] Crawl the site for broken links, bad redirects, and indexing problems.
 - [ ] Remove temporary settings and assign every remaining issue an owner.

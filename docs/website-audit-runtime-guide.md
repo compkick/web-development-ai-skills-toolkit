@@ -92,7 +92,9 @@ The performance profile runs Lighthouse with its desktop configuration and conve
 
 The technical SEO profile runs Lighthouse with its desktop configuration and records rendered titles, descriptions, indexing directives, canonicals, headings, text, link inventory, structured-data syntax, and language alternates. It also requests the same origin's `robots.txt` file and previews up to three same-origin sitemaps declared there, or the default `/sitemap.xml` when none is declared. Sitemap previews are limited to 256 KiB and can be incomplete. The profile does not fetch every discovered link, perform an unbounded crawl, access Search Console or analytics, validate migration maps, or guarantee indexing or rankings.
 
-The launch profile is a lightweight homepage preflight that deliberately does not rerun the specialist collectors. It records the homepage response, HTTPS state, bounded HTTP redirect, semantic header/navigation/main/footer structure, noindex directives, browser-error counts, unset or invalid visible link destinations, and up to 50 unique same-host link responses. Link checks prioritize navigation, header, footer, and then page content. The profile does not request external destinations, submit forms, authenticate, run axe, run Lighthouse, collect the security or technical SEO profiles, or crawl the site. Its automated result is evidence for the agent's final go/no-go recommendation, not the final decision by itself.
+The launch profile is a lightweight homepage preflight that deliberately does not rerun the specialist collectors. It records the homepage response, HTTPS state, bounded HTTP redirect, semantic header/navigation/main/footer structure, noindex directives, browser-error counts, favicon evidence, unset or invalid visible link destinations, and up to 50 unique same-host link responses. Link checks prioritize navigation, header, footer, and then page content. The profile does not request external destinations, submit forms, authenticate, run axe, run Lighthouse, collect the security or technical SEO profiles, or crawl the site. Its automated result is evidence for the agent's final go/no-go recommendation, not the final decision by itself.
+
+Favicon review checks the document-head declaration, image loading and decoding, actual dimensions, declared metadata, and HTTPS URLs. It reads at most six icon assets plus one declared manifest from the homepage's origin, allows up to three same-origin redirects per resource, limits each response to 1 MiB, and shares an 8-second collection budget. Limits are configured in `FAVICON_REVIEW` in `runtime/config/runtime-config.mjs`. External/CDN and unsupported icon URLs are left for manual review, not reported as confirmed broken. The report includes local PNG previews at tab size and enlarged on light and dark backgrounds; original SVG markup is never embedded in the report. Favicon issues are warnings, and touch/installed-app icons are conditional rather than universally required. Browser/device selection, brand approval, crawler access, and eventual search appearance still need human review.
 
 The web project audit profile collects the existing accessibility, security, performance, technical SEO, and homepage evidence in one browser and Lighthouse run. It creates one high-level `web-project-audit-report.html` plus the detailed area reports for drill-down. It does not inspect a repository, execute project commands, review private environments, authenticate, test mobile layouts, or verify operations; the `audit-web-project` skill adds those sources when they are available and in scope.
 
@@ -122,6 +124,16 @@ The summary records console-error and page-error counts without their message te
 
 Screenshots, including axe element screenshots, Lighthouse reports, URLs, and optional browser-error details can contain rendered content, personal data, query strings, private endpoints, or secrets exposed by the page. Store and share audit artifacts accordingly.
 
+## Accessibility rule coverage
+
+The shared axe configuration in `runtime/config/runtime-config.mjs` selects `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`, and `best-practice`. This includes earlier Level A/AA requirements, not just rules added in WCAG 2.2. Experimental, deprecated, and AAA-only rules are not selected. Best-practice findings are additional guidance, not automatically WCAG failures. Lighthouse keeps its own rule selection.
+
+Verified with pinned axe-core 4.13.0 on 2026-10-30: its `target-size` rule (`wcag22aa`, WCAG 2.5.8) is disabled by default but runs with this explicit tag selection. Regression fixtures check valid and undersized adjacent targets and compare the recorded rule inventory with the pinned engine's supported rules.
+
+`axe-results.json` records the target, selected tags, and each returned rule's ID, tags, and outcomes under `ruleSelection`. A rule can pass for some elements and fail for others; the inventory counts it once. The HTML report shows the target, tags, and rule count, including inapplicable rules. Counts describe axe rules, not WCAG success criteria. Older evidence without this metadata has an unknown selection; do not infer it from a profile label.
+
+The desktop scan does not establish full WCAG 2.2 AA conformance. Review keyboard and screen-reader behavior, zoom/reflow, focus obstruction, dragging alternatives, consistent help, repeated form entry, and accessible authentication separately. The accessibility checklist and profile coverage distinguish automated evidence from manual work.
+
 ## Outputs
 
 Treat each run directory as one evidence package. When a user requests `.output` or another durable destination, preserve the complete directory and verify the expected files before reporting success; do not keep only the normalized JSON files or delete the raw axe, Lighthouse, screenshot, or element evidence during the task. If a collector did not complete, retain the partial package and use `summary.json` and `evidence.json` to report its status and error.
@@ -129,19 +141,19 @@ Treat each run directory as one evidence package. When a user requests `.output`
 - `summary.json` contains the page result, browser used, desktop form factor and viewport, Lighthouse scores, and automated accessibility counts.
 - `run-failure.json` records the stage when the runner cannot complete startup, navigation, or capture. Raw error text is included only with `--include-error-details`. The command still exits unsuccessfully; a profile run also writes incomplete `evidence.json`, `coverage.json`, and its applicable summary HTML report. Earlier partial artifacts are retained, and non-empty output directories are never overwritten.
 - `page.png` is a full-page screenshot of the rendered page.
-- `axe-results.json` contains reduced axe findings without copied HTML snippets.
+- `axe-results.json` contains reduced axe findings and the explicit rule-selection inventory without copied HTML snippets.
 - `accessibility-report.html` presents confirmed violations and incomplete checks in a human-readable format and links to bounded screenshots under `axe-elements/`.
 - `lighthouse-report.json` and `lighthouse-report.html` contain the Lighthouse results.
 - `browser-errors.json` is created only when `--include-error-details` is explicitly requested.
 - `security-results.json` contains reduced TLS, transport, selected response-header, public-cookie-attribute, disclosure, redirect, and `security.txt` observations when security collection is enabled. Cookie values are not stored.
 - `seo-results.json` contains reduced rendered metadata, indexing, canonical, heading, content, link, structured-data, language, redirect, robots, and bounded sitemap observations when technical SEO collection is enabled.
-- `launch-results.json` contains reduced homepage structure, visible-link, bounded same-host link-response, noindex, and HTTP redirect observations when launch collection is enabled.
+- `launch-results.json` contains reduced homepage structure, visible-link, bounded same-host link-response, noindex, HTTP redirect, and favicon observations when launch collection is enabled. `favicon-preview-*.png` files are safe rasterized previews of successfully decoded icons.
 - `evidence.json` is created by the deterministic profile runner and contains normalized machine observations with stable check identifiers.
 - `coverage.json` is created by the deterministic profile runner and shows which canonical checklist items remain partially automated or manual.
 - `security-report.html` is created by the security profile and presents normalized pass, fail, warning, informational, and not-checked results with checklist coverage and limitations.
 - `performance-report.html` is created by the performance profile and presents normalized desktop lab metrics, Lighthouse observations, checklist coverage, limitations, and artifact links.
 - `technical-seo-report.html` is created by the technical SEO profile and presents normalized crawl, indexing, metadata, canonical, sitemap, and Lighthouse observations with checklist coverage, limitations, and artifact links.
-- `launch-readiness-report.html` is created by the launch profile and presents the high-level automated preflight, homepage and link observations, canonical launch-checklist coverage, limitations, and artifact links.
+- `launch-readiness-report.html` is created by the launch profile and presents the high-level automated preflight, homepage and link observations, favicon checks and visual previews, canonical launch-checklist coverage, limitations, and artifact links.
 - `web-project-audit-report.html` is created by the web project audit profile and groups the five public evidence areas into a concise cross-discipline baseline with links to detailed reports.
 
 The runtime prioritizes confirmed violations and then incomplete checks for element screenshots, with a default limit of 50 candidates per page. The report records elements that were skipped by the limit, could not be found after the scan, used unsupported nested targets, or failed during capture.

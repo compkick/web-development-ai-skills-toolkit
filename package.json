@@ -1,7 +1,7 @@
 {
   "name": "ai-agent-skills-toolkit-web-development",
   "private": true,
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Practical checklists, automated audits, and agent skills for building better websites.",
   "license": "MIT",
   "author": {
@@ -28,21 +28,25 @@
     "reviews:test-security": "node plugins/web-dev-checklists/runtime/scripts/test-security-review-runner.mjs",
     "reviews:test-performance": "node plugins/web-dev-checklists/runtime/scripts/test-performance-review-runner.mjs",
     "reviews:test-technical-seo": "node plugins/web-dev-checklists/runtime/scripts/test-technical-seo-review-runner.mjs",
-    "reviews:test-launch": "node plugins/web-dev-checklists/runtime/scripts/test-launch-review-runner.mjs",
+    "reviews:test-launch": "node plugins/web-dev-checklists/runtime/scripts/test-favicon.mjs && node plugins/web-dev-checklists/runtime/scripts/test-launch-review-runner.mjs",
     "reviews:test-audit": "node plugins/web-dev-checklists/runtime/scripts/test-web-project-audit-runner.mjs",
     "versions:check": "node scripts/check-versions.mjs",
-    "deps:audit": "npm audit --audit-level=high && npm audit --prefix plugins/web-dev-checklists/runtime --audit-level=high",
+    "deps:audit": "node scripts/test-dependency-audit.mjs && node scripts/check-dependency-audit.mjs",
     "repo:check": "npm run docs:check && npm run skills:refs:check && npm run runtime:check && npm run reviews:check && npm run versions:check && npm run deps:audit"
   },
   "devDependencies": {
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1",
-    "markdownlint-cli2": "0.23.2"
+    "markdownlint-cli2": "0.24.0"
   },
   "overrides": {
-    "markdown-it": "14.3.0",
     "markdownlint-cli2": {
-      "smol-toml": "1.7.1"
+      "markdownlint": {
+        "re2js": "2.8.7"
+      },
+      "micromark-extension-math": {
+        "katex": "0.18.2"
+      }
     }
   },
   "engines": {

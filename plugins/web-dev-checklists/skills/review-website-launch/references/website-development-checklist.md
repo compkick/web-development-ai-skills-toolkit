@@ -34,7 +34,7 @@ Use this checklist while building and configuring a website. It covers the commo
 - [ ] Add useful page titles and meta descriptions.
 - [ ] Add canonical URLs.
 - [ ] Add Open Graph or other sharing metadata when needed.
-- [ ] Add favicons and application icons.
+- [ ] Add the site favicon and link it in the shared document head; add application icons when needed. Follow the [favicon setup guide](website-favicon-setup-guide.md).
 - [ ] Configure `robots.txt` and indexing rules for each environment.
 - [ ] Create the XML sitemap when the site needs one.
 - [ ] Configure the site search index when search is enabled.

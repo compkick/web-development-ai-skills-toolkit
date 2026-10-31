@@ -69,6 +69,7 @@ export async function writeAxeHtmlReport(axeResult, outputPath) {
     <h1>axe accessibility report</h1>
     <p class="lede">Automated evidence for <a href="${safeExternalUrl(axeResult.url)}">${escapeHtml(axeResult.url)}</a>. Automated results do not replace manual accessibility testing.</p>
     <p class="meta">Scanned ${escapeHtml(formatDate(axeResult.timestamp))} with ${escapeHtml(axeResult.testEngine?.name ?? "axe-core")} ${escapeHtml(axeResult.testEngine?.version ?? "unknown")} in ${escapeHtml(axeResult.auditEnvironment?.formFactor ?? "unknown")} mode at ${escapeHtml(axeResult.testEnvironment?.windowWidth ?? axeResult.auditEnvironment?.viewport?.width ?? "unknown")} × ${escapeHtml(axeResult.testEnvironment?.windowHeight ?? axeResult.auditEnvironment?.viewport?.height ?? "unknown")}.</p>
+    ${renderRuleSelection(axeResult.ruleSelection)}
     <section class="summary" aria-label="Result summary">
       ${renderMetric("Violation rules", axeResult.violations.length)}
       ${renderMetric("Affected violation elements", violationNodeCount)}
@@ -87,6 +88,15 @@ export async function writeAxeHtmlReport(axeResult, outputPath) {
 
 function collectNodes(rules, category) {
   return rules.flatMap((rule) => rule.nodes.map((node) => ({ category, node, ruleId: rule.id })));
+}
+
+function renderRuleSelection(selection) {
+  if (!selection) return '<p class="note">Rule selection was not recorded in this evidence package.</p>';
+  return `<section><h2>Automated rule coverage</h2>
+    <p>Target: ${escapeHtml(selection.standard)}. Includes earlier WCAG Level A/AA rules and additional best-practice checks.</p>
+    <p class="meta">Selected tags: ${selection.tags.map((tag) => `<code>${escapeHtml(tag)}</code>`).join(", ")}. ${escapeHtml(selection.rules.length)} rules returned a result, including rules not applicable to this page. Rule counts are not counts of WCAG success criteria.</p>
+    <p class="note">A clean scan does not establish WCAG conformance. Keyboard, screen-reader, zoom/reflow, focus visibility, dragging alternatives, consistent help, repeated form entry, and accessible authentication still need manual review. Best-practice findings are not automatically WCAG failures. Lighthouse uses its own rule selection.</p>
+  </section>`;
 }
 
 function countNodes(rules) {
@@ -109,6 +119,7 @@ function renderRule(rule) {
   <div class="rule-header"><span class="badge badge-${safeFilePart(rule.impact ?? "unknown")}">${escapeHtml(rule.impact ?? "unknown")}</span><h3>${escapeHtml(rule.help)}</h3></div>
   <p>${escapeHtml(rule.description)}</p>
   <p><code>${escapeHtml(rule.id)}</code> · ${escapeHtml(rule.nodes.length)} affected element${rule.nodes.length === 1 ? "" : "s"} · <a href="${helpLink}">Rule guidance</a></p>
+  <p class="meta">${rule.tags?.includes("best-practice") ? "Best practice (not automatically a WCAG failure)" : "WCAG-related rule"}${rule.tags?.length ? ` · ${rule.tags.map(escapeHtml).join(", ")}` : ""}</p>
   ${rule.nodes.map((node, index) => renderNode(node, index)).join("\n")}
 </article>`;
 }

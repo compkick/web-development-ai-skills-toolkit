@@ -86,6 +86,18 @@ After changing the website audit runtime or deterministic review profiles, boots
 
 `repo:check` includes JSON Schema validation, evaluator contracts, report rendering, cache behavior, and bounded HTTP tests without launching a browser. Ajv and its format checks are repository-only development dependencies. The separate browser-fixture CI job installs the pinned runtime and Chromium in a fresh cache and runs both browser suites with sandboxing enabled. See [Playwright's CI setup](https://playwright.dev/docs/ci-intro).
 
+GitHub Actions runs the full validation workflow when a `v*` release tag is pushed, or through **Actions → Release validation → Run workflow**. It does not run on a schedule, branch pushes, or pull requests. Run local checks before merging, and wait for tag validation to pass before announcing a release. The workflow validates the toolkit; it does not publish a release or deploy anything.
+
+### Dependency maintenance
+
+Update package versions and the lockfile together, run `npm ci`, and rerun validation. Do not use `npm audit fix --force` blindly. The scoped RE2JS and KaTeX overrides supply patched versions until the Markdown linter's dependencies catch up; remove them once upstream includes compatible fixes. The old `smol-toml` override is no longer needed.
+
+The October 30, 2026 update uses `markdownlint-cli2` 0.24.0 with `markdown-it` 15.0.3 and [RE2JS 2.8.7](https://github.com/advisories/GHSA-gg6h-894w-4m9c). The runtime lockfile updates Puppeteer within Lighthouse's supported range, resolving Chromium BiDi with Zod 4.6.7. Lighthouse, Playwright, axe, and the Node.js minimum are unchanged; no cross-major Zod override is used.
+
+`npm run deps:audit` checks both dependency trees and blocks unaccepted high/critical advisories or audit errors. Plain `npm audit` remains available for the unfiltered report.
+
+One temporary exception is recorded in [check-dependency-audit.mjs](scripts/check-dependency-audit.mjs): [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm), only for development-only `braces@3.0.3`, expiring 2027-01-17. No patched release was available when assessed on 2026-10-19. The issue concerns deeply nested glob patterns; our Markdown linter receives repository-controlled patterns, not visitor input or content from audited sites. Release validation runs reviewed repository code. This accepts a limited development-tool denial-of-service risk, not a runtime exception. Reassess if external glob input is introduced, and remove the exception when a compatible upstream fix is available. Other advisories, production usage, version changes, and an expired exception still block validation.
+
 ### Runtime code locations
 
 - `runtime/scripts/`: CLI entry points and integration tests.
