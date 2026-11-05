@@ -1,5 +1,7 @@
 # Web Development AI Skills Toolkit
 
+![A developer and friendly AI robot working through a checklist, with the Web Development AI Skills Toolkit title.](assets/publishing/web-dev-ai-toolkit-readme-banner.png)
+
 ## About
 
 The Web Development AI Skills Toolkit (or Web Dev AI Skills Toolkit) is a set of practical checklists, automated audits, and agent skills for building better websites.

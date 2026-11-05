@@ -41,11 +41,15 @@ Project overview: [Web Development AI Skills Toolkit on Computerkick](https://co
 
 ## LinkedIn v0.1.4 update
 
-Web Development AI Skills Toolkit v0.1.4 is here!
+I've been using and testing my web dev toolkit on real sites, and I keep finding things I want it to catch before launch.
 
-This update adds favicon checks and icon previews to launch and project-audit reports, makes WCAG 2.2 AA rule selection explicit, and makes TLS security results easier to understand. It also updates dependencies to resolve the reported security advisories.
+Favicons were one of them. A small detail, but easy to miss until somebody notices the wrong icon in their browser tab.
 
-Same six review skills, better evidence. Use the human checklists, run the reports from the command line, or ask OpenAI Codex to review a site and prioritize the fixes. Automated results still leave the human checks clearly identified.
+So I've released v0.1.4 of the Web Development AI Skills Toolkit, with favicon checks and icon previews, clearer WCAG 2.2 AA accessibility reporting, easier-to-read TLS security results, and dependency security fixes.
+
+The toolkit combines practical developer checklists, automated website reports, and six AI agent skills for OpenAI Codex. Work through the checklists yourself, run a report from the command line, or ask Codex to review a site and help prioritize the fixes. It also tells you what still needs a human review.
+
+I'm looking for contributors and testers. If you'd like to try it on a site, suggest improvements, or help with the code, drop me a line!
 
 Get the toolkit and setup instructions: [Web Development AI Skills Toolkit](https://computerkick.com/web-development-ai-skills-toolkit/).
 
@@ -216,6 +220,15 @@ Suggested alt text, untitled: `A smiling blocky developer and friendly AI robot 
 Suggested alt text, titled: `Web Dev AI Skills Toolkit: a smiling developer and AI robot working through a checklist.`
 
 Generated with the built-in image-generation tool. The titled image is an edit of the original; no client screenshots or private evidence were used. Prompts are recorded below for future revisions.
+
+### Release and README images
+
+- [v0.1.4 launch artwork](assets/publishing/web-dev-ai-toolkit-v0.1.4-launch.png): 1734 × 907 PNG, approximately 1.91:1, showing the developer and robot launching around a browser favicon. Use for the release post.
+- [README banner](assets/publishing/web-dev-ai-toolkit-readme-banner.png): 2172 × 724 PNG, 3:1, with the project title and checklist scene. Embedded at the top of the README; intentionally has no version number.
+
+Both reuse the original characters and orange/cream palette, remain under 2 MB each, and preserve the native generated PNGs without resampling. The release image uses the landscape ratio in [LinkedIn's image guidance](https://www.linkedin.com/help/lms/answer/a570368). The banner's wider layout is for the README, not a GitHub social-preview setting.
+
+Full prompts, dimensions, file hashes, and source-artwork details are recorded in the [image manifest](assets/publishing/image-manifest.json).
 
 ### Illustration prompt
 
