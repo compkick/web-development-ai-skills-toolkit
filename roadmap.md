@@ -10,8 +10,8 @@ This file is the canonical implementation roadmap. Update it as work is complete
 
 - Plan status: In progress
 - Current phase: Phase 6 (release verification and optional distribution)
-- Next work item: Confirm the v0.1.4 tag, GitHub Release, and release CI
-- Last reviewed: 2026-10-30
+- Next work item: Plan desktop and mobile accessibility coverage
+- Last reviewed: 2026-11-04
 
 ## Guiding decisions
 
@@ -393,6 +393,17 @@ These are not v0.1.4 release requirements.
 - [ ] Package and test Claude Code installation using the existing skills and shared runtime.
 - [ ] Update installation instructions and the compatibility matrix with verified results.
 
+## Next update: Desktop and mobile accessibility
+
+The current automated axe and Lighthouse runs use desktop settings only. Extend the existing accessibility review to cover desktop and mobile layouts against WCAG 2.2 AA; no new skill is needed.
+
+- [ ] Support desktop, mobile, and combined runs, keeping axe, Lighthouse, and screenshot settings consistent for each mode.
+- [ ] Label reports with the viewport and device mode, and keep each mode's evidence separate.
+- [ ] Add fixtures with mobile-only accessibility issues and confirm existing desktop checks still work.
+- [ ] Update the accessibility skill and checklist to cover both layouts, including manual reflow, zoom, touch-target, and mobile screen-reader checks.
+
+Passing automated checks at both sizes does not establish WCAG conformance or replace real-device and assistive-technology testing. Use the [accessibility checklist](docs/web-accessibility-review-checklist.md) and [W3C mobile accessibility guidance](https://www.w3.org/WAI/standards-guidelines/mobile/).
+
 ## Phase 7: Optional specialized skills
 
 ### WordPress skills
@@ -459,6 +470,7 @@ Publication tasks and discovery work are tracked in Phase 6 above.
 
 | Date | Decision | Reason |
 | --- | --- | --- |
+| 2026-11-04 | Plan desktop and mobile coverage in the existing accessibility review. | Responsive layouts can expose different accessibility issues; v0.1.4's automated baseline is desktop-only. |
 | 2026-10-23 | Plan v0.1.4 for committed post-launch improvements and defer cross-harness execution testing. | The public launch is complete; Bionic manual import exposed a missing shared runtime, so discovery alone is not compatibility. |
 | 2026-09-09 | Close Phase 5 functional validation, make Phase 6 publication, and move optional specialized skills to Phase 7. | Windows and Linux runtime tests and representative agent tests are complete; unfinished release CI, metadata inspection, packaging, and public distribution remain explicit Phase 6 gates. |
 | 2026-07-21 | Modernize and normalize documentation before building skills. | Skills should encode reviewed guidance, not preserve stale advice. |
